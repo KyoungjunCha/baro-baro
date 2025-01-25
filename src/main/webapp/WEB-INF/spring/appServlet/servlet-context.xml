@@ -62,8 +62,6 @@
 	</tx:advice>
 	
 	
-	<context:component-scan base-package="com.barobaro.app" />
-	
 	<aop:config>
 		<aop:pointcut id="ID_cut" expression="execution(public * com.barobaro..*Impl.*(..))" /> <!-- WHERE -->
 		<aop:advisor advice-ref="ID_tx_advice" pointcut-ref="ID_cut"/> <!-- WHAT + WHEN -->

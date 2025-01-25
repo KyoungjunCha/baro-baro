@@ -34,17 +34,17 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class GoogleOauth implements Oauth {
-	@Value("${google.loginform.url}")
+//	@Value("${google.loginform.url}")
 	private String LOGIN_FORM_URL;
-	@Value("${google.client.id}")
+//	@Value("${google.client.id}")
 	private String CLIENT_ID;
-	@Value("${google.client.pw}")
+//	@Value("${google.client.pw}")
 	private String CLIENT_PW;
-	@Value("${google.redirect.uri}")
+//	@Value("${google.redirect.uri}")
 	private String CALLBACK_URL;
-	@Value("${google.endpoint.token}")
+//	@Value("${google.endpoint.token}")
 	private String ENDPOINT_URL_TOKEN;
-	@Value("${google.endpoint.userinfo}")
+//	@Value("${google.endpoint.userinfo}")
 	private String ENDPOINT_URL_USERINFO;
 	private String ACCESS_TOKEN  = "";
     
