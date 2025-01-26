@@ -1,23 +1,68 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=c60b5a80c355b99117a9426ef4296a8c&autoload=false"></script>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script> <!-- jQuery 라이브러리 로드 -->
+    <style>
+        /* 모달 창 스타일 */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        #additional-items {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
-	
-	<div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <h2>게시글 작성3</h2>
+
+    <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
         <form id="create-post-form" enctype="multipart/form-data">
-            <table>
+            <table id="post-table">
+                <caption>게시글 작성2</caption>
                 <tr>
                     <td><label for="title">제목</label></td>
                     <td><input type="text" id="title" name="title" required></td>
                 </tr>
-                 <tr>
+                <tr>
+                    <td><label for="ufile">관련 이미지</label></td>
+                    <td><input type="file" id="ufile" name="ufile" multiple></td>
+                </tr>
+                <tr>
                     <td><label for="product_name">제품명 상세 이름</label></td>
                     <td><input type="text" id="product_name" name="product_name" required></td>
                 </tr>
@@ -30,36 +75,181 @@
                     <td><input type="text" id="rent_content" name="rent_content" required></td>
                 </tr>
                 <tr>
-                    <td><label for="rent_location">대여 위치(도로명 주소로 입력)</label></td>
-                    <td><input type="text" id="rent_location" name="rent_location" required></td>
+                    <td colspan="2">
+                        <button type="button" id="add-item-button">대여 일정 추가</button> 
+                    </td>
+                </tr>
+                <tr id="additional-items">
+                    <!-- 추가된 항목들이 들어갈 곳 -->
                 </tr>
                 <tr>
-                    <td><label for="ufile">첨부파일</label></td>
-                    <td><input type="file" id="ufile" name="ufile" multiple></td>
-                </tr>
-                <tr>
-                	<td><div id="map" style="width:500px;height:400px;"></div></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><input type="submit" value="게시글 작성"></td>
+                    <td colspan="2">
+                        <button type="submit">게시글 작성</button>
+                    </td>
                 </tr>
             </table>
         </form>
     </div>
-	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script>
-		window.onload = function() {
-	        // Kakao Maps API 로드가 완료된 후 실행
-	        kakao.maps.load(function() {
-	            var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-	            var options = { //지도를 생성할 때 필요한 기본 옵션
-	                center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표
-	                level: 3 //지도의 레벨(확대, 축소 정도)
-	            };
-	
-	            var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-	        });
-	    };
+
+    <!-- 모달 창 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>대여 일정 입력</h2>
+            <form id="modal-form">
+                <label for="rent_at">대여일:</label>
+                <input type="datetime-local" id="rent_at" name="rent_at" required>
+                <br><br>
+                <label for="return_at">반납일:</label>
+                <input type="datetime-local" id="return_at" name="return_at" required>
+                <br><br>
+                <!-- <label for="rent_location">대여 장소:</label>
+                <input type="text" id="rent_location" name="rent_location" required>
+                <br><br>
+                <label for="rent_rotate_x">대여 장소 X 좌표:</label>
+                <input type="number" id="rent_rotate_x" name="rent_rotate_x" required>
+                <br><br>
+                <label for="rent_rotate_y">대여 장소 Y 좌표:</label>
+                <input type="number" id="rent_rotate_y" name="rent_rotate_y" required>
+                <br><br>
+                <label for="return_location">반납 장소:</label>
+                <input type="text" id="return_location" name="return_location" required>
+                <br><br>
+                <label for="return_rotate_x">반납 장소 X 좌표:</label>
+                <input type="number" id="return_rotate_x" name="return_rotate_x" required>
+                <br><br>
+                <label for="return_rotate_y">반납 장소 Y 좌표:</label>
+                <input type="number" id="return_rotate_y" name="return_rotate_y" required> -->
+                <br><br>
+                <div id="map" style="width:500px;height:400px;"></div>
+                <br><br>
+                <button type="button" id="add-item-modal">항목 추가</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // 동적으로 카카오 API 로드하기
+        function loadKakaoMapAPI(callback) {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=c60b5a80c355b99117a9426ef4296a8c&autoload=false&libraries=services,clusterer,drawing';
+            script.onload = callback; // API가 로드되면 콜백 함수 실행
+            document.head.appendChild(script); // 문서에 스크립트 추가
+        }
+
+        // 카카오 맵 API 로드 후 실행
+        loadKakaoMapAPI(function() {
+            kakao.maps.load(function() {
+            	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                mapOption = { 
+                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            // 마커가 표시될 위치입니다 
+            var markerPosition = new kakao.maps.LatLng(33.450701, 126.570667); 
+
+            // 마커를 생성합니다
+            var marker1 = new kakao.maps.Marker({
+                position: markerPosition,
+                content: '대여 장소'
+            });
+
+            var marker2 = new kakao.maps.Marker({
+                position: markerPosition,
+                content: '반납 장소'
+            });
+            // 마커가 지도 위에 표시되도록 설정합니다
+            marker1.setMap(map);
+
+            // 마커가 드래그 가능하도록 설정합니다 
+            marker1.setDraggable(true); 
+            
+            marker2.setMap(map);
+
+            // 마커가 드래그 가능하도록 설정합니다 
+            marker2.setDraggable(true); 
+            });
+        });
+
+        // 폼 제출 시 jQuery를 이용해 AJAX로 RESTful 요청 보내기
+        $('#create-post-form').on('submit', function(event) {
+            event.preventDefault(); // 기본 폼 제출 동작 막기
+
+            var formData = new FormData(this); // 폼 데이터 수집
+
+            $.ajax({
+                url: '/your-api-endpoint', // API 엔드포인트 (서버에서 설정한 URL로 변경)
+                type: 'POST',
+                data: formData,
+                processData: false, // 파일 전송을 위한 설정
+                contentType: false, // 파일 전송을 위한 설정
+                success: function(response) {
+                    console.log('게시글 작성 성공', response);
+                    alert('게시글 작성이 완료되었습니다!');
+                },
+                error: function(error) {
+                    console.error('게시글 작성 실패', error);
+                    alert('게시글 작성에 실패했습니다.');
+                }
+            });
+        });
+
+        // 모달 창 관련 처리
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("add-item-button");
+        var span = document.getElementsByClassName("close")[0];
+
+        // 추가 버튼 클릭 시 모달 띄우기
+        btn.onclick = function() {
+            modal.style.display = "block";
+            map.relayout();
+        }
+
+        // 모달 닫기
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // 항목 추가 처리
+        $('#add-item-modal').click(function() {
+            var rentAt = $('#rent_at').val();
+            var returnAt = $('#return_at').val();
+            var rentLocation = $('#rent_location').val();
+            var rentRotateX = $('#rent_rotate_x').val();
+            var rentRotateY = $('#rent_rotate_y').val();
+            var returnLocation = $('#return_location').val();
+            var returnRotateX = $('#return_rotate_x').val();
+            var returnRotateY = $('#return_rotate_y').val();
+
+            if (rentAt && returnAt && rentLocation && rentRotateX && rentRotateY && returnLocation && returnRotateX && returnRotateY) {
+                var newRow = $('<tr>').append(
+                    $('<td>').text(rentAt),
+                    $('<td>').text(returnAt),
+                    $('<td>').text(rentLocation),
+                    $('<td>').text(rentRotateX),
+                    $('<td>').text(rentRotateY),
+                    $('<td>').text(returnLocation),
+                    $('<td>').text(returnRotateX),
+                    $('<td>').text(returnRotateY)
+                );
+                $('#additional-items').append(newRow);  // '대여 일정 추가' 버튼 오른쪽에 추가
+                modal.style.display = "none"; // 모달 닫기
+            } else {
+                alert("모든 항목을 입력하세요.");
+            }
+        });
     </script>
+
 </body>
 </html>
