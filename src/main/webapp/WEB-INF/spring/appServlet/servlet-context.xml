@@ -46,7 +46,7 @@
 	</bean>
 	
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.barobaro.app" /> 
+		<property name="basePackage" value="com.barobaro.app.mapper" /> 
 	</bean> 
 	
 	<aop:aspectj-autoproxy proxy-target-class="true" />
