@@ -43,4 +43,30 @@ public class CommonCode {
 		private String nickname;
 		private UserStatus userStatus;
 	}
+	
+	
+	@AllArgsConstructor
+	@Getter
+	public static enum ReservationHistoryStatus {
+		REQUESTED(1, "예약대기중"),
+		ACCEPTED(2, "예약승인"),
+		REFUSED(3, "예약거절"),
+		CANCLE_REQUESTED(4, "예약취소요청"),
+		CANCLE_COMPLETED(5, "예약취소완료"),
+		DONE(6, "거래완료");
+		
+		private int code; 
+		private String desc;
+	}
+	
+	@AllArgsConstructor
+	@Getter
+	public static enum ReservationAvailableStatus {
+		AVAILABLE(1, "예약가능"),
+		NOAVAILABLE(2, "예약불가능");
+		
+		private int code; 
+		private String desc;
+	}
+	
 }
