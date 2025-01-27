@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.service.CategoryService;
+import com.barobaro.app.service.PostService;
+import com.barobaro.app.vo.PostVO;
 
 @Controller
 @RequestMapping("/post")
@@ -27,6 +30,9 @@ public class PostController {
 	
 	@Autowired
 	CategoryService categoryService;
+	
+	@Autowired
+	PostService postService;
 	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
@@ -59,7 +65,7 @@ public class PostController {
 	}
 	
 	@RequestMapping(value =  "/create", method = RequestMethod.POST)
-	public ResponseEntity<?> test(HttpSession session,
+	public ResponseEntity<?> createPost(HttpSession session,
 			@RequestParam("ufile") List<MultipartFile> files,
             @RequestParam("title") String title,
             @RequestParam("product_name") String productName,
@@ -68,8 +74,18 @@ public class PostController {
             @RequestParam("category") long category
             ) {
 		UserInfo userInfo = (UserInfo)session.getAttribute("user_info");
-		
+		postService.createPost(PostVO.builder()
+				
+				.build());
 		
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value =  "/{postSeq}", method = RequestMethod.GET)
+	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("pages/post/detail_post");
+		return mav;
+	}
+	
 }
