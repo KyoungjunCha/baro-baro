@@ -42,15 +42,16 @@ public class ReservationController {
     }
 	
 	// 예약 요청하기
-//	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST)
-//    public ResponseEntity<String> requestReservation(@RequestBody ReservationVO reservation) {
-//        boolean isRequested = reservationSvc.requestReservation(reservation);
-//        if (isRequested) {
-//            return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<String>("예약 요청에 실패했습니다. 이미 다른 사용자에 의해 요청 완료된 시간일 수 있습니다.", HttpStatus.BAD_REQUEST);
-//        }
-//    }
+	@RequestMapping(value = "/request-Reservation", method = RequestMethod.POST)
+    public ResponseEntity<String> requestReservation(@RequestBody ReservationVO reservation) {
+		System.out.println("컨트롤러 호출됨");
+		boolean isRequested = reservationSvc.requestReservation(reservation);
+        if (isRequested) {
+            return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("예약 요청에 실패했습니다. 이미 다른 사용자에 의해 요청 완료된 시간일 수 있습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
 	
 	// 에약 수락하기
 	// 예약 거절하기

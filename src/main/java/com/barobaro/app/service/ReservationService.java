@@ -9,5 +9,5 @@ public interface ReservationService {
 	
 //	public void						createTimeSlot(RentTimeSlotVO timeVO);
 	public List<RentTimeSlotVO> 	getTimeSlots(int post_seq, String selectedDate);
-//	public boolean 					requestReservation(ReservationVO reservation);
+	public boolean 					requestReservation(ReservationVO reservation);
 }

@@ -19,6 +19,6 @@ public interface ReservationMapper {
 	public 	List<RentTimeSlotVO> 	getTimeSlots(@Param("post_seq") int postSeq, 
 												 @Param("selected_date") String selectedDate);
 	
-//	public 		boolean 			requestReservation(ReservationVO reservation);
+	public 		boolean 			requestReservation(ReservationVO reservation);
 	
 }

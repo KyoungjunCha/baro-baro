@@ -27,10 +27,10 @@ public class ReservationServiceImpl implements ReservationService {
 		return Mapper.getTimeSlots(post_seq, selectedDate);
 	}
 
-
-//	@Override
-//	public boolean requestReservation(ReservationVO reservation) {
-//		return Mapper.requestReservation(reservation);
-//	}
+	@Override
+	public boolean requestReservation(ReservationVO reservation) {
+		System.out.println("서비스 호출됨");
+		return Mapper.requestReservation(reservation);
+	}
 
 }
