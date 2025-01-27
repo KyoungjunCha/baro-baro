@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  interface UserMapper.java를 사용할 경우 -->
+<mapper namespace="com.barobaro.app.mapper.CategoryMapper">
+
+	<select id="allCategories" resultMap="categoryResultMap">
+		SELECT * FROM category
+	</select>
+	<resultMap type="com.barobaro.app.vo.CategoryVO" id="categoryResultMap">
+		<id property="categorySeq" 			column="category_seq" />
+		<result property="categoryName" 	column="category_name" />
+        <result property="description" 	column="description" />
+        <result property="createdAt" 	column="created_at" />
+        <result property="updatedAt" 	column="updated_at" />
+        <result property="parentSeq" 	column="parent_seq" />
+	</resultMap>
+</mapper>
+
+
+  

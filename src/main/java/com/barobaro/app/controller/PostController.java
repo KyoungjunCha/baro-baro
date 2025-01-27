@@ -1,7 +1,12 @@
 package com.barobaro.app.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
+import com.barobaro.app.service.CategoryService;
 
 @Controller
 @RequestMapping("/post")
 public class PostController {
+	
+	@Autowired
+	CategoryService categoryService;
+	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
 	public String login(@RequestParam("id") String id, @RequestParam("pw") String pw, HttpSession session) {
@@ -35,12 +47,29 @@ public class PostController {
 		return "OK";
 	}
 	
-	@RequestMapping(value =  "/create", method = RequestMethod.GET)
-	public String test(HttpSession session, Model model) {
+	@RequestMapping(value =  "/create_page", method = RequestMethod.GET)
+	public ModelAndView getCreatePostPage(HttpSession session) {
+		session.setAttribute("user_info", new UserInfo(1, "test@test.com", "test nickname", UserStatus.ACTIVE));
+//		model.addAttribute("categories", categoryService.getAllCategoryNameAndSeq());
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
+		mav.setViewName("pages/post/create_post");
+		return mav;
+//		return "redirect: /pages/post/create_post.jsp";
+	}
+	
+	@RequestMapping(value =  "/create", method = RequestMethod.POST)
+	public ResponseEntity<?> test(HttpSession session,
+			@RequestParam("ufile") List<MultipartFile> files,
+            @RequestParam("title") String title,
+            @RequestParam("product_name") String productName,
+            @RequestParam("item_content") String itemContent,
+            @RequestParam("rent_content") String rentContent,
+            @RequestParam("category") long category
+            ) {
 		UserInfo userInfo = (UserInfo)session.getAttribute("user_info");
 		
-		model.addAttribute("user_info", userInfo);
 		
-		return "";
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }
