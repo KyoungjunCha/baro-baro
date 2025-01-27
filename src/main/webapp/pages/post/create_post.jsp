@@ -123,25 +123,7 @@
                 <br><br>
                 <label for="price">대여비:</label>
                 <input type="number" id="price" name="price" required>
-                <br><br>
-                <!-- <label for="rent_location">대여 장소:</label>
-                <input type="text" id="rent_location" name="rent_location" required>
-                <br><br>
-                <label for="rent_rotate_x">대여 장소 X 좌표:</label>
-                <input type="number" id="rent_rotate_x" name="rent_rotate_x" required>
-                <br><br>
-                <label for="rent_rotate_y">대여 장소 Y 좌표:</label>
-                <input type="number" id="rent_rotate_y" name="rent_rotate_y" required>
-                <br><br>
-                <label for="return_location">반납 장소:</label>
-                <input type="text" id="return_location" name="return_location" required>
-                <br><br>
-                <label for="return_rotate_x">반납 장소 X 좌표:</label>
-                <input type="number" id="return_rotate_x" name="return_rotate_x" required>
-                <br><br>
-                <label for="return_rotate_y">반납 장소 Y 좌표:</label>
-                <input type="number" id="return_rotate_y" name="return_rotate_y" required> -->
-                <br><br>
+                <br><br><br><br>
                 <div id="map" style="width:500px;height:400px;"></div>
                 <br><br>
                 <button type="button" id="add-item-modal">대여 일자 추가</button>
