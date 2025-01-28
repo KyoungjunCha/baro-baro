@@ -140,20 +140,10 @@ public class PostController {
 				}
 			}
 		}
-		
-		System.out.println(postVO);
-		
 		postService.createPost(postVO, files);
 		ModelAndView mav = new ModelAndView();
 		mav.setStatus(HttpStatus.CREATED);
-		mav.setViewName("pages/post/detail_post");
-		mav.addObject("KEY_POST", postVO);
-		ObjectMapper om = new ObjectMapper();
-		try {
-			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
 		return mav;
 	}
 	
