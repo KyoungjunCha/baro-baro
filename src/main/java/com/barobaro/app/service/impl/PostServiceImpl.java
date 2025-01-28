@@ -71,4 +71,9 @@ public class PostServiceImpl implements PostService{
 		);
 		
 	}
+
+	@Override
+	public PostVO getPostByPostSeq(long postSeq) {
+		return postMapper.selectPostByPostSeq(postSeq);
+	}
 }

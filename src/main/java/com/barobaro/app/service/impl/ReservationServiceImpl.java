@@ -1,6 +1,9 @@
 package com.barobaro.app.service.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +24,22 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	@Override
-	public boolean requestReservation(int timeSlotSeq) {
-		System.out.println("서비스 호출됨");
+	public List<RentTimeSlotVO> getTimeSlot(long postSeq, Date rentAt) {
+		return Mapper.getTimeSlot(postSeq, rentAt);
+	}
+	
+	@Override
+	public int requestReservation(@Param("time_slot_seq") long timeSlotSeq) {
 		return Mapper.requestReservation(timeSlotSeq);
 	}
 
+	@Override
+	public int acceptReservation(@Param("reservation_seq") long reservationSeq) {
+		return Mapper.acceptReservation(reservationSeq);
+	}
+
+	@Override
+	public int refuseReservation(@Param("reservation_seq") long reservationSeq) {
+		return Mapper.refuseReservation(reservationSeq);
+	}
 }
