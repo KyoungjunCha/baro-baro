@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  interface UserMapper.java를 사용할 경우 -->
+<mapper namespace="com.barobaro.app.mapper.PostMapper">
+
+	<insert id="insertPostByPostVO" parameterType="com.barobaro.app.vo.PostVO" useGeneratedKeys="false">
+        <selectKey keyProperty="postSeq" resultType="long" order="BEFORE">
+            SELECT post_seq.NEXTVAL FROM dual
+        </selectKey>
+        
+        INSERT INTO post (
+            POST_SEQ, TITLE, ITEM_CONTENT, RENT_CONTENT, POST_AT, PRODUCT_NAME, USER_SEQ, CATEGORY_SEQ
+        ) VALUES (
+            #{postSeq}, #{title}, #{itemContent}, #{rentContent}, #{postAt}, #{productName}, #{userSeq}, #{categoryName}
+        )
+    </insert>
+    
+    <insert id="insertRentTimeSlotByPostVO" parameterType="com.barobaro.app.vo.RentTimeSlotVO" useGeneratedKeys="false">
+        <selectKey keyProperty="time_slot_seq" resultType="int" order="BEFORE">
+            SELECT rent_time_slot_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO rent_time_slot (
+            TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS, POST_SEQ, REGDATE, REGID, PRICE, RENT_LOCATION, RENT_ROTATE_X, RENT_ROTATE_Y, RETURN_LOCATION, RETURN_ROTATE_X, RETURN_ROTATE_Y
+        ) VALUES (
+            #{time_slot_seq}, #{rent_at}, #{return_at}, #{status}, #{post_seq}, #{regdate}, #{regid}, #{price}, #{rent_location}, #{rent_rotate_x}, #{rent_rotate_y}, #{return_location}, #{return_rotate_x}, #{return_rotate_y}
+        )
+    </insert>
+</mapper>
+
+
+  

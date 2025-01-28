@@ -1,6 +1,9 @@
 package com.barobaro.app.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostVO;
@@ -9,8 +12,8 @@ import com.barobaro.app.vo.PostVO;
 public class PostServiceImpl implements PostService{
 
 	@Override
-	public void createPost(PostVO postVO) {
-		// TODO Auto-generated method stub
+	public void createPost(PostVO postVO, List<MultipartFile> files) {
+		
 		
 	}
 
