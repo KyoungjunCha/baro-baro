@@ -51,21 +51,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 
 	
-    <!-- 특정날짜 선택시 시간목록 조회하기  테스트OK, 커밋OK -->
-    <select id="getTimeSlots" 								resultMap="timeSlotMap">
-        SELECT TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS
-		FROM RENT_TIME_SLOT
-		WHERE POST_SEQ = #{post_seq}
-		AND TRUNC(RENT_AT) = TO_DATE(#{selected_date}, 'YYYY-MM-DD')
-		ORDER BY RENT_AT ASC
-    </select>
+<!--     특정날짜 선택시 시간목록 조회하기  테스트OK, 커밋OK -->
+<!--     <select id="getTimeSlots" 								resultMap="timeSlotMap"> -->
+<!--         SELECT TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS -->
+<!-- 		FROM RENT_TIME_SLOT -->
+<!-- 		WHERE POST_SEQ = #{post_seq} -->
+<!-- 		AND TRUNC(RENT_AT) = TO_DATE(#{selected_date}, 'YYYY-MM-DD') -->
+<!-- 		ORDER BY RENT_AT ASC -->
+<!--     </select> -->
 	
 	
     <!-- 대여자가 예약 요청하기 => 방금요청된 건은 이제 예약불가능으로 바꾸기 -->
     <insert id="requestReservation" parameterType="int">
     	BEGIN
-	        INSERT INTO RESERVATION_HISTORY(RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ)
-			VALUES (RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq});
+	        INSERT INTO RESERVATION_HISTORY( RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ )
+			VALUES ( RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq} );
 			
 			UPDATE RENT_TIME_SLOT
 			SET STATUS = 2

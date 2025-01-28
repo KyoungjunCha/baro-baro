@@ -15,22 +15,15 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	private ReservationMapper Mapper;
 	
-//	@Override
-//	public void createTimeSlot(RentTimeSlotVO timeVO) {
-//		Mapper.createTimeSlot(timeVO);
-//		
-//	}
-	
 	@Override
-	public List<RentTimeSlotVO> getTimeSlots(int post_seq, String selectedDate) {
-		System.out.println("서비스 호출됨");
-		return Mapper.getTimeSlots(post_seq, selectedDate);
+	public void createTimeSlot(RentTimeSlotVO timeVO) {
+		Mapper.createTimeSlot(timeVO);
 	}
 
 	@Override
-	public boolean requestReservation(ReservationVO reservation) {
+	public boolean requestReservation(int timeSlotSeq) {
 		System.out.println("서비스 호출됨");
-		return Mapper.requestReservation(reservation);
+		return Mapper.requestReservation(timeSlotSeq);
 	}
 
 }

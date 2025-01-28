@@ -30,22 +30,11 @@ public class ReservationController {
 	@Qualifier("reservationServiceImpl")
 	private ReservationService reservationSvc;
 	
-	// 특정날짜 선택시 시간목록 조회하기
-	@RequestMapping(value="/time-slot-list", method = RequestMethod.GET)
-	@ResponseBody
-    public ResponseEntity<?> getTimeSlots( 
-					    		@RequestParam("post_seq") int postSeq , 
-					    		@RequestParam("selected_date") String selectedDate) {
+	// 예약 요청하기 /reservation/request-reservation
+	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST)
+    public ResponseEntity<String> requestReservation(@RequestParam int timeSlotSeq) {
 		System.out.println("컨트롤러 호출됨");
-        List<RentTimeSlotVO> timeSlotList = reservationSvc.getTimeSlots(postSeq, selectedDate);
-        return new ResponseEntity<>(timeSlotList, HttpStatus.OK);
-    }
-	
-	// 예약 요청하기
-	@RequestMapping(value = "/request-Reservation", method = RequestMethod.POST)
-    public ResponseEntity<String> requestReservation(@RequestBody ReservationVO reservation) {
-		System.out.println("컨트롤러 호출됨");
-		boolean isRequested = reservationSvc.requestReservation(reservation);
+		boolean isRequested = reservationSvc.requestReservation(timeSlotSeq);
         if (isRequested) {
             return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
         } else {

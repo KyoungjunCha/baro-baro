@@ -11,14 +11,7 @@ import com.barobaro.app.vo.ReservationVO;
 
 @Repository
 @Mapper
-
 public interface ReservationMapper {
-	
-	public  void					createTimeSlot(RentTimeSlotVO timeVO);
-	
-	public 	List<RentTimeSlotVO> 	getTimeSlots(@Param("post_seq") int postSeq, 
-												 @Param("selected_date") String selectedDate);
-	
-	public 		boolean 			requestReservation(ReservationVO reservation);
-	
+	public  void	createTimeSlot(RentTimeSlotVO timeVO);
+	public 	boolean requestReservation(int timeSlotSeq);
 }
