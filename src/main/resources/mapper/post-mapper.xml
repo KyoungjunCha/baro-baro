@@ -16,7 +16,7 @@
         )
     </insert>
     
-    <insert id="insertRentTimeSlotByPostVO" parameterType="com.barobaro.app.vo.RentTimeSlotVO" useGeneratedKeys="false">
+    <insert id="insertRentTimeSlotByRentTimeSlotVO" parameterType="com.barobaro.app.vo.RentTimeSlotVO" useGeneratedKeys="false">
         <selectKey keyProperty="time_slot_seq" resultType="int" order="BEFORE">
             SELECT rent_time_slot_seq.NEXTVAL FROM dual
         </selectKey>
@@ -25,6 +25,17 @@
         ) VALUES (
             #{time_slot_seq}, #{rent_at}, #{return_at}, #{status}, #{post_seq}, #{regdate}, #{regid}, #{price}, #{rent_location}, #{rent_rotate_x}, #{rent_rotate_y}, #{return_location}, #{return_rotate_x}, #{return_rotate_y}
         )
+    </insert>
+    
+    <insert id="insertPostFileByPostFileVO" parameterType="com.barobaro.app.vo.PostFileVO" useGeneratedKeys="false">
+        <selectKey keyProperty="fileSeq" resultType="long" order="BEFORE">
+            SELECT post_file_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO rent_time_slot (
+            FILE_SEQ, NAME, STORAGE_PATH, POST_SEQ
+        ) VALUES (
+            #{fileSeq}, #{name}, #{storagePath}, #{postSeq}
+		)
     </insert>
 </mapper>
 

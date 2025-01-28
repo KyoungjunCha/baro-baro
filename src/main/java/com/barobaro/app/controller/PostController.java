@@ -1,5 +1,6 @@
 package com.barobaro.app.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +74,7 @@ public class PostController {
 	}
 	
 	@RequestMapping(value =  "/create", method = RequestMethod.POST)
-	public ResponseEntity<?> createPost(HttpSession session,
+	public ModelAndView createPost(HttpSession session,
 			@RequestParam("title") String title,
             @RequestParam("category") String category,
             @RequestParam("product_name") String productName,
@@ -117,18 +119,27 @@ public class PostController {
 						.build());
 			}
 		}
-		files.forEach(e -> {
-			postVO.getPostImages().add(PostFileVO.builder()
-					.name(e.getOriginalFilename())
-					.build());
-		});
+//		files.forEach(e -> {
+//			postVO.getPostImages().add(PostFileVO.builder()
+//					.name(e.getOriginalFilename())
+//					.build());
+//		});
 		
 		System.out.println(postVO);
 		
 		postService.createPost(postVO, files);
-		
-        // 실제 로직 수행 후 결과 반환
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		ModelAndView mav = new ModelAndView();
+		mav.setStatus(HttpStatus.CREATED);
+		mav.setViewName("pages/post/detail_post");
+		mav.addObject("KEY_POST", postVO);
+		ObjectMapper om = new ObjectMapper();
+		try {
+			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mav;
 	}
 	
 	@RequestMapping(value =  "/post/{postSeq}", method = RequestMethod.GET)
