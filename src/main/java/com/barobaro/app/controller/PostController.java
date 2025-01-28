@@ -48,14 +48,16 @@ public class PostController {
 	PostService postService;
 
 	
-//	@Autowired
-//	PostMapper testMapper;
-//	
-//	@GetMapping("/test")
-//	public String test() {
-//		System.out.println(testMapper.selectPostByPostSeq(1));
-//		return "";
-//	}
+	@Autowired
+	PostMapper testMapper;
+	
+	@GetMapping("/test")
+	public ModelAndView test() {
+		System.out.println(testMapper.selectPostByPostSeq(1));
+		ModelAndView mav = new ModelAndView();
+		
+		return mav;
+	}
 	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
@@ -201,4 +203,7 @@ public class PostController {
 		return mav;
 	}
 	
+	
+//	@RequestMapping(value = "", method = RequestMethod.GET)
+//	public ModelAndView ()
 }

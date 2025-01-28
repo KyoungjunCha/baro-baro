@@ -15,8 +15,12 @@
 	<mvc:annotation-driven />
 
 
-	<!-- <resources mapping="/resources/**" location="/resources/" /> -->
-	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/fonts/**" location="/fonts/" />
+	<mvc:resources mapping="/icons/**" location="/icons/" />
+	<mvc:resources mapping="/img/**" location="/img/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
 	
 	<bean id="MY_tomcat_ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	 	<property name="driverClassName" 	value="${oracle.driver}" />
