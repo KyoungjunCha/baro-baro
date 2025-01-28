@@ -24,7 +24,7 @@ public class PostVO {
 	private String categoryName;
 	private List<PostFileVO> postImages;
 	private List<CommentTest> comments;
-	private List<RentTimeSlotVO> renttimes;
+	private List<RentTimeSlotVO> rentTimes; 
 	
 	public static class CommentTest{
 		
