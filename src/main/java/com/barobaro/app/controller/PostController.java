@@ -152,6 +152,21 @@ public class PostController {
 	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq){
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/detail_post");
+		PostVO postVO = postService.getPostByPostSeq(postSeq);
+		mav.addObject("KEY_POST", postVO);
+		ObjectMapper om = new ObjectMapper();
+		try {
+			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		PostVO pvo = PostVO.builder().rentTimes(new ArrayList<>()).build();
 //		 // 오늘 날짜 이후로 10개의 예시 데이터 생성
 //        Calendar calendar = Calendar.getInstance();

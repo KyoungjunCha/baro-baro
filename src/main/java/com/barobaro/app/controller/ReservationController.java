@@ -36,6 +36,7 @@ public class ReservationController {
     public ResponseEntity<String> requestReservation(@RequestParam long timeSlotSeq) {
 		System.out.println("컨트롤러 호출됨, timeSlotSeq 는 : " + timeSlotSeq);
 		int rows = reservationSvc.requestReservation(timeSlotSeq);
+		System.out.println("변경된 건수:"+rows);
         if (rows == 1) {
             return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
         } else {

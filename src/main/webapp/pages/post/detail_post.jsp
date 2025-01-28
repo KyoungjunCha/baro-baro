@@ -128,13 +128,25 @@ body {
 	    var rentTimes = postJsonKey.rentTimes; // rentTimes 리스트
 	    var availableDates = [];
 	    
+	    var standardDate = new Date();
+	    
         // rentTimes에서 rent_at만 추출하여 availableDates 배열에 저장
         rentTimes.forEach(function(slot) {
            var rentDate = new Date(slot.rent_at);
-           if (rentDate >= new Date()) { // 오늘 날짜 이후의 rent_at만 활성화
-               var dateStr = rentDate.toISOString().split('T')[0]; // "YYYY-MM-DD" 형식으로 날짜 추출
-               if (!availableDates.includes(dateStr)) {
-                  availableDates.push(dateStr);
+           //const year = rentDate.getFullYear();  // 연도
+           //const month = rentDate.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
+           //const day = rentDate.getDate();  // 일
+           //rentDate >= new Date()
+           
+           //standardDate.getFullYear() <= rentDate.getFullYear()
+        	//	&& standardDate.getMonth() <= rentDate.getMonth()
+        		//&& standardDate.getDate() <= rentDate.getDate()
+           if (standardDate <= rentDate) { // 오늘 날짜 이후의 rent_at만 활성화
+        		const year = rentDate.getFullYear();  // 연도
+               const month = rentDate.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
+               const day = rentDate.getDate();  // 일
+               if (!availableDates.includes(year+'-'+month+'-'+day)) {
+                  availableDates.push(year+'-'+month+'-'+day);
                }
            }
         });
@@ -153,36 +165,33 @@ body {
 
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);  // 오늘 날짜의 시간 부분을 00:00:00:000으로 설정
+                
+                const year = clickedDate.getFullYear();  // 연도
+                const month = clickedDate.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
+                const day = clickedDate.getDate();  // 일
+                const clickedDayStr = year+'-'+month+'-'+day;
 
                 // 오늘 이전 날짜 클릭 방지
                 if (clickedDate < today) return;
-
-                const clickedDateStr = clickedDate.toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                }).replace(/\. /g, '-').replace('.', ''); // YYYY-MM-DD 형식
-
+				console.log("avail: " + availableDates + " / " + clickedDate);
                 // availableDates 배열에 해당 날짜가 없으면 클릭 방지
-                if (!availableDates.includes(clickedDateStr)) {
+                if (!availableDates.includes(clickedDayStr)) {
                     info.jsEvent.preventDefault();  // 클릭 이벤트 취소
                     alert("해당날짜에 예약 가능한 시간이 없습니다.");
                 } else {
                     selectedDateEl.value = info.dateStr; 	// 선택한 날짜 저장
                     
-                    fetchTimeSlots(clickedDateStr); 	   // 선택한 날짜에 해당하는 시간대 조회
-                    
-                    console.log(clickedDateStr, "은(는) 선택 가능한 날짜입니다");
+                    fetchTimeSlots(clickedDate); 	   // 선택한 날짜에 해당하는 시간대 조회
                 }
             },
             dayCellDidMount: function (info) {
-                const cellDateStr = info.date.toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                }).replace(/\. /g, '-').replace('.', ''); // YYYY-MM-DD 형식
+            	const year = info.date.getFullYear();  // 연도
+                const month = info.date.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
+                const day = info.date.getDate();  // 일
+                const clickedDayStr = year+'-'+month+'-'+day;
+            	
 
-                if (!availableDates.includes(cellDateStr)) {
+                if (!availableDates.includes(clickedDayStr)) {
                     info.el.style.backgroundColor = "#f0f0f0"; // 배경색 변경 (회색)
                     info.el.style.color = "#bbb"; // 글자색 연하게
                     info.el.style.pointerEvents = "none"; // 클릭 방지
@@ -207,32 +216,32 @@ body {
 	    $("#timeSlotBody").empty();
 	    
 	    rentTimes.forEach((element) => {
-	    	if (new Date(element.rent_at).toISOString().split('T')[0] == selectedDate) {
-	    		var rentAt   = new Date(element.rent_at);
+	    	const rentAt = new Date(element.rent_at)
+	    	if(
+	    			selectedDate.getFullYear() == rentAt.getFullYear()
+	            	&& selectedDate.getMonth() == rentAt.getMonth()
+	            	&& selectedDate.getDate() == rentAt.getDate()
+	    	){
+	    	//if (new Date(element.rent_at).toISOString().split('T')[0] == selectedDate) {
+	    		//var rentAt   = new Date(element.rent_at);
 		        var returnAt = new Date(element.return_at);
 		        var status   = element.status === 1 ? "예약 가능" : "예약 불가능";
 	    		// 시간 값 포맷팅 (ISO 문자열을 활용하여 시각 정보 추출 HH:mm 형식)
-		        var rentAtTime   = rentAt.toISOString().split('T')[1].slice(0, 5);
-		        var returnAtTime = returnAt.toISOString().split('T')[1].slice(0, 5);
+		        var rentAtTime   = rentAt;
+		        var returnAtTime = returnAt;
 		        //console.log(rentAtTime, returnAtTime, status);  // 시간값 확인
 		        
-		        // 버튼 생성
-				var button;
-				if (element.status === 1) {
-				    // 예약 가능 시 -> 파란색 버튼 (활성화)
-				    button = "<button class=\"request-btn\" data-time-slot-seq=\"" + element.time_slot_seq + "\" style=\"background-color: blue; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;\">"
-				           + "대여 가능"
-				           + "</button>";
-				} else {
-				    // 예약 불가능 시 -> 빨간색 버튼 (비활성화)
-				    button = "<button style=\"background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px;\" disabled>"
-				           + "대여 불가능"
-				           + "</button>";
-				}
+		        var button;
+	            if (element.status === 1) {
+	                button = "<button class=\"request-btn\" data-time-slot-seq=\"" + element.time_slot_seq + "\" style=\"background-color: blue; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;\">대여 가능</button>";
+	            } else {
+	                button = "<button style=\"background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px;\" disabled>대여 불가능</button>";
+	            }
+		        
 		        
 		        var row = "<tr>" +
-		        "<td>" + rentAtTime + "</td>" +
-		        "<td>" + returnAtTime + "</td>" +
+		        "<td>" + rentAtTime.toLocaleString('ko-KR') + "</td>" +
+		        "<td>" + returnAtTime.toLocaleString('ko-KR') + "</td>" +
 		        "<td>" + element.price + "원</td>" +
 		        "<td>" + button + "</td>" +
 		        "</tr>";
@@ -240,25 +249,22 @@ body {
 		        $("#timeSlotBody").append(row);
 		    }
 		});
-	    
-
-	    // 버튼 클릭 이벤트 바인딩 (동적 요소 이벤트 처리)
-	    $(".request-btn").off("click").on("click", function() {
-	        
-	    	var timeSlotSeq = $(this).data("time-slot-seq");
+	    $(document).on("click", ".request-btn", function () {
+	        var timeSlotSeq = $(this).data("time-slot-seq");
 
 	        // 확인 알림창 띄우기
-	        if (confirm("대여 예약을 요청하시겠습니까?")) {
+	        if (confirm("예약을 요청보낼까요?")) {
 	            $.ajax({
-	                type: "POST",
 	                url: "/reservation/request-reservation",
+	                type: "POST",
 	                data: { timeSlotSeq: timeSlotSeq },
-	                success: function(response) {
-	                    alert(response);
-	                    fetchTimeSlots(selectedDate); // 상태 업데이트 (새로고침 없이 반영)
+	                success: function (response) {
+						console.log(response);	                	
+	                    alert("예약이 거부되었습니다: " + response.message);
+	                    location.reload(); // 페이지 새로고침 (필요 시)
 	                },
-	                error: function(xhr) {
-	                    alert(xhr.responseText);
+	                error: function (xhr, status, error) {
+	                    alert("오류 발생: " + xhr.responseText);
 	                }
 	            });
 	        }
