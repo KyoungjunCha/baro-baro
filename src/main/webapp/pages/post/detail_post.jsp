@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>예약 시간 목록 조회</title>
+<title>바로바로 | baro-borrow</title>
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
 <style>
 body {
@@ -80,42 +80,126 @@ body {
     background-color: #f1f1f1; /* 마우스 호버 시 색상 변경 */
     transition: background-color 0.2s ease-in-out;
 }
-
+	#detail-post-container{
+		width: 1000px;
+	}
+	.post-images {
+	    position: relative;
+	    max-width: 500px;
+	    margin: auto;
+	    overflow: hidden;
+	}
+	.post-images img {
+	    width: 100%;
+	    display: none;
+	}
+	.post-images img.active {
+	    display: block;
+	}
+	.post-image-buttons {
+	    position: absolute;
+	    top: 50%;
+	    width: 100%;
+	    display: flex;
+	    justify-content: space-between;
+	    transform: translateY(-50%);
+	}
+	.post-image-buttons button {
+	    background-color: rgba(0, 0, 0, 0.5);
+	    color: white;
+	    border: none;
+	    padding: 10px;
+	    cursor: pointer;
+	}
+	.post-container {
+	    margin: 20px;
+	}
+	.post-title {
+	    font-size: 24px;
+	    font-weight: bold;
+	}
+	.post-content {
+	    margin-top: 10px;
+	}
+	.post-footer {
+	    margin-top: 20px;
+	    font-size: 14px;
+	} 
 </style>
 </head>
 
 <body>
-	<h1>대여 타임 조회</h1>
-	<div id="calendar"></div>
-	<div id="schedule">
-		<h3>대여 타임 슬롯</h3>
-		<table id="timeSlotTable">
-			<thead>
-				<tr>
-					<th>대여 시간</th>
-					<th>반납 시간</th>
-					<th>가격</th>
-					<th>상태</th>
-				</tr>
-			</thead>
-			<tbody id="timeSlotBody">
-				<tr>
-					<td colspan="4">날짜를 선택하세요.</td>
-				</tr>
-			</tbody>
-		</table>
+	<div id="detail-post-container">
+		<div class="post-info-container">
+			<h1 class="post-title">${KEY_POST.title}</h1>
+
+	        <div class="post-images">
+	            <c:forEach var="image" items="${KEY_POST.postImages}" varStatus="status">
+	                <img src="${image.storagePath.replace('c:\\uploads', '/uploads')}" alt="Post image" class="${status.index == 0 ? 'active' : ''}" />
+	            </c:forEach>
+	            <div class="post-image-buttons">
+	                <button onclick="changeImage(-1)">◁</button>
+	                <button onclick="changeImage(1)">▷</button>
+	            </div>
+	        </div>
+	
+	        <div class="post-content">
+	            <h3>Item Content</h3>
+	            <p>${KEY_POST.itemContent}</p>
+	
+	            <h3>Rent Content</h3>
+	            <p>${KEY_POST.rentContent}</p>
+	        </div>
+	
+	        <div class="post-footer">
+	            <p>Product Name: ${KEY_POST.productName}</p>
+	            <p>Category: ${KEY_POST.categoryName}</p>
+	            <p>Posted At: ${KEY_POST.postAt}</p>
+	            <p>View Count: ${KEY_POST.count}</p>
+	        </div>
+		</div>
+		
+		<div class="reservation-container">
+			<h1>대여 타임 조회</h1>
+			<div id="calendar"></div>
+			<div id="schedule">
+				<h3>대여 타임 슬롯</h3>
+				<table id="timeSlotTable">
+					<thead>
+						<tr>
+							<th>대여 시간</th>
+							<th>반납 시간</th>
+							<th>가격</th>
+							<th>상태</th>
+						</tr>
+					</thead>
+					<tbody id="timeSlotBody">
+						<tr>
+							<td colspan="4">날짜를 선택하세요.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 
 	<!-- 숨겨진 input 요소 -->
 	<input type="hidden" id="selected_date" name="selected_date">
 	<input type="hidden" id="post_seq" name="post_seq" value="${KEY_POST.postSeq}">
-
 	<!-- jQuery 로드 (FullCalendar보다 먼저) -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 	<!-- FullCalendar 로드-->
 	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+	<script>
+        let currentImageIndex = 0;
+        const images = document.querySelectorAll('.post-images img');
 
+        function changeImage(direction) {
+            images[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
+            images[currentImageIndex].classList.add('active');
+        }
+    </script>
 	<script>
 	document.addEventListener('DOMContentLoaded', function () {
 	    const calendarEl     = document.getElementById('calendar');

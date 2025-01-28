@@ -38,6 +38,13 @@
 		)
     </insert>
     
+    <update id="incrementPostViewCount">
+        UPDATE post
+        SET count = count + 1
+        WHERE post_seq = #{postSeq}
+    </update>
+    
+    
     <select id="selectPostByPostSeq" resultMap="postResultMap">
         SELECT
             p.post_seq,

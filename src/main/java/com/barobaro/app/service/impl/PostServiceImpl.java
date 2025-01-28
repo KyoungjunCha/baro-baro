@@ -74,6 +74,9 @@ public class PostServiceImpl implements PostService{
 
 	@Override
 	public PostVO getPostByPostSeq(long postSeq) {
+		if(postMapper.incrementPostViewCount(postSeq) != 1) {
+			throw new RuntimeException("뭐여");
+		}
 		return postMapper.selectPostByPostSeq(postSeq);
 	}
 }
