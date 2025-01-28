@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
+import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.CategoryService;
 import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostFileVO;
@@ -45,6 +46,16 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+
+	
+//	@Autowired
+//	PostMapper testMapper;
+//	
+//	@GetMapping("/test")
+//	public String test() {
+//		System.out.println(testMapper.selectPostByPostSeq(1));
+//		return "";
+//	}
 	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
@@ -129,23 +140,11 @@ public class PostController {
 				}
 			}
 		}
-		
-		System.out.println(postVO);
-		
 		postService.createPost(postVO, files);
 		ModelAndView mav = new ModelAndView();
-//		mav.setStatus(HttpStatus.CREATED);
-//		mav.setViewName("pages/post/detail_post");
-//		mav.addObject("KEY_POST", postVO);
-//		ObjectMapper om = new ObjectMapper();
-//		try {
-//			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return mav;
-		
-		mav.setViewName("redirect:/post/post/"+postVO.getPostSeq());
+
+		mav.setStatus(HttpStatus.CREATED);
+		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
 		return mav;
 	}
 	
