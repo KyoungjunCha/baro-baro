@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  interface UserMapper.java를 사용할 경우 -->
+<mapper namespace="com.barobaro.app.mapper.PostMapper">
+
+	<insert id="insertPostByPostVO" parameterType="com.barobaro.app.vo.PostVO" useGeneratedKeys="false">
+        <selectKey keyProperty="postSeq" resultType="long" order="BEFORE">
+            SELECT post_seq.NEXTVAL FROM dual
+        </selectKey>
+        
+        INSERT INTO post (
+            POST_SEQ, TITLE, ITEM_CONTENT, RENT_CONTENT, POST_AT, PRODUCT_NAME, USER_SEQ, CATEGORY_SEQ, COUNT
+        ) VALUES (
+            #{postSeq}, #{title}, #{itemContent}, #{rentContent}, SYSDATE, #{productName}, #{userSeq}, #{categoryName}, 0
+        )
+    </insert>
+    
+    <insert id="insertRentTimeSlotByRentTimeSlotVO" parameterType="com.barobaro.app.vo.RentTimeSlotVO" useGeneratedKeys="false">
+        <selectKey keyProperty="time_slot_seq" resultType="int" order="BEFORE">
+            SELECT rent_time_slot_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO rent_time_slot (
+            TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS, POST_SEQ, REGDATE, REGID, PRICE, RENT_LOCATION, RENT_ROTATE_X, RENT_ROTATE_Y, RETURN_LOCATION, RETURN_ROTATE_X, RETURN_ROTATE_Y
+        ) VALUES (
+            #{time_slot_seq}, #{rent_at}, #{return_at}, 1, #{post_seq}, SYSDATE, #{regid}, #{price}, #{rent_location}, #{rent_rotate_x}, #{rent_rotate_y}, #{return_location}, #{return_rotate_x}, #{return_rotate_y}
+        )
+    </insert>
+    
+    <insert id="insertPostFileByPostFileVO" parameterType="com.barobaro.app.vo.PostFileVO" useGeneratedKeys="false">
+        <selectKey keyProperty="fileSeq" resultType="long" order="BEFORE">
+            SELECT post_file_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO post_file (
+            FILE_SEQ, NAME, STORAGE_PATH, POST_SEQ
+        ) VALUES (
+            #{fileSeq}, #{name}, #{storagePath}, #{postSeq}
+		)
+    </insert>
+    
+    <update id="incrementPostViewCount">
+        UPDATE post
+        SET count = count + 1
+        WHERE post_seq = #{postSeq}
+    </update>
+    
+    
+    <select id="selectPostByPostSeq" resultMap="postResultMap">
+        SELECT
+            p.post_seq,
+            p.title,
+            p.item_content,
+            p.rent_content,
+            p.post_at,
+            p.count,
+            p.product_name,
+            p.user_seq,
+            (SELECT c.category_name FROM category c
+            WHERE c.category_seq = p.category_seq 
+            ) AS category_name,
+            
+            pf.file_seq,
+            pf.name,
+            pf.storage_path,
+            pf.post_seq,
+            
+            rt.time_slot_seq,
+            rt.rent_at,
+            rt.return_at,
+            rt.status,
+            rt.post_seq,
+            rt.regdate,
+            rt.regid,
+            rt.price,
+            rt.rent_location,
+            rt.rent_rotate_x,
+            rt.rent_rotate_y,
+            rt.return_location,
+            rt.return_rotate_x,
+            rt.return_rotate_y
+        FROM
+            post p
+        LEFT JOIN
+            post_file pf ON p.post_seq = pf.post_seq
+        LEFT JOIN
+            (SELECT * FROM rent_time_slot ORDER BY rent_at ASC) rt ON p.post_seq = rt.post_seq
+        WHERE
+            p.post_seq = #{postSeq}
+    </select>
+    
+    
+    <resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
+	    <!-- 기본 필드 매핑 -->
+	    <id property="postSeq" column="post_seq"/>
+	    <result property="title" column="title"/>
+	    <result property="itemContent" column="item_content"/>
+	    <result property="rentContent" column="rent_content"/>
+	    <result property="postAt" column="post_at"/>
+	    <result property="count" column="count"/>
+	    <result property="productName" column="product_name"/>
+	    <result property="userSeq" column="user_seq"/>
+	    <result property="categoryName" column="category_name"/>
+	    
+	    <!-- postImages (PostFileVO) 리스트 매핑 -->
+	    <collection property="postImages" ofType="com.barobaro.app.vo.PostFileVO">
+	        <result property="fileSeq" column="file_seq"/>
+	        <result property="name" column="name"/>
+	        <result property="storagePath" column="storage_path"/>
+	        <result property="postSeq" column="post_seq"/>
+	    </collection>
+	
+	    <!-- <collection property="comments" ofType="com.barobaro.app.vo.PostVO.CommentTest">
+	    </collection> -->
+	
+	    <!-- rentTimes (RentTimeSlotVO) 리스트 매핑 -->
+	    <collection property="rentTimes" ofType="com.barobaro.app.vo.RentTimeSlotVO">
+	        <result property="time_slot_seq" column="time_slot_seq"/>
+	        <result property="rent_at" column="rent_at"/>
+	        <result property="return_at" column="return_at"/>
+	        <result property="status" column="status"/>
+	        <result property="post_seq" column="post_seq"/>
+	        <result property="regdate" column="regdate"/>
+	        <result property="regid" column="regid"/>
+	        <result property="price" column="price"/>
+	        <result property="rent_location" column="rent_location"/>
+	        <result property="rent_rotate_x" column="rent_rotate_x"/>
+	        <result property="rent_rotate_y" column="rent_rotate_y"/>
+	        <result property="return_location" column="return_location"/>
+	        <result property="return_rotate_x" column="return_rotate_x"/>
+	        <result property="return_rotate_y" column="return_rotate_y"/>
+	    </collection>
+	</resultMap>
+    
+</mapper>
+
+
+  

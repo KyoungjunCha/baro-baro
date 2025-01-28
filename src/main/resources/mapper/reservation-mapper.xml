@@ -31,41 +31,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	
 	<!-- 등록자가 타임 등록하기 -->
-	<insert id="createTimeSlot" 	parameterType="com.barobaro.app.vo.RentTimeSlotVO">
-		INSERT INTO RENT_TIME_SLOT (
-		    TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS, POST_SEQ, REGDATE, REGID, PRICE, 
-		    RENT_LOCATION, 	 RENT_ROTATE_X,   RENT_ROTATE_Y, 
-		    RETURN_LOCATION, RETURN_ROTATE_X, RETURN_ROTATE_Y
-		) VALUES (
-		    RENT_TIME_SLOT_SEQ.nextval, 
-		    #{rent_at}, 
-		    #{return_at}, 
-		    1,
-		    #{post_seq},
-		    SYSDATE,
-		    #{regid},
-		    #{price},
-		    #{rent_location},   #{rent_rotate_x},   #{rent_rotate_y}, 
-		    #{return_location}, #{return_rotate_x}, #{return_rotate_y}
-		)
-	</insert>
+<!-- 	<insert id="createTimeSlot" 	parameterType="com.barobaro.app.vo.RentTimeSlotVO"> -->
+<!-- 		INSERT INTO RENT_TIME_SLOT ( -->
+<!-- 		    TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS, POST_SEQ, REGDATE, REGID, PRICE,  -->
+<!-- 		    RENT_LOCATION, 	 RENT_ROTATE_X,   RENT_ROTATE_Y,  -->
+<!-- 		    RETURN_LOCATION, RETURN_ROTATE_X, RETURN_ROTATE_Y -->
+<!-- 		) VALUES ( -->
+<!-- 		    RENT_TIME_SLOT_SEQ.nextval,  -->
+<!-- 		    #{rent_at},  -->
+<!-- 		    #{return_at},  -->
+<!-- 		    1, -->
+<!-- 		    #{post_seq}, -->
+<!-- 		    SYSDATE, -->
+<!-- 		    #{regid}, -->
+<!-- 		    #{price}, -->
+<!-- 		    #{rent_location},   #{rent_rotate_x},   #{rent_rotate_y},  -->
+<!-- 		    #{return_location}, #{return_rotate_x}, #{return_rotate_y} -->
+<!-- 		) -->
+<!-- 	</insert> -->
 
 	
-    <!-- 특정날짜 선택시 시간목록 조회하기  테스트OK, 커밋OK -->
-    <select id="getTimeSlots" 								resultMap="timeSlotMap">
-        SELECT TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS
-		FROM RENT_TIME_SLOT
-		WHERE POST_SEQ = #{post_seq}
-		AND TRUNC(RENT_AT) = TO_DATE(#{selected_date}, 'YYYY-MM-DD')
-		ORDER BY RENT_AT ASC
-    </select>
+<!-- 특정날짜 선택시 시간목록 조회하기  테스트OK, 커밋OK -->
+<!--     <select id="getTimeSlot" 								resultMap="timeSlotMap"> -->
+<!--         SELECT TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS -->
+<!-- 		FROM RENT_TIME_SLOT -->
+<!-- 		WHERE POST_SEQ = #{post_seq} -->
+<!-- 		AND TRUNC(RENT_AT) = TO_DATE(#{selected_date}, 'YYYY-MM-DD') -->
+<!-- 		ORDER BY RENT_AT ASC -->
+<!--     </select> -->
 	
 	
     <!-- 대여자가 예약 요청하기 => 방금요청된 건은 이제 예약불가능으로 바꾸기 -->
-    <insert id="requestReservation" parameterType="int">
+    <insert id="requestReservation">
     	BEGIN
-	        INSERT INTO RESERVATION_HISTORY(RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ)
-			VALUES (RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq});
+	        INSERT INTO RESERVATION_HISTORY( RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ )
+			VALUES ( RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq} );
 			
 			UPDATE RENT_TIME_SLOT
 			SET STATUS = 2
@@ -74,48 +74,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 	
 	<!-- 에약 수락하기 -->
-<!-- 	<update id="acceptReservation" parameterType="int"> -->
-<!-- 		UPDATE RESERVATION_HISTORY -->
-<!-- 		SET STATUS = 2, UPDATED_AT = SYSDATE -->
-<!-- 		WHERE RESERVATION_SEQ = #{reservation_seq} -->
-<!--     </update> -->
+	<update id="acceptReservation">
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 2, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
+    </update>
     
 	<!-- 예약 거절하기 => 거절당한 요청건은 이제 예약가능으로 바꾸기 -->
-<!-- 	<update id="refuseReservation" parameterType="int"> -->
-<!-- 		BEGIN -->
-<!-- 			UPDATE RESERVATION_HISTORY -->
-<!-- 			SET STATUS = 3, UPDATED_AT = SYSDATE -->
-<!-- 			WHERE RESERVATION_SEQ = #{reservation_seq}; -->
+	<update id="refuseReservation">
+		BEGIN
+			UPDATE RESERVATION_HISTORY
+			SET STATUS = 3, UPDATED_AT = SYSDATE
+			WHERE RESERVATION_SEQ = #{reservation_seq};
 		
-<!-- 			UPDATE RENT_TIME_SLOT -->
-<!-- 			SET STATUS = 1 -->
-<!-- 			WHERE TIME_SLOT_SEQ = #{time_slot_seq}; -->
-<!-- 		END; -->
-<!-- 	</update> -->
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 1
+			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
+		END;
+	</update>
 	
 	<!-- 예약 취소요청하기 -->
-<!-- 	<update id="cancleRequest" parameterType="int"> -->
-<!-- 		UPDATE RESERVATION_HISTORY -->
-<!-- 		SET STATUS = 4, UPDATED_AT = SYSDATE -->
-<!-- 		WHERE RESERVATION_SEQ = #{reservation_seq} -->
-<!-- 	</update> -->
+	<update id="cancleRequest" parameterType="int">
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 4, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
+	</update>
 	
 	<!-- 예약 취소요청 수락하기 -->
-<!-- 	<update id="cancleAccept" parameterType="int"> -->
-<!-- 		UPDATE RESERVATION_HISTORY -->
-<!-- 		SET STATUS = 5, UPDATED_AT = SYSDATE -->
-<!-- 		WHERE RESERVATION_SEQ = #{reservation_seq}; -->
-
-<!-- 		예약이 취소가 되면 이제 예약가능으로 바꾸기 -->
-<!-- 			UPDATE RENT_TIME_SLOT -->
-<!-- 			SET STATUS = 1 -->
-<!-- 			WHERE TIME_SLOT_SEQ = #{time_slot_seq}; -->
-<!-- 	</update> -->
+	<update id="cancleAccept" parameterType="int">
+		BEGIN
+			UPDATE RESERVATION_HISTORY
+			SET STATUS = 5, UPDATED_AT = SYSDATE
+			WHERE RESERVATION_SEQ = #{reservation_seq};
+	
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 1
+			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
+		END;		
+	</update>
 	
 	<!-- 거래 완료시 -->
-<!-- 	<update id="done" parameterType="int"> -->
-<!-- 		UPDATE RESERVATION_HISTORY -->
-<!-- 		SET STATUS = 6, UPDATED_AT = SYSDATE -->
-<!-- 		WHERE RESERVATION_SEQ = #{reservation_seq} -->
-<!-- 	</update> -->
+	<update id="done" parameterType="int">
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 6, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
+	</update>
 </mapper>

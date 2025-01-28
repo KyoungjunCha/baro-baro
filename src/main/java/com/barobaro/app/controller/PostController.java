@@ -1,9 +1,18 @@
 package com.barobaro.app.controller;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
-
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +23,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
+import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.CategoryService;
 import com.barobaro.app.service.PostService;
+import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.RentTimeSlotVO;
 
 @Controller
 @RequestMapping("/post")
@@ -33,6 +46,18 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+
+	
+//	@Autowired
+//	PostMapper testMapper;
+//	
+//	@GetMapping("/test")
+//	public ModelAndView test() {
+//		System.out.println(testMapper.selectPostByPostSeq(1));
+//		ModelAndView mav = new ModelAndView();
+//		
+//		return mav;
+//	}
 	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
@@ -55,37 +80,97 @@ public class PostController {
 	
 	@RequestMapping(value =  "/create_page", method = RequestMethod.GET)
 	public ModelAndView getCreatePostPage(HttpSession session) {
-		session.setAttribute("user_info", new UserInfo(1, "test@test.com", "test nickname", UserStatus.ACTIVE));
-//		model.addAttribute("categories", categoryService.getAllCategoryNameAndSeq());
+		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		mav.setViewName("pages/post/create_post");
 		return mav;
-//		return "redirect: /pages/post/create_post.jsp";
 	}
 	
 	@RequestMapping(value =  "/create", method = RequestMethod.POST)
-	public ResponseEntity<?> createPost(HttpSession session,
-			@RequestParam("ufile") List<MultipartFile> files,
-            @RequestParam("title") String title,
+	public ModelAndView createPost(HttpSession session,
+			@RequestParam("title") String title,
+            @RequestParam("category") String category,
             @RequestParam("product_name") String productName,
             @RequestParam("item_content") String itemContent,
             @RequestParam("rent_content") String rentContent,
-            @RequestParam("category") long category
+            @RequestParam(value = "rent_at[]", required = false) List<String> rentAt,             
+            @RequestParam(value = "return_at[]", required = false) List<String> returnAt,             
+            @RequestParam(value = "price[]", required = false) List<Integer> prices,             
+            @RequestParam(value = "rent_location[]", required = false) List<String> rentLocations,             
+            @RequestParam(value = "rent_rotate_x[]", required = false) List<Double> rentRotateX,             
+            @RequestParam(value = "rent_rotate_y[]", required = false) List<Double> rentRotateY,             
+            @RequestParam(value = "return_location[]", required = false) List<String> returnLocations,             
+            @RequestParam(value = "return_rotate_x[]", required = false) List<Double> returnRotateX,             
+            @RequestParam(value = "return_rotate_y[]", required = false) List<Double> returnRotateY,
+            @RequestParam("ufile") List<MultipartFile> files
             ) {
+		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
 		UserInfo userInfo = (UserInfo)session.getAttribute("user_info");
-		postService.createPost(PostVO.builder()
-				
-				.build());
-		
-		return new ResponseEntity<>(HttpStatus.CREATED);
-	}
-	
-	@RequestMapping(value =  "/{postSeq}", method = RequestMethod.GET)
-	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq){
+		PostVO postVO = PostVO.builder()
+				.title(title)
+				.itemContent(itemContent)
+				.rentContent(rentContent)
+				.productName(productName)
+				.userSeq(userInfo.getUserSeq())
+				.categoryName(category)
+				.postImages(new ArrayList<>())
+				.rentTimes(new ArrayList<>())
+				.build();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+		if(prices != null) {
+			for(int i = 0; i < prices.size(); i++) {
+				try {
+					postVO.getRentTimes().add(RentTimeSlotVO.builder()
+							.rent_at(sdf.parse(rentAt.get(i)))
+							.return_at(sdf.parse(returnAt.get(i)))
+							.price(prices.get(i))
+							.rent_location(rentLocations.get(i))
+							.rent_rotate_x(rentRotateX.get(i))
+							.rent_rotate_y(rentRotateY.get(i))
+							.return_location(rentLocations.get(i))
+							.return_rotate_x(returnRotateX.get(i))
+							.return_rotate_y(rentRotateY.get(i))
+							.regid(userInfo.getNickname())
+							.build());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		postService.createPost(postVO, files);
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("pages/post/detail_post");
+
+		mav.setStatus(HttpStatus.CREATED);
+		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
 		return mav;
 	}
 	
+	@RequestMapping(value =  "/post/{postSeq}", method = RequestMethod.GET)
+	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("pages/post/detail_post");
+		PostVO postVO = postService.getPostByPostSeq(postSeq);
+		mav.addObject("KEY_POST", postVO);
+		ObjectMapper om = new ObjectMapper();
+		try {
+			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mav;
+	}
+	
+	
+	@RequestMapping(value = "/posts", method = RequestMethod.GET)
+	public ModelAndView searchPost() {
+		return new ModelAndView();
+	}
 }
