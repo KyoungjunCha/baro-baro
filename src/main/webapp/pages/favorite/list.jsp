@@ -22,6 +22,12 @@ th {
 	background-color: #f4f4f4;
 }
 
+table tr:hover {
+	cursor: pointer;
+	background-color: #f1f1f1; 
+	transition: background-color 0.3s ease; 
+}
+
 .price {
 	color: red;
 	font-weight: bold;
@@ -40,21 +46,6 @@ th {
 	width: 100px;
 }
 </style>
-<script>
-        function removeFavorite(postSeq) {
-            if (confirm("정말로 이 즐겨찾기를 삭제하시겠습니까?")) {
-                fetch(`/favorite/delete?postSeq=${postSeq}`, { method: "POST" })
-                    .then(response => {
-                        if (response.ok) {
-                            alert("삭제되었습니다.");
-                            location.reload();
-                        } else {
-                            alert("삭제에 실패했습니다.");
-                        }
-                    });
-            }
-        }
-    </script>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 	rel="stylesheet"
@@ -80,11 +71,14 @@ th {
 				<c:forEach var="post" items="${favorite.postList}">
 					<tr>
 						<td></td>
-						<td>${post.title}</td>
+						<td>
+							<a href="/post/detail?postSeq=${post.postSeq }" style="text-decoration: none; color: inherit;">
+								${post.title}
+							</a>
+						</td>
 						<td></td>
 						<td>${post.rentLocation}</td>
-						<td>
-							<i class="heart bi bi-heart-fill"
+						<td><i class="heart bi bi-heart-fill"
 							data-user-seq="${post.userSeq}" data-post-seq="${post.postSeq}"></i>
 						</td>
 					</tr>
