@@ -105,7 +105,6 @@ public class PostController {
             @RequestParam(value = "return_rotate_y[]", required = false) List<Double> returnRotateY,
             @RequestParam("ufile") List<MultipartFile> files
             ) {
-		System.out.println("요청은 온다~~~ @!#!@#");
 		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
 		UserInfo userInfo = (UserInfo)session.getAttribute("user_info");
 		PostVO postVO = PostVO.builder()
@@ -166,57 +165,12 @@ public class PostController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		PostVO pvo = PostVO.builder().rentTimes(new ArrayList<>()).build();
-//		 // 오늘 날짜 이후로 10개의 예시 데이터 생성
-//        Calendar calendar = Calendar.getInstance();
-//        List<RentTimeSlotVO> rentTimes = pvo.getRentTimes();
-//
-//        // 오늘 날짜 이후로 10개의 RentTimeSlotVO 객체 추가
-//        for (int i = 0; i < 10; i++) {
-//            calendar.add(Calendar.HOUR, 2);  // 2시간 간격으로 대여시간 설정
-//            Date rentAt = calendar.getTime();  // 대여시간
-//
-//            calendar.add(Calendar.HOUR, 1);  // 1시간 후 반납시간 설정
-//            Date returnAt = calendar.getTime();  // 반납시간
-//
-//            RentTimeSlotVO rentTimeSlot = new RentTimeSlotVO();
-//            rentTimeSlot.setTime_slot_seq(i + 1);  // 타임슬롯 식별자
-//            rentTimeSlot.setRent_at(rentAt);  // 대여 시간
-//            rentTimeSlot.setReturn_at(returnAt);  // 반납 시간
-//            rentTimeSlot.setStatus(1);  // 예약 가능 상태
-//            rentTimeSlot.setPost_seq(1001);  // 게시물 식별자 (예시)
-//            rentTimeSlot.setRegdate(new Date());  // 생성일 (현재 시간)
-//            rentTimeSlot.setRegid("admin");  // 등록자 식별자
-//            rentTimeSlot.setPrice(50000);  // 가격 (예시)
-//            rentTimeSlot.setRent_location("서울시 강남구 테헤란로 123");  // 대여 장소
-//            rentTimeSlot.setRent_rotate_x(127);  // 대여 장소 x 좌표 (예시)
-//            rentTimeSlot.setRent_rotate_y(37);  // 대여 장소 y 좌표 (예시)
-//            rentTimeSlot.setReturn_location("서울시 강남구 역삼동 456");  // 반납 장소
-//            rentTimeSlot.setReturn_rotate_x(127);  // 반납 장소 x 좌표 (예시)
-//            rentTimeSlot.setReturn_rotate_y(37);  // 반납 장소 y 좌표 (예시)
-//
-//            // pvo.getRentTimes() 리스트에 추가
-//            rentTimes.add(rentTimeSlot);
-//        }
-//		
-//		mav.addObject("KEY_POST", pvo);
-//		ObjectMapper om = new ObjectMapper();
-//		try {
-//			mav.addObject("KEY_POST_JSON", om.writeValueAsString(pvo));
-//		} catch (JsonGenerationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (JsonMappingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		return mav;
 	}
 	
 	
-//	@RequestMapping(value = "", method = RequestMethod.GET)
-//	public ModelAndView ()
+	@RequestMapping(value = "/posts", method = RequestMethod.GET)
+	public ModelAndView searchPost() {
+		return new ModelAndView();
+	}
 }

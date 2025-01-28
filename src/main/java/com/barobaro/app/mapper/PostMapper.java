@@ -15,4 +15,5 @@ public interface PostMapper {
 	int insertRentTimeSlotByRentTimeSlotVO(RentTimeSlotVO rentTimeSlotVO);
 	int insertPostFileByPostFileVO(PostFileVO postFileVO);
 	PostVO selectPostByPostSeq(@Param("postSeq")long postSeq);
+	int incrementPostViewCount(@Param("postSeq")long postSeq);
 }
