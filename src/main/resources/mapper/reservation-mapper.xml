@@ -61,16 +61,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--     </select> -->
 	
 	
-    <!-- 대여자가 예약 요청하기 => 방금요청된 건은 이제 예약불가능으로 바꾸기 -->
+    <!-- 대여자가 예약 요청하기 -->
     <insert id="requestReservation">
-    	BEGIN
 	        INSERT INTO RESERVATION_HISTORY( RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ )
-			VALUES ( RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq} );
-			
-			UPDATE RENT_TIME_SLOT
-			SET STATUS = 2
-			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
-		END;
+			VALUES ( RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq} )
     </insert>
 	
 	<!-- 에약 수락하기 -->
@@ -80,38 +74,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE RESERVATION_SEQ = #{reservation_seq}
     </update>
     
-	<!-- 예약 거절하기 => 거절당한 요청건은 이제 예약가능으로 바꾸기 -->
+	<!-- 예약 거절하기 -->
 	<update id="refuseReservation">
-		BEGIN
 			UPDATE RESERVATION_HISTORY
 			SET STATUS = 3, UPDATED_AT = SYSDATE
-			WHERE RESERVATION_SEQ = #{reservation_seq};
-		
-			UPDATE RENT_TIME_SLOT
-			SET STATUS = 1
-			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
-		END;
+			WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
 	
+	
 	<!-- 예약 취소요청하기 -->
-	<update id="cancleRequest" parameterType="int">
+	<update id="cancleRequest">
 		UPDATE RESERVATION_HISTORY
 		SET STATUS = 4, UPDATED_AT = SYSDATE
 		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
 	
-	<!-- 예약 취소요청 수락하기 -->
-	<update id="cancleAccept" parameterType="int">
-		BEGIN
-			UPDATE RESERVATION_HISTORY
-			SET STATUS = 5, UPDATED_AT = SYSDATE
-			WHERE RESERVATION_SEQ = #{reservation_seq};
 	
-			UPDATE RENT_TIME_SLOT
-			SET STATUS = 1
-			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
-		END;		
+	<!-- 예약 취소요청 수락하기 -->
+	<update id="cancleAccept">
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 5, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
+	<!-- => 취소된 요청건은 이제 예약가능으로 바꾸기 -->
+	
 	
 	<!-- 거래 완료시 -->
 	<update id="done" parameterType="int">
@@ -119,4 +105,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SET STATUS = 6, UPDATED_AT = SYSDATE
 		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
+    
+   	<!-- 타임슬롯 예약 가능으로 바꾸기 -->
+	<update id="updateStatusAvailable">
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 1
+			WHERE TIME_SLOT_SEQ = #{time_slot_seq}
+	</update>
+	
+    <!-- 타임슬롯 예약 불가능으로 바꾸기 -->
+    <update id="updateStatusUnavailable">
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 2
+			WHERE TIME_SLOT_SEQ = #{time_slot_seq}
+    </update>
 </mapper>

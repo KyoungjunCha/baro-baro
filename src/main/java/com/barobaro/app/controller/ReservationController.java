@@ -32,20 +32,24 @@ public class ReservationController {
 	private ReservationService reservationSvc;
 	
 	// 예약 요청하기 	/reservation/request-reservation
-	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST)
-    public ResponseEntity<String> requestReservation(@RequestParam long timeSlotSeq) {
+	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> requestReservation(@RequestParam("timeSlotSeq") long timeSlotSeq) {
 		System.out.println("컨트롤러 호출됨, timeSlotSeq 는 : " + timeSlotSeq);
-		int rows = reservationSvc.requestReservation(timeSlotSeq);
-		System.out.println("변경된 건수:"+rows);
-        if (rows == 1) {
-            return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<String>("예약 요청에 실패했습니다. 이미 다른 사용자에 의해 요청 완료된 시간일 수 있습니다.", HttpStatus.BAD_REQUEST);
-        }
-    }
+		
+				   reservationSvc.requestReservation(timeSlotSeq);
+		int rows = reservationSvc.updateStatusUnavailable(timeSlotSeq);
+		System.out.println("업데이트한 행 수 : " + rows);
+		if (rows == 1) {
+			return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>("예약 요청에 실패했습니다. 이미 다른사용자에 의해 요청이 완료된 시간일 수 있습니다.", HttpStatus.BAD_REQUEST);
+		}
+	}
+		
+    
 	
 	// 에약 수락하기		/reservation/accept-reservation
-	@RequestMapping(value = "/accept-reservation", method = RequestMethod.POST)
+	@RequestMapping(value = "/accept-reservation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> acceptReservation(@RequestParam long reservationSeq) {
 		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
 		int rows = reservationSvc.acceptReservation(reservationSeq);
@@ -57,7 +61,7 @@ public class ReservationController {
     }
 	
 	// 예약 거절하기		/reservation/refuse-reservation
-	@RequestMapping(value = "/refuse-reservation", method = RequestMethod.POST)
+	@RequestMapping(value = "/refuse-reservation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> refuseReservation(@RequestParam long reservationSeq) {
 		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
 		int rows = reservationSvc.refuseReservation(reservationSeq);

@@ -29,8 +29,9 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 	
 	@Override
-	public int requestReservation(@Param("time_slot_seq") long timeSlotSeq) {
-		return Mapper.requestReservation(timeSlotSeq);
+	public void requestReservation(@Param("time_slot_seq") long timeSlotSeq) {
+		System.out.println("서비스 호출됨");
+		Mapper.requestReservation(timeSlotSeq);
 	}
 
 	@Override
@@ -41,5 +42,36 @@ public class ReservationServiceImpl implements ReservationService {
 	@Override
 	public int refuseReservation(@Param("reservation_seq") long reservationSeq) {
 		return Mapper.refuseReservation(reservationSeq);
+	}
+
+	@Override
+	public int cancleRequest(long reservationSeq) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int cancleAccept(long reservationSeq) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int done(long reservationSeq) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateStatusAvailable(long timeSlotSeq) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateStatusUnavailable(long timeSlotSeq) {
+		System.out.println("서비스 호출됨ddd");
+		int rows = Mapper.updateStatusUnavailable(timeSlotSeq);
+		return rows;
 	}
 }
