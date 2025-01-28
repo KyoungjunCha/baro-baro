@@ -215,16 +215,54 @@ body {
 		        var rentAtTime   = rentAt.toISOString().split('T')[1].slice(0, 5);
 		        var returnAtTime = returnAt.toISOString().split('T')[1].slice(0, 5);
 		        //console.log(rentAtTime, returnAtTime, status);  // 시간값 확인
+		        
+		        // 버튼 생성
+				var button;
+				if (element.status === 1) {
+				    // 예약 가능 시 -> 파란색 버튼 (활성화)
+				    button = "<button class=\"request-btn\" data-time-slot-seq=\"" + element.time_slot_seq + "\" style=\"background-color: blue; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;\">"
+				           + "대여 가능"
+				           + "</button>";
+				} else {
+				    // 예약 불가능 시 -> 빨간색 버튼 (비활성화)
+				    button = "<button style=\"background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px;\" disabled>"
+				           + "대여 불가능"
+				           + "</button>";
+				}
+		        
 		        var row = "<tr>" +
 		        "<td>" + rentAtTime + "</td>" +
 		        "<td>" + returnAtTime + "</td>" +
 		        "<td>" + element.price + "원</td>" +
-		        "<td>" + status + "</td>" +
+		        "<td>" + button + "</td>" +
 		        "</tr>";
 
 		        $("#timeSlotBody").append(row);
 		    }
 		});
+	    
+
+	    // 버튼 클릭 이벤트 바인딩 (동적 요소 이벤트 처리)
+	    $(".request-btn").off("click").on("click", function() {
+	        
+	    	var timeSlotSeq = $(this).data("time-slot-seq");
+
+	        // 확인 알림창 띄우기
+	        if (confirm("대여 예약을 요청하시겠습니까?")) {
+	            $.ajax({
+	                type: "POST",
+	                url: "/reservation/request-reservation",
+	                data: { timeSlotSeq: timeSlotSeq },
+	                success: function(response) {
+	                    alert(response);
+	                    fetchTimeSlots(selectedDate); // 상태 업데이트 (새로고침 없이 반영)
+	                },
+	                error: function(xhr) {
+	                    alert(xhr.responseText);
+	                }
+	            });
+	        }
+	    });
 	}
 </script>
 

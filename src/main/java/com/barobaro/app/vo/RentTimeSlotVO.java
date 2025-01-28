@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentTimeSlotVO {
-	private int 	time_slot_seq;		//타임슬롯 식별자
+	private long 	time_slot_seq;		//타임슬롯 식별자
 	private Date 	rent_at;			//대여시간
 	private Date 	return_at;			//반납시간
 	private int 	status;				//상태 (1:예약가능 2:예약불가능)
-	private int 	post_seq;			//게시물 식별자
+	private long 	post_seq;			//게시물 식별자
 	private Date 	regdate;			//생성일
 	private String 	regid;				//등록자 식별자
 	private int 	price;				//가격

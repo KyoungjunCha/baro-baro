@@ -21,9 +21,12 @@ public class ReservationServiceImpl implements ReservationService {
 	}
 
 	@Override
+	public List<RentTimeSlotVO> getTimeSlot(long postSeq, long rentAt) {
+		return Mapper.getTimeSlot(postSeq, rentAt);
+	}
+	
+	@Override
 	public boolean requestReservation(int timeSlotSeq) {
-		System.out.println("서비스 호출됨");
 		return Mapper.requestReservation(timeSlotSeq);
 	}
-
 }

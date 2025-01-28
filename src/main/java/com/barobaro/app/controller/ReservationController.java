@@ -33,7 +33,7 @@ public class ReservationController {
 	// 예약 요청하기 /reservation/request-reservation
 	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST)
     public ResponseEntity<String> requestReservation(@RequestParam int timeSlotSeq) {
-		System.out.println("컨트롤러 호출됨");
+		System.out.println("컨트롤러 호출됨, timeSlotSeq = " + timeSlotSeq);
 		boolean isRequested = reservationSvc.requestReservation(timeSlotSeq);
         if (isRequested) {
             return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
