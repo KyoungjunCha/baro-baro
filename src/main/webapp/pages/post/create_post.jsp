@@ -52,7 +52,7 @@
 <body>
 
     <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <form id="create-post-form" enctype="multipart/form-data">
+        <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/create">
             <table id="post-table">
                 <caption>게시글 작성2</caption>
                 <tr>
@@ -141,12 +141,12 @@
             document.head.appendChild(script); // 문서에 스크립트 추가
         }
 
-        // 폼 제출 시 jQuery를 이용해 AJAX로 RESTful 요청 보내기
+        /* // 폼 제출 시 jQuery를 이용해 AJAX로 RESTful 요청 보내기
         $('#create-post-form').on('submit', function(event) {
             event.preventDefault(); // 기본 폼 제출 동작 막기
 
             var formData = new FormData(this); // 폼 데이터 수집
-
+			console.log(formData);
             $.ajax({
                 url: '/post/create', // API 엔드포인트 (서버에서 설정한 URL로 변경)
                 type: 'POST',
@@ -162,7 +162,7 @@
                     alert('게시글 작성에 실패했습니다.');
                 }
             });
-        });
+        }); */
 
         // 모달 창 관련 처리
         var modal = document.getElementById("myModal");
@@ -307,6 +307,152 @@
 	        .catch(function(error) {
 	            console.log(error);
 	        });
+	    
+	    $('#create-post-form').on('submit', function(event) {
+	        // 기본 폼 제출 동작을 막지 않음 (AJAX 통신을 막는 부분을 제거)
+	        // event.preventDefault(); // 기본 폼 제출 동작을 막기 위해 주석 처리
+
+	        // 각 입력 값 추출
+	        var title = $('#title').val();
+	        var category = $('#category').val();
+	        var ufile = $('#ufile')[0].files; // 파일은 배열 형태로 받음
+	        var productName = $('#product_name').val();
+	        var itemContent = $('#item_content').val();
+	        var rentContent = $('#rent_content').val();
+
+	        // 대여 일정 항목 추출
+	        var rentAt = [];
+	        var returnAt = [];
+	        var price = [];
+	        var rentLocation = [];
+	        var rentRotateX = [];
+	        var rentRotateY = [];
+	        var returnLocation = [];
+	        var returnRotateX = [];
+	        var returnRotateY = [];
+
+	        // 추가된 대여 일정 항목들 추출
+	        $('#additional-items tr').each(function() {
+	            rentAt.push($(this).find('td').eq(0).text());
+	            returnAt.push($(this).find('td').eq(1).text());
+	            price.push($(this).find('td').eq(2).text());
+	            rentLocation.push($(this).find('td').eq(3).text());
+	            rentRotateX.push($(this).find('td').eq(4).text());
+	            rentRotateY.push($(this).find('td').eq(5).text());
+	            returnLocation.push($(this).find('td').eq(6).text());
+	            returnRotateX.push($(this).find('td').eq(7).text());
+	            returnRotateY.push($(this).find('td').eq(8).text());
+	        });
+
+	        // 전송할 데이터 객체 구성
+	        var formData = new FormData();
+	        formData.append('title', title);
+	        formData.append('category', category);
+
+	        // 여러 파일을 지원하려면 for문을 사용하여 추가 (선택된 파일이 여러 개라면)
+	        for (var i = 0; i < ufile.length; i++) {
+	            formData.append('ufile[]', ufile[i]); // 'ufile[]'로 배열 형태로 서버에 전달
+	        }
+
+	        formData.append('product_name', productName);
+	        formData.append('item_content', itemContent);
+	        formData.append('rent_content', rentContent);
+
+	        // 대여 일정 정보 추가
+	        rentAt.forEach(function(rent, index) {
+	            formData.append('rent_at[]', rentAt[index]);
+	            formData.append('return_at[]', returnAt[index]);
+	            formData.append('price[]', price[index]);
+	            formData.append('rent_location[]', rentLocation[index]);
+	            formData.append('rent_rotate_x[]', rentRotateX[index]);
+	            formData.append('rent_rotate_y[]', rentRotateY[index]);
+	            formData.append('return_location[]', returnLocation[index]);
+	            formData.append('return_rotate_x[]', returnRotateX[index]);
+	            formData.append('return_rotate_y[]', returnRotateY[index]);
+	        });
+
+	        //$('#create-post-form')[0].submit();
+	        $('#create-post-form').submit();
+	    });
+	    
+	    
+	    /* $('#create-post-form').on('submit', function(event) {
+	        //event.preventDefault(); // 기본 폼 제출 동작 막기
+
+	        // 각 입력 값 추출
+	        var title = $('#title').val();
+	        var category = $('#category').val();
+	        var ufile = $('#ufile')[0].files; // 파일은 배열 형태로 받음
+	        var productName = $('#product_name').val();
+	        var itemContent = $('#item_content').val();
+	        var rentContent = $('#rent_content').val();
+
+	        // 대여 일정 항목 추출
+	        var rentAt = [];
+	        var returnAt = [];
+	        var price = [];
+	        var rentLocation = [];
+	        var rentRotateX = [];
+	        var rentRotateY = [];
+	        var returnLocation = [];
+	        var returnRotateX = [];
+	        var returnRotateY = [];
+
+	        // 추가된 대여 일정 항목들 추출
+	        $('#additional-items tr').each(function() {
+	            rentAt.push($(this).find('td').eq(0).text());
+	            returnAt.push($(this).find('td').eq(1).text());
+	            price.push($(this).find('td').eq(2).text());
+	            rentLocation.push($(this).find('td').eq(3).text());
+	            rentRotateX.push($(this).find('td').eq(4).text());
+	            rentRotateY.push($(this).find('td').eq(5).text());
+	            returnLocation.push($(this).find('td').eq(6).text());
+	            returnRotateX.push($(this).find('td').eq(7).text());
+	            returnRotateY.push($(this).find('td').eq(8).text());
+	        });
+
+	        // 전송할 데이터 객체 구성
+	        var formData = new FormData();
+	        formData.append('title', title);
+	        formData.append('category', category);
+	        //for (var i = 0; i < ufile.length; i++) {
+	        //    formData.append('ufile[]', ufile[i]); // 'ufile[]'로 배열 형태로 서버에 전달
+	        //}
+	        formData.append('ufile[]', ufile[0]);
+	        formData.append('product_name', productName);
+	        formData.append('item_content', itemContent);
+	        formData.append('rent_content', rentContent);
+
+	        // 대여 일정 정보 추가
+	        rentAt.forEach(function(rent, index) {
+	            formData.append('rent_at[]', rentAt[index]);
+	            formData.append('return_at[]', returnAt[index]);
+	            formData.append('price[]', price[index]);
+	            formData.append('rent_location[]', rentLocation[index]);
+	            formData.append('rent_rotate_x[]', rentRotateX[index]);
+	            formData.append('rent_rotate_y[]', rentRotateY[index]);
+	            formData.append('return_location[]', returnLocation[index]);
+	            formData.append('return_rotate_x[]', returnRotateX[index]);
+	            formData.append('return_rotate_y[]', returnRotateY[index]);
+	        });
+
+	        // AJAX로 전송
+	        $.ajax({
+	            url: '/post/create', // 서버의 요청 URL
+	            type: 'POST',
+	            data: formData,
+	            processData: false, // 데이터 처리 방식을 자동으로 설정하지 않음
+	            contentType: false, // 파일 업로드를 위해 설정
+	            success: function(response) {
+	                console.log('게시글 작성 성공', response);
+	                alert('게시글 작성이 완료되었습니다!');
+	            },
+	            error: function(error) {
+	                console.error('게시글 작성 실패', error);
+	                alert('게시글 작성에 실패했습니다.');
+	            }
+	        });
+	    }); */
 	});
     </script>
 
