@@ -9,6 +9,13 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         <setting name="cacheEnabled" value="false" />
         <setting name="jdbcTypeForNull" value="NULL" />
     </settings>
+    
+    <!-- typeHandlers 추가 -->
+<!--     <typeHandlers>
+        Date와 Timestamp 간 변환을 위한 TypeHandler 추가
+        <typeHandler handler="org.apache.ibatis.type.DateTypeHandler" />
+    </typeHandlers> -->
+    
 <!-- 	<typeAliases>
 		<typeAlias alias="BoardVO" type="com.lec.tx.BoardVO" />
 	</typeAliases> -->

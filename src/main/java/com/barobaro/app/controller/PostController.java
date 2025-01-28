@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
+import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.CategoryService;
 import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostFileVO;
@@ -45,6 +46,16 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+
+	
+//	@Autowired
+//	PostMapper testMapper;
+//	
+//	@GetMapping("/test")
+//	public String test() {
+//		System.out.println(testMapper.selectPostByPostSeq(1));
+//		return "";
+//	}
 	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
