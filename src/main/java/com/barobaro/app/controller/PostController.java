@@ -48,16 +48,16 @@ public class PostController {
 	PostService postService;
 
 	
-	@Autowired
-	PostMapper testMapper;
-	
-	@GetMapping("/test")
-	public ModelAndView test() {
-		System.out.println(testMapper.selectPostByPostSeq(1));
-		ModelAndView mav = new ModelAndView();
-		
-		return mav;
-	}
+//	@Autowired
+//	PostMapper testMapper;
+//	
+//	@GetMapping("/test")
+//	public ModelAndView test() {
+//		System.out.println(testMapper.selectPostByPostSeq(1));
+//		ModelAndView mav = new ModelAndView();
+//		
+//		return mav;
+//	}
 	
 	// /post/test/login
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
@@ -81,13 +81,10 @@ public class PostController {
 	@RequestMapping(value =  "/create_page", method = RequestMethod.GET)
 	public ModelAndView getCreatePostPage(HttpSession session) {
 		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
-//		model.addAttribute("categories", categoryService.getAllCategoryNameAndSeq());
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
-//		System.out.println(categoryService.getAllCategoryNameAndSeq());
 		mav.setViewName("pages/post/create_post");
 		return mav;
-//		return "redirect: /pages/post/create_post.jsp";
 	}
 	
 	@RequestMapping(value =  "/create", method = RequestMethod.POST)
