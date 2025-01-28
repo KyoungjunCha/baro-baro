@@ -7,7 +7,6 @@ import com.barobaro.app.vo.ReservationVO;
 
 public interface ReservationService {
 	
-//	public void						createTimeSlot(RentTimeSlotVO timeVO);
-	public List<RentTimeSlotVO> 	getTimeSlots(int post_seq, String selectedDate);
-	public boolean 					requestReservation(ReservationVO reservation);
+	public void	   createTimeSlot(RentTimeSlotVO timeVO);
+	public boolean requestReservation(int timeSlotSeq);
 }
