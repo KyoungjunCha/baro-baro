@@ -371,7 +371,8 @@
 	            formData.append('return_rotate_y[]', returnRotateY[index]);
 	        });
 
-	        $('#create-post-form')[0].submit();
+	        //$('#create-post-form')[0].submit();
+	        $('#create-post-form').submit();
 	    });
 	    
 	    

@@ -1,6 +1,8 @@
 package com.barobaro.app.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -104,28 +106,29 @@ public class PostController {
 				.userSeq(userInfo.getUserSeq())
 				.categoryName(category)
 				.postImages(new ArrayList<>())
-				.renttimes(new ArrayList<>())
+				.rentTimes(new ArrayList<>())
 				.build();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		if(prices != null) {
 			for(int i = 0; i < prices.size(); i++) {
-				postVO.getRenttimes().add(RentTimeSlotVO.builder()
-						.rent_at(rentAt.get(i))
-						.return_at(returnAt.get(i))
-						.price(prices.get(i))
-						.rent_location(rentLocations.get(i))
-						.rent_rotate_x(rentRotateX.get(i))
-						.rent_rotate_y(rentRotateY.get(i))
-						.return_location(rentLocations.get(i))
-						.return_rotate_x(returnRotateX.get(i))
-						.return_rotate_y(rentRotateY.get(i))
-						.build());
+				try {
+					postVO.getRentTimes().add(RentTimeSlotVO.builder()
+							.rent_at(sdf.parse(rentAt.get(i)))
+							.return_at(sdf.parse(returnAt.get(i)))
+							.price(prices.get(i))
+							.rent_location(rentLocations.get(i))
+							.rent_rotate_x(rentRotateX.get(i))
+							.rent_rotate_y(rentRotateY.get(i))
+							.return_location(rentLocations.get(i))
+							.return_rotate_x(returnRotateX.get(i))
+							.return_rotate_y(rentRotateY.get(i))
+							.regid(userInfo.getNickname())
+							.build());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-//		files.forEach(e -> {
-//			postVO.getPostImages().add(PostFileVO.builder()
-//					.name(e.getOriginalFilename())
-//					.build());
-//		});
 		
 		System.out.println(postVO);
 		
@@ -138,7 +141,6 @@ public class PostController {
 		try {
 			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return mav;

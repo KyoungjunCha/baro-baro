@@ -24,7 +24,7 @@ public class PostServiceImpl implements PostService{
 	public void createPost(PostVO postVO, List<MultipartFile> files) {
 		
 		postMapper.insertPostByPostVO(postVO);
-		postVO.getRenttimes().forEach(e -> {
+		postVO.getRentTimes().forEach(e -> {
 			e.setPost_seq((int)postVO.getPostSeq());
 			postMapper.insertRentTimeSlotByRentTimeSlotVO(e);
 		});
