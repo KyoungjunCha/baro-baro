@@ -1,5 +1,6 @@
 package com.barobaro.app.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -12,7 +13,12 @@ import com.barobaro.app.vo.ReservationVO;
 @Repository
 @Mapper
 public interface ReservationMapper {
-	public  void	createTimeSlot(RentTimeSlotVO timeVO);
-	public List<RentTimeSlotVO> getTimeSlot(long postSeq, long rentAt);
-	public 	boolean requestReservation(int timeSlotSeq);
+	public void createTimeSlot(RentTimeSlotVO timeVO);
+	public List<RentTimeSlotVO> getTimeSlot(long postSeq, Date rentAt);
+	public int requestReservation(@Param("time_slot_seq") long timeSlotSeq);
+	public int acceptReservation(@Param("reservation_seq") long reservationSeq);
+	public int refuseReservation(@Param("reservation_seq") long reservationSeq);
+	public int cancleRequest();
+	public int cancleAccept();
+	public int done();
 }
