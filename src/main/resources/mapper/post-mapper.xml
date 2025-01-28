@@ -76,7 +76,7 @@
         LEFT JOIN
             post_file pf ON p.post_seq = pf.post_seq
         LEFT JOIN
-            rent_time_slot rt ON p.post_seq = rt.post_seq
+            (SELECT * FROM rent_time_slot ORDER BY rent_at ASC) rt ON p.post_seq = rt.post_seq
         WHERE
             p.post_seq = #{postSeq}
     </select>
