@@ -20,7 +20,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 	// 대여희망자가 예약을 요청
 	@Override
-	public int processReservation(@Param("time_slot_seq") long timeSlotSeq) {
+	public int processReservation(long timeSlotSeq) {
 			       reservationMapper.requestReservation(timeSlotSeq);
 		int rows = reservationMapper.updateStatusUnavailable(timeSlotSeq);
 		return rows;
@@ -28,13 +28,13 @@ public class ReservationServiceImpl implements ReservationService {
 	
 	// 물품등록자가 예약을 수락
 	@Override
-	public int acceptReservation(@Param("reservation_seq") long reservationSeq) {
+	public int acceptReservation(long reservationSeq) {
 		return reservationMapper.acceptReservation(reservationSeq);
 	}
 	
 	// 물품등록자가 예약을 거절
 	@Override
-	public int processRefuseReservation(@Param("reservation_seq") long reservationSeq) {
+	public int processRefuseReservation(long reservationSeq) {
 			       reservationMapper.refuseReservation(reservationSeq);
 		int rows = reservationMapper.updateStatusAvailableByReservationSeq(reservationSeq);
 		return rows;
@@ -42,13 +42,13 @@ public class ReservationServiceImpl implements ReservationService {
 	
 	// 대여희망자가 예약을 취소요청
 	@Override
-	public int cancleRequest(@Param("reservation_seq") long reservationSeq) {
+	public int cancleRequest(long reservationSeq) {
 		return reservationMapper.cancleRequest(reservationSeq);
 	}
 	
 	// 물품등록자가 예약 취소요청을 수락
 	@Override
-	public int processCancleAccept(@Param("reservation_seq") long reservationSeq) {
+	public int processCancleAccept(long reservationSeq) {
 				   reservationMapper.cancleAccept(reservationSeq);
 		int rows = reservationMapper.updateStatusAvailableByReservationSeq(reservationSeq);
 		return rows;
@@ -56,7 +56,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 	// 거래 완료됨
 	@Override
-	public int done(@Param("reservation_seq") long reservationSeq) {
+	public int done(long reservationSeq) {
 		return reservationMapper.done(reservationSeq);
 	}
 }
