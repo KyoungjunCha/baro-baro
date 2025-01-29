@@ -16,62 +16,47 @@ import com.barobaro.app.vo.ReservationVO;
 public class ReservationServiceImpl implements ReservationService {
 	
 	@Autowired
-	private ReservationMapper Mapper;
-	
-	@Override
-	public void createTimeSlot(RentTimeSlotVO timeVO) {
-		Mapper.createTimeSlot(timeVO);
-	}
+	private ReservationMapper reservationMapper;
 
+	// 대여희망자가 예약을 요청
 	@Override
-	public List<RentTimeSlotVO> getTimeSlot(long postSeq, Date rentAt) {
-		return Mapper.getTimeSlot(postSeq, rentAt);
+	public int processReservation(@Param("time_slot_seq") long timeSlotSeq) {
+			       reservationMapper.requestReservation(timeSlotSeq);
+		int rows = reservationMapper.updateStatusUnavailable(timeSlotSeq);
+		return rows;
 	}
 	
-	@Override
-	public void requestReservation(@Param("time_slot_seq") long timeSlotSeq) {
-		System.out.println("서비스 호출됨");
-		Mapper.requestReservation(timeSlotSeq);
-	}
-
+	// 물품등록자가 예약을 수락
 	@Override
 	public int acceptReservation(@Param("reservation_seq") long reservationSeq) {
-		return Mapper.acceptReservation(reservationSeq);
+		return reservationMapper.acceptReservation(reservationSeq);
 	}
-
+	
+	// 물품등록자가 예약을 거절
 	@Override
-	public int refuseReservation(@Param("reservation_seq") long reservationSeq) {
-		return Mapper.refuseReservation(reservationSeq);
-	}
-
-	@Override
-	public int cancleRequest(long reservationSeq) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int cancleAccept(long reservationSeq) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int done(long reservationSeq) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int updateStatusAvailable(long timeSlotSeq) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int updateStatusUnavailable(long timeSlotSeq) {
-		System.out.println("서비스 호출됨ddd");
-		int rows = Mapper.updateStatusUnavailable(timeSlotSeq);
+	public int processRefuseReservation(@Param("reservation_seq") long reservationSeq) {
+			       reservationMapper.refuseReservation(reservationSeq);
+		int rows = reservationMapper.updateStatusAvailableByReservationSeq(reservationSeq);
 		return rows;
+	}
+	
+	// 대여희망자가 예약을 취소요청
+	@Override
+	public int cancleRequest(@Param("reservation_seq") long reservationSeq) {
+		return reservationMapper.cancleRequest(reservationSeq);
+	}
+	
+	// 물품등록자가 예약 취소요청을 수락
+	@Override
+	public int processCancleAccept(@Param("reservation_seq") long reservationSeq) {
+				   reservationMapper.cancleAccept(reservationSeq);
+		int rows = reservationMapper.updateStatusAvailableByReservationSeq(reservationSeq);
+		return rows;
+	}
+
+	// 거래 완료됨
+	@Override
+	public int done(@Param("reservation_seq") long reservationSeq) {
+		return reservationMapper.done(reservationSeq);
 	}
 }
