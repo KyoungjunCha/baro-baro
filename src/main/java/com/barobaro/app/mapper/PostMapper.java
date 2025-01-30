@@ -1,5 +1,7 @@
 package com.barobaro.app.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -16,4 +18,5 @@ public interface PostMapper {
 	int insertPostFileByPostFileVO(PostFileVO postFileVO);
 	PostVO selectPostByPostSeq(@Param("postSeq")long postSeq);
 	int incrementPostViewCount(@Param("postSeq")long postSeq);
+	List<PostVO> selectPostBySearchKeyword(@Param("searchKeyword") String searchKeyword, @Param("searchType") String searchType);
 }

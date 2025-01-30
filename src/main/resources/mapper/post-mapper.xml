@@ -131,6 +131,49 @@
 	    </collection>
 	</resultMap>
     
+    <select id="selectPostBySearchKeyword" resultMap="postResultMap2">
+		SELECT	p.TITLE, p.ITEM_CONTENT, p.RENT_CONTENT,
+	     		p.POST_AT, p.COUNT, p.PRODUCT_NAME,
+	     		c.CATEGORY_NAME,
+         		pf.STORAGE_PATH
+	    FROM POST p
+	    LEFT JOIN CATEGORY c 
+	    		ON p.CATEGORY_SEQ = c.CATEGORY_SEQ
+        LEFT JOIN (SELECT FILE_SEQ, STORAGE_PATH, POST_SEQ, 
+        		   		  ROW_NUMBER() OVER (PARTITION BY POST_SEQ ORDER BY FILE_SEQ ASC) AS rownumber
+                   FROM POST_FILE) pf
+            	ON pf.rownumber = 1 AND p.POST_SEQ = pf.POST_SEQ
+		<where>
+            <if test="searchType == 'product'">
+						  p.TITLE LIKE '%' || #{searchKeyword} || '%'
+		        OR p.ITEM_CONTENT LIKE '%' || #{searchKeyword} || '%'
+		        OR p.PRODUCT_NAME LIKE '%' || #{searchKeyword} || '%'
+			</if>
+			
+			<if test="searchType == 'user'">
+				USER_SEQ = (SELECT USER_SEQ
+							FROM USER_TABLE
+							WHERE NICKNAME LIKE '%' || #{searchKeyword} || '%'
+							)
+			</if>
+		</where>
+		ORDER BY COUNT DESC, POST_AT DESC
+    </select>
+    
+    <resultMap id="postResultMap2" type="com.barobaro.app.vo.PostVO">
+	    <!-- 기본 필드 매핑 -->
+	    <result property="title" 		column="title"/>
+	    <result property="itemContent"  column="item_content"/>
+	    <result property="rentContent"  column="rent_content"/>
+	    <result property="postAt" 		column="post_at"/>
+	    <result property="count" 		column="count"/>
+	    <result property="productName"  column="product_name"/>
+	    <result property="categoryName" column="category_name"/>
+	    <!-- 하나의 사진만 매핑 (PostFileVO) -->
+	    <association property="postImage" javaType="com.barobaro.app.vo.PostFileVO">
+	        <result property="storagePath" column="storage_path"/>
+	    </association>
+	</resultMap>
 </mapper>
 
 
