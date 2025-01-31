@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +37,7 @@ import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.RentTimeSlotVO;
+import com.barobaro.app.vo.SearchVO;
 
 @Controller
 @RequestMapping("/post")
@@ -168,9 +170,18 @@ public class PostController {
 		return mav;
 	}
 	
-	
+//						/post/posts
 	@RequestMapping(value = "/posts", method = RequestMethod.GET)
-	public ModelAndView searchPost() {
-		return new ModelAndView();
+	public ModelAndView searchPost( @ModelAttribute SearchVO svo ) {
+		String searchKeyword = svo.getSearchKeyword();
+		String searchType = svo.getSearchType();
+		System.out.println("검색타입 : " + searchType + ", 검색어 : " + searchKeyword);
+		
+		List<PostVO> plist = postService.getPostBySearchKeyword(searchKeyword, searchType);
+		System.out.println(plist.toString());
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("pages/post/search_post_list_test2");
+		mav.addObject("KEY_PLIST", plist);
+		return mav;
 	}
 }

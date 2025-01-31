@@ -9,9 +9,10 @@ import com.barobaro.app.vo.RentTimeSlotVO;
 import com.barobaro.app.vo.ReservationVO;
 
 public interface ReservationService {
-	public void createTimeSlot(RentTimeSlotVO timeVO);
-	public List<RentTimeSlotVO> getTimeSlot(long postSeq, Date rentAt);
-	public int requestReservation(@Param("time_slot_seq") long timeSlotSeq);
-	public int acceptReservation(@Param("reservation_seq") long reservationSeq);
-	public int refuseReservation(@Param("reservation_seq") long reservationSeq);
+	public int processReservation(long timeSlotSeq);
+	public int acceptReservation(long reservationSeq);
+	public int processRefuseReservation(long reservationSeq);
+	public int cancleRequest(long reservationSeq);
+	public int processCancleAccept(long reservationSeq);
+	public int done(long reservationSeq);
 }

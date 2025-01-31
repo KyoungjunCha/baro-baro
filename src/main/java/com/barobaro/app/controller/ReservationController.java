@@ -29,26 +29,27 @@ public class ReservationController {
 	
 	@Autowired
 	@Qualifier("reservationServiceImpl")
-	private ReservationService reservationSvc;
+	private ReservationService reservationService;
 	
-	// 예약 요청하기 	/reservation/request-reservation
-	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST)
-    public ResponseEntity<String> requestReservation(@RequestParam long timeSlotSeq) {
+	// 예약 요청 	/reservation/request-reservation  테스트완료
+	@RequestMapping(value = "/request-reservation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> requestReservation(@RequestParam("timeSlotSeq") long timeSlotSeq) {
 		System.out.println("컨트롤러 호출됨, timeSlotSeq 는 : " + timeSlotSeq);
-		int rows = reservationSvc.requestReservation(timeSlotSeq);
-		System.out.println("변경된 건수:"+rows);
-        if (rows == 1) {
-            return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<String>("예약 요청에 실패했습니다. 이미 다른 사용자에 의해 요청 완료된 시간일 수 있습니다.", HttpStatus.BAD_REQUEST);
-        }
-    }
+		int rows = reservationService.processReservation(timeSlotSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 요청됨");
+		if (rows == 1) {
+			return new ResponseEntity<String>("예약 요청이 완료되었습니다.", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>("예약 요청에 실패했습니다. 이미 다른사용자에 의해 요청이 완료된 시간일 수 있습니다.", HttpStatus.BAD_REQUEST);
+		}
+	}
 	
-	// 에약 수락하기		/reservation/accept-reservation
-	@RequestMapping(value = "/accept-reservation", method = RequestMethod.POST)
-    public ResponseEntity<String> acceptReservation(@RequestParam long reservationSeq) {
+	// 에약 수락		/reservation/accept-reservation  테스트완료
+	@RequestMapping(value = "/accept-reservation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> acceptReservation(@RequestParam("reservationSeq") long reservationSeq) {
 		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
-		int rows = reservationSvc.acceptReservation(reservationSeq);
+		int rows = reservationService.acceptReservation(reservationSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 수락됨");
         if (rows == 1) {
             return new ResponseEntity<String>("수락이 완료되었습니다.", HttpStatus.OK);
         } else {
@@ -56,11 +57,12 @@ public class ReservationController {
         }
     }
 	
-	// 예약 거절하기		/reservation/refuse-reservation
-	@RequestMapping(value = "/refuse-reservation", method = RequestMethod.POST)
-    public ResponseEntity<String> refuseReservation(@RequestParam long reservationSeq) {
+	// 예약 거절		/reservation/refuse-reservation  테스트완료
+	@RequestMapping(value = "/refuse-reservation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> refuseReservation(@RequestParam("reservationSeq") long reservationSeq) {
 		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
-		int rows = reservationSvc.refuseReservation(reservationSeq);
+		int rows = reservationService.processRefuseReservation(reservationSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 거절됨");
         if (rows == 1) {
             return new ResponseEntity<String>("거절이 완료되었습니다.", HttpStatus.OK);
         } else {
@@ -68,9 +70,43 @@ public class ReservationController {
         }
     }
 	
-	// 예약 취소요청하기
-	// 예약 취소요청 수락하기
-	// 거래 완료시
+	// 예약 취소요청		/reservation/cancle-request  테스트완료
+	@RequestMapping(value = "/cancle-request", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> cancleRequest(@RequestParam("reservationSeq") long reservationSeq) {
+		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
+		int rows = reservationService.cancleRequest(reservationSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 취소요청됨");
+        if (rows == 1) {
+            return new ResponseEntity<String>("취소 요청이 완료되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("취소 요청이 실패했습니다. 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+        }
+    }
 	
+	// 예약 취소요청 수락		/reservation/cancle-accept  테스트완료
+	@RequestMapping(value = "/cancle-accept", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> cancleAccept(@RequestParam("reservationSeq") long reservationSeq) {
+		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
+		int rows = reservationService.processCancleAccept(reservationSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 취소요청 수락됨");
+        if (rows == 1) {
+            return new ResponseEntity<String>("취소요청을 수락하였습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("취소요청을 수락하는데에 실패했습니다. 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+        }
+    }
+	
+	// 거래 완료		/reservation/done  테스트완료
+	@RequestMapping(value = "/done", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> done(@RequestParam("reservationSeq") long reservationSeq) {
+		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
+		int rows = reservationService.done(reservationSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 거래완료됨");
+        if (rows == 1) {
+            return new ResponseEntity<String>("거래 완료", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("실패했습니다. 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+        }
+    }
     
 }
