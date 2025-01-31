@@ -28,12 +28,23 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String payload = message.getPayload();
+    	String payload = message.getPayload().trim();
+        if (payload.toUpperCase().startsWith("CONNECT") 
+            || payload.toUpperCase().startsWith("CONNECTED")
+            || payload.length() < 1) {
+            return; 
+        }
         Map<String,String> parsed = parsePayload(payload);
-        
         Long roomId = Long.valueOf(parsed.get("roomId"));
         String sender = parsed.get("sender");
         String content = parsed.get("content");
+
+        // (1) roomSessions에 세션이 없다면 추가
+        roomSessions.computeIfAbsent(roomId, k -> new ArrayList<>());
+        List<WebSocketSession> sessions = roomSessions.get(roomId);
+        if (!sessions.contains(session)) {
+            sessions.add(session);
+        }
 
         // DB 저장
         ChatMessageVO chatMessage = new ChatMessageVO();
@@ -42,8 +53,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         chatMessage.setContent(content);
         chatMapper.insertChatMessage(chatMessage);
 
-        // 현재 채팅방에 연결된 사용자에게만 브로드캐스팅
-        List<WebSocketSession> sessions = roomSessions.getOrDefault(roomId, new ArrayList<>());
+        // 브로드캐스팅
         TextMessage echo = new TextMessage(sender + ": " + content);
         for (WebSocketSession s : sessions) {
             s.sendMessage(echo);
@@ -55,14 +65,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         roomSessions.values().forEach(list -> list.remove(session));
     }
 
-    private Map<String,String> parsePayload(String p) {
-        Map<String,String> map = new HashMap<>();
+    private Map<String, String> parsePayload(String p) {
+        Map<String, String> map = new HashMap<>();
         String[] tokens = p.split("&");
-        for(String t : tokens) {
-            String[] kv = t.split("=");
-            map.put(kv[0], kv[1]);
+        for (String t : tokens) {
+            String[] kv = t.split("=", 2);
+            if (kv.length == 2) {
+                map.put(kv[0], kv[1]);
+            } else {
+            }
         }
-        Long rid = Long.valueOf(map.get("roomId"));
         return map;
     }
+
 }
