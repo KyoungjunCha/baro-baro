@@ -79,4 +79,9 @@ public class PostServiceImpl implements PostService{
 		}
 		return postMapper.selectPostByPostSeq(postSeq);
 	}
+
+	@Override
+	public List<PostVO> getPostBySearchKeyword(String searchKeyword, String searchType) {
+		return postMapper.selectPostBySearchKeyword(searchKeyword, searchType);
+	}
 }

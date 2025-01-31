@@ -257,7 +257,7 @@ body {
 
                 // 오늘 이전 날짜 클릭 방지
                 if (clickedDate < today) return;
-				console.log("avail: " + availableDates + " / " + clickedDate);
+				//console.log("avail: " + availableDates + " / " + clickedDate);
                 // availableDates 배열에 해당 날짜가 없으면 클릭 방지
                 if (!availableDates.includes(clickedDayStr)) {
                     info.jsEvent.preventDefault();  // 클릭 이벤트 취소
@@ -344,11 +344,11 @@ body {
 	                data: { timeSlotSeq: timeSlotSeq },
 	                success: function (response) {
 						console.log(response);	                	
-	                    alert("예약이 거부되었습니다: " + response.message);
-	                    location.reload(); // 페이지 새로고침 (필요 시)
+	                    alert(response);
+	                    //location.reload(); // 페이지 새로고침 (필요 시)
 	                },
 	                error: function (xhr, status, error) {
-	                    alert("오류 발생: " + xhr.responseText);
+	                    alert("예약 요청에 실패했습니다." + xhr.responseText);
 	                }
 	            });
 	        }

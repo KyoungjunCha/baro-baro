@@ -13,12 +13,14 @@ import com.barobaro.app.vo.ReservationVO;
 @Repository
 @Mapper
 public interface ReservationMapper {
-	public void createTimeSlot(RentTimeSlotVO timeVO);
-	public List<RentTimeSlotVO> getTimeSlot(long postSeq, Date rentAt);
-	public int requestReservation(@Param("time_slot_seq") long timeSlotSeq);
+	public void requestReservation(@Param("time_slot_seq") long timeSlotSeq);
 	public int acceptReservation(@Param("reservation_seq") long reservationSeq);
 	public int refuseReservation(@Param("reservation_seq") long reservationSeq);
-	public int cancleRequest();
-	public int cancleAccept();
-	public int done();
+	public int cancleRequest(@Param("reservation_seq") long reservationSeq);
+	public int cancleAccept(@Param("reservation_seq") long reservationSeq);
+	public int done(@Param("reservation_seq") long reservationSeq);
+	
+	public int updateStatusAvailableByReservationSeq(@Param("reservation_seq") long reservationSeq);
+	public int updateStatusAvailableByTimeSlotSeq(@Param("time_slot_seq") long timeSlotSeq);
+	public int updateStatusUnavailable(@Param("time_slot_seq") long timeSlotSeq);
 }
