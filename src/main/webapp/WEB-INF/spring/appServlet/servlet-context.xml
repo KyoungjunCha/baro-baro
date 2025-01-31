@@ -5,11 +5,13 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
 	<context:component-scan base-package="com.barobaro.app" />
 	<mvc:annotation-driven />
@@ -82,6 +84,13 @@
       <property name="maxUploadSize" value="1000000000"/>  <!--최대업로드크기 필요없으면 버리기 -->
       <property name="defaultEncoding" value="UTF-8"/>
     </bean>
+    
+   <!-- WebSocket Namespace config -->
+   <bean id="chatWebSocketHandler" class="com.barobaro.app.handler.ChatWebSocketHandler" />
+   <websocket:handlers>
+        <websocket:mapping path="/ws/chat" handler="chatWebSocketHandler"/>
+        <websocket:sockjs />
+    </websocket:handlers>
 	
 	
 </beans>
