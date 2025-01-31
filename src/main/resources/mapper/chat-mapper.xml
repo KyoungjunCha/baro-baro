@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  interface UserMapper.java를 사용할 경우 -->
+<mapper namespace="com.barobaro.app.mapper.ChatMapper">
+
+	 <!-- ChatRoomVO 매핑 -->
+  <resultMap id="ChatRoomResultMap" type="com.barobaro.app.vo.ChatRoomVO">
+    <id property="roomId" column="CHAT_ROOM_SEQ"/>
+    <result property="title" column="TITLE"/>
+    <result property="regdate" column="REGDATE"/>
+  </resultMap>
+
+  <!-- ChatMessageVO 매핑 -->
+  <resultMap id="ChatMessageResultMap" type="com.barobaro.app.vo.ChatMessageVO">
+    <id property="messageId" column="CHAT_MESSAGE_SEQ"/>
+    <result property="roomId" column="CHAT_ROOM_SEQ"/>
+    <result property="sender" column="SENDER"/>
+    <result property="content" column="CONTENT"/>
+    <result property="regdate" column="REGDATE"/>
+  </resultMap>
+
+  <!-- 채팅 메시지 INSERT -->
+  <insert id="insertChatMessage">
+    INSERT INTO CHAT_MESSAGE (CHAT_MESSAGE_SEQ, CHAT_ROOM_SEQ, SENDER, CONTENT, REGDATE)
+    VALUES (CHAT_MESSAGE_SEQ.NEXTVAL, #{roomId}, #{sender}, #{content}, SYSDATE)
+  </insert>
+
+  <!-- 특정 채팅방의 메시지 목록 SELECT -->
+  <select id="selectMessagesByRoom" resultMap="ChatMessageResultMap">
+    SELECT CHAT_MESSAGE_SEQ, CHAT_ROOM_SEQ, SENDER, CONTENT, REGDATE
+      FROM CHAT_MESSAGE
+     WHERE CHAT_ROOM_SEQ = #{roomId}
+     ORDER BY REGDATE
+  </select>
+
+  <!-- 채팅방 생성 -->
+  <insert id="createRoom" parameterType="com.barobaro.app.vo.ChatRoomVO">
+    INSERT INTO CHAT_ROOM (CHAT_ROOM_SEQ, TITLE, REGDATE)
+    VALUES (CHAT_ROOM_SEQ.NEXTVAL, #{title}, SYSDATE)
+  </insert>
+
+  <!-- 채팅방 목록 -->
+  <select id="selectRoomList" resultMap="ChatRoomResultMap">
+    SELECT CHAT_ROOM_SEQ, TITLE, REGDATE
+      FROM CHAT_ROOM
+     ORDER BY REGDATE
+  </select>
+</mapper>
+
+
+  
