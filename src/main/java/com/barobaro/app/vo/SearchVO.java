@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SearchVO {
 	private String searchKeyword;
 	private String searchType;
+	private int	   categorySeq;
 }

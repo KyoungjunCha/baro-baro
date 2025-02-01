@@ -66,7 +66,13 @@
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
                         <a href="/index.html"><i class="fa fa-home"></i> Home</a>
-                        <span>Shop</span>
+                        
+                        <span id="searchInfo" 
+						      data-search-type="${KEY_SEARCH.searchType}" 
+						      data-search-keyword="${KEY_SEARCH.searchKeyword}">
+						    "${KEY_SEARCH.searchKeyword}"  검색결과
+						</span>
+                        
                     </div>
                 </div>
             </div>
@@ -151,7 +157,7 @@
 									
 									<div class="card">
 									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseFive">출산/유아동</a>
+									        <a data-toggle="collapse" data-target="#collapseFive" class="category" data-category-seq="5">출산/유아동</a>
 									    </div>
 									    <div id="collapseFive" class="collapse" data-parent="#accordionExample">
 									        <div class="card-body">
@@ -605,6 +611,7 @@
         </div>
     </div>
     <!-- Search End -->
+    
 
     <!-- Js Plugins -->
     <script src="/js/jquery-3.3.1.min.js"></script>
@@ -617,6 +624,32 @@
     <script src="/js/owl.carousel.min.js"></script>
     <script src="/js/jquery.nicescroll.min.js"></script>
     <script src="/js/main.js"></script>
+	
+	<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var searchInfo = document.getElementById("searchInfo");
+        var searchType = searchInfo.dataset.searchType;
+        var searchKeyword = searchInfo.dataset.searchKeyword;
+
+        console.log(searchType);
+        console.log(searchKeyword);
+        
+        document.querySelectorAll(".category").forEach(category => {
+            category.addEventListener("click", function() {
+                
+            	// HTML 요소에서 data-category-seq 값 가져오기
+            	const categorySeq = this.dataset.categorySeq;
+                console.log(categorySeq);
+
+                // URL을 한번에 작성하여 페이지 리디렉션
+                const url = "/post/posts?searchType="+searchType+"&searchKeyword="+searchKeyword+"&categorySeq="+categorySeq;
+                window.location.href = url;  // 페이지 리디렉션
+            });
+        });
+    });
+	</script>
+
+
 </body>
 
 </html>

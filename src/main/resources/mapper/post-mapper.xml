@@ -131,7 +131,7 @@
 	    </collection>
 	</resultMap>
     
-    <select id="selectPostBySearchKeyword" resultMap="postResultMap2">
+    <select id="selectPostBySearchKeywordAndCategory" resultMap="postResultMap2">
 		SELECT	p.TITLE, p.ITEM_CONTENT, p.RENT_CONTENT,
 	     		p.POST_AT, p.COUNT, p.PRODUCT_NAME,
 	     		c.CATEGORY_NAME,
@@ -144,17 +144,21 @@
                    FROM POST_FILE) pf
             	ON pf.rownumber = 1 AND p.POST_SEQ = pf.POST_SEQ
 		<where>
+		    <if test=" categorySeq != null and categorySeq != '' ">
+		        c.CATEGORY_SEQ = #{categorySeq}
+		    </if>
+    
             <if test="searchType == 'product'">
-						  p.TITLE LIKE '%' || #{searchKeyword} || '%'
+				    AND ( p.TITLE LIKE '%' || #{searchKeyword} || '%'
 		        OR p.ITEM_CONTENT LIKE '%' || #{searchKeyword} || '%'
-		        OR p.PRODUCT_NAME LIKE '%' || #{searchKeyword} || '%'
+		        OR p.PRODUCT_NAME LIKE '%' || #{searchKeyword} || '%' )
 			</if>
 			
 			<if test="searchType == 'user'">
-				USER_SEQ = (SELECT USER_SEQ
-							FROM USER_TABLE
-							WHERE NICKNAME LIKE '%' || #{searchKeyword} || '%'
-							)
+				AND USER_SEQ = (SELECT USER_SEQ
+								FROM USER_TABLE
+								WHERE NICKNAME LIKE '%' || #{searchKeyword} || '%'
+								)
 			</if>
 		</where>
 		ORDER BY COUNT DESC, POST_AT DESC

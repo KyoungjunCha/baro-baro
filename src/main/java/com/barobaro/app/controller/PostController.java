@@ -175,13 +175,15 @@ public class PostController {
 	public ModelAndView searchPost( @ModelAttribute SearchVO svo ) {
 		String searchKeyword = svo.getSearchKeyword();
 		String searchType = svo.getSearchType();
-		System.out.println("검색타입 : " + searchType + ", 검색어 : " + searchKeyword);
+		int categorySeq = svo.getCategorySeq();
+		System.out.println("검색타입 : " + searchType + ", 검색어 : " + searchKeyword + ", 카테고리 선택 : " + categorySeq);
 		
-		List<PostVO> plist = postService.getPostBySearchKeyword(searchKeyword, searchType);
+		List<PostVO> plist = postService.getPostBySearchKeywordAndCategory(searchKeyword, searchType, categorySeq);
 		System.out.println(plist.toString());
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/search_post_list_test2");
 		mav.addObject("KEY_PLIST", plist);
+		mav.addObject("KEY_SEARCH", svo);
 		return mav;
 	}
 }
