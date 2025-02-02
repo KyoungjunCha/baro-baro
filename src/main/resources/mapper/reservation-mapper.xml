@@ -5,118 +5,74 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.barobaro.app.mapper.ReservationMapper">
 
-	<!-- 게시물 항목 -->
-<!-- 	<resultMap id="postMap" type="  게시글VO...  "> -->
-<!-- 		<id     	property="post_seq" column="post_seq" /> -->
-<!-- 		<collection property="tlist"  javaType="List"  resultMap="timeSlotMap" />	게시글 하나당 대여시간 여러개 -->
-<!-- 	</resultMap> -->
-	
-	<!-- 대여시간 항목 -->
-	<resultMap id="timeSlotMap" type="com.barobaro.app.vo.RentTimeSlotVO" >
-		<id     property="time_slot_seq" 	column="time_slot_seq" />
-		<result property="rent_at" 		 	column="rent_at"/>
-		<result property="return_at" 	 	column="return_at"/>
-		<result property="status" 	 	 	column="status"/>
-		<result property="post_seq" 	 	column="post_seq"/>
-		<result property="regdate" 	 	 	column="regdate"/>
-		<result property="regid" 	 	 	column="regid"/>
-		<result property="price" 	 	 	column="price"/>
-		<result property="rent_location" 	column="rent_location"/>
-		<result property="rent_rotate_x" 	column="rent_rotate_x"/>
-		<result property="rent_rotate_y" 	column="rent_rotate_y"/>
-		<result property="return_location" 	column="return_location"/>
-		<result property="return_rotate_x" 	column="return_rotate_x"/>
-		<result property="return_rotate_y" 	column="return_rotate_y"/>
-	</resultMap>
-	
-	
-	<!-- 등록자가 타임 등록하기 -->
-<!-- 	<insert id="createTimeSlot" 	parameterType="com.barobaro.app.vo.RentTimeSlotVO"> -->
-<!-- 		INSERT INTO RENT_TIME_SLOT ( -->
-<!-- 		    TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS, POST_SEQ, REGDATE, REGID, PRICE,  -->
-<!-- 		    RENT_LOCATION, 	 RENT_ROTATE_X,   RENT_ROTATE_Y,  -->
-<!-- 		    RETURN_LOCATION, RETURN_ROTATE_X, RETURN_ROTATE_Y -->
-<!-- 		) VALUES ( -->
-<!-- 		    RENT_TIME_SLOT_SEQ.nextval,  -->
-<!-- 		    #{rent_at},  -->
-<!-- 		    #{return_at},  -->
-<!-- 		    1, -->
-<!-- 		    #{post_seq}, -->
-<!-- 		    SYSDATE, -->
-<!-- 		    #{regid}, -->
-<!-- 		    #{price}, -->
-<!-- 		    #{rent_location},   #{rent_rotate_x},   #{rent_rotate_y},  -->
-<!-- 		    #{return_location}, #{return_rotate_x}, #{return_rotate_y} -->
-<!-- 		) -->
-<!-- 	</insert> -->
+<!--  ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 예약 히스토리 테이블 (RESERVATION_HISTORY) ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 
-	
-<!-- 특정날짜 선택시 시간목록 조회하기  테스트OK, 커밋OK -->
-<!--     <select id="getTimeSlot" 								resultMap="timeSlotMap"> -->
-<!--         SELECT TIME_SLOT_SEQ, RENT_AT, RETURN_AT, STATUS -->
-<!-- 		FROM RENT_TIME_SLOT -->
-<!-- 		WHERE POST_SEQ = #{post_seq} -->
-<!-- 		AND TRUNC(RENT_AT) = TO_DATE(#{selected_date}, 'YYYY-MM-DD') -->
-<!-- 		ORDER BY RENT_AT ASC -->
-<!--     </select> -->
-	
-	
-    <!-- 대여자가 예약 요청하기 => 방금요청된 건은 이제 예약불가능으로 바꾸기 -->
+    <!-- 예약을 요청 상태(STATUS=1)로 등록 -->
     <insert id="requestReservation">
-    	BEGIN
-	        INSERT INTO RESERVATION_HISTORY( RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ )
-			VALUES ( RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq} );
-			
-			UPDATE RENT_TIME_SLOT
-			SET STATUS = 2
-			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
-		END;
+        INSERT INTO RESERVATION_HISTORY( RESERVATION_SEQ, CREATED_AT, UPDATED_AT, STATUS, TIME_SLOT_SEQ )
+		VALUES ( RESERVATION_HISTORY_SEQ.NEXTVAL, SYSDATE, SYSDATE, 1, #{time_slot_seq} )
     </insert>
 	
-	<!-- 에약 수락하기 -->
+	<!-- 예약을 수락 상태(STATUS=2)로 변경 -->
 	<update id="acceptReservation">
 		UPDATE RESERVATION_HISTORY
 		SET STATUS = 2, UPDATED_AT = SYSDATE
 		WHERE RESERVATION_SEQ = #{reservation_seq}
     </update>
     
-	<!-- 예약 거절하기 => 거절당한 요청건은 이제 예약가능으로 바꾸기 -->
+	<!-- 예약을 거절 상태(STATUS=3)로 변경 -->
 	<update id="refuseReservation">
-		BEGIN
-			UPDATE RESERVATION_HISTORY
-			SET STATUS = 3, UPDATED_AT = SYSDATE
-			WHERE RESERVATION_SEQ = #{reservation_seq};
-		
-			UPDATE RENT_TIME_SLOT
-			SET STATUS = 1
-			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
-		END;
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 3, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
 	
-	<!-- 예약 취소요청하기 -->
-	<update id="cancleRequest" parameterType="int">
+	<!-- 예약을 취소요청 상태(STATUS=4)로 변경 -->
+	<update id="cancleRequest">
 		UPDATE RESERVATION_HISTORY
 		SET STATUS = 4, UPDATED_AT = SYSDATE
 		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
 	
-	<!-- 예약 취소요청 수락하기 -->
-	<update id="cancleAccept" parameterType="int">
-		BEGIN
-			UPDATE RESERVATION_HISTORY
-			SET STATUS = 5, UPDATED_AT = SYSDATE
-			WHERE RESERVATION_SEQ = #{reservation_seq};
-	
-			UPDATE RENT_TIME_SLOT
-			SET STATUS = 1
-			WHERE TIME_SLOT_SEQ = #{time_slot_seq};
-		END;		
+	<!-- 예약 취소요청 수락 상태(STATUS=5)로 변경 -->
+	<update id="cancleAccept">
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 5, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
+
 	
-	<!-- 거래 완료시 -->
-	<update id="done" parameterType="int">
+	<!-- 거래 완료 상태(STATUS=6)로 변경 -->
+	<update id="done">
 		UPDATE RESERVATION_HISTORY
 		SET STATUS = 6, UPDATED_AT = SYSDATE
 		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
+    
+    
+<!--  ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 대여타임 테이블 (RENT_TIME_SLOT) ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+    
+	<!-- 타임슬롯을 예약가능 상태(STATUS = 1)로 변경 -->
+	<update id="updateStatusAvailableByReservationSeq">
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 1
+			WHERE TIME_SLOT_SEQ = ( SELECT TIME_SLOT_SEQ
+							        FROM RESERVATION_HISTORY
+							        WHERE RESERVATION_SEQ = #{reservation_seq}
+		    						)
+	</update>
+	
+	<!-- 타임슬롯을 예약가능 상태(STATUS = 1)로 변경 -->
+	<update id="updateStatusAvailableByTimeSlotSeq">
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 1
+			WHERE TIME_SLOT_SEQ = #{time_slot_seq}
+	</update>
+	
+	<!-- 타임슬롯을 예약 불가능 상태(STATUS = 2)로 변경 -->
+    <update id="updateStatusUnavailable">
+			UPDATE RENT_TIME_SLOT
+			SET STATUS = 2
+			WHERE TIME_SLOT_SEQ = #{time_slot_seq}
+    </update>
 </mapper>

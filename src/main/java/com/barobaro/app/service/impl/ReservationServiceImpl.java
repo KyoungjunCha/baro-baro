@@ -16,30 +16,47 @@ import com.barobaro.app.vo.ReservationVO;
 public class ReservationServiceImpl implements ReservationService {
 	
 	@Autowired
-	private ReservationMapper Mapper;
-	
-	@Override
-	public void createTimeSlot(RentTimeSlotVO timeVO) {
-		Mapper.createTimeSlot(timeVO);
-	}
+	private ReservationMapper reservationMapper;
 
+	// 대여희망자가 예약을 요청
 	@Override
-	public List<RentTimeSlotVO> getTimeSlot(long postSeq, Date rentAt) {
-		return Mapper.getTimeSlot(postSeq, rentAt);
+	public int processReservation(long timeSlotSeq) {
+			       reservationMapper.requestReservation(timeSlotSeq);
+		int rows = reservationMapper.updateStatusUnavailable(timeSlotSeq);
+		return rows;
 	}
 	
+	// 물품등록자가 예약을 수락
 	@Override
-	public int requestReservation(@Param("time_slot_seq") long timeSlotSeq) {
-		return Mapper.requestReservation(timeSlotSeq);
+	public int acceptReservation(long reservationSeq) {
+		return reservationMapper.acceptReservation(reservationSeq);
+	}
+	
+	// 물품등록자가 예약을 거절
+	@Override
+	public int processRefuseReservation(long reservationSeq) {
+			       reservationMapper.refuseReservation(reservationSeq);
+		int rows = reservationMapper.updateStatusAvailableByReservationSeq(reservationSeq);
+		return rows;
+	}
+	
+	// 대여희망자가 예약을 취소요청
+	@Override
+	public int cancleRequest(long reservationSeq) {
+		return reservationMapper.cancleRequest(reservationSeq);
+	}
+	
+	// 물품등록자가 예약 취소요청을 수락
+	@Override
+	public int processCancleAccept(long reservationSeq) {
+				   reservationMapper.cancleAccept(reservationSeq);
+		int rows = reservationMapper.updateStatusAvailableByReservationSeq(reservationSeq);
+		return rows;
 	}
 
+	// 거래 완료됨
 	@Override
-	public int acceptReservation(@Param("reservation_seq") long reservationSeq) {
-		return Mapper.acceptReservation(reservationSeq);
-	}
-
-	@Override
-	public int refuseReservation(@Param("reservation_seq") long reservationSeq) {
-		return Mapper.refuseReservation(reservationSeq);
+	public int done(long reservationSeq) {
+		return reservationMapper.done(reservationSeq);
 	}
 }

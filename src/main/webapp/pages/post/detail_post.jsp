@@ -378,11 +378,11 @@ body {
 	                data: { timeSlotSeq: timeSlotSeq },
 	                success: function (response) {
 						console.log(response);	                	
-	                    alert("예약이 거부되었습니다: " + response.message);
-	                    location.reload(); // 페이지 새로고침 (필요 시)
+	                    alert(response);
+	                    //location.reload(); // 페이지 새로고침 (필요 시)
 	                },
 	                error: function (xhr, status, error) {
-	                    alert("오류 발생: " + xhr.responseText);
+	                    alert("예약 요청에 실패했습니다." + xhr.responseText);
 	                }
 	            });
 	        }
