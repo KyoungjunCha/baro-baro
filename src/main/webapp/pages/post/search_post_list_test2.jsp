@@ -57,7 +57,15 @@
     </div>
     <!-- Offcanvas Menu End -->
 
-    <jsp:include page="/pages/common/header.jsp" />
+
+
+
+<!-- 수정 ************************************************************************** -->
+    <jsp:include page="/pages/common/header_test_sh.jsp" />
+<!-- 수정 ************************************************************************** -->
+
+
+
 
     <!-- Breadcrumb Begin -->
     <div class="breadcrumb-option">
@@ -88,9 +96,21 @@
                 <div class="col-lg-3 col-md-3">
                     <div class="shop__sidebar">
                         <div class="sidebar__categories">
+                        
+                        <!-- 예약 가능한 항목만 보기 -->
+                        <label>
+						    <input type="checkbox" id="availableOnlyCheckbox"> 예약 가능만 보기
+						</label>
+                        
+
+                        <!-- 거리순 정렬 버튼 실패....(사용자 웹브라우저의 위치 받기) -->
+    					<button id="sortByDistance">가까운 거리순 정렬</button>
+     
+    					
                             <div class="section-title">
-                                <h4>Categories</h4>
+                                <h4>카테고리</h4>
                             </div>
+                            
                             <div class="categories__accordion">
                                 <div class="accordion" id="accordionExample">
 									<div class="card">
@@ -169,184 +189,7 @@
 									    </div>
 									</div>
 									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseSix">모바일 및 태블릿</a>
-									    </div>
-									    <div id="collapseSix" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">스마트폰</a></li>
-									                <li><a href="#">태블릿PC</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
 									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseSeven">가전제품</a>
-									    </div>
-									    <div id="collapseSeven" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">냉장고</a></li>
-									                <li><a href="#">TV</a></li>
-									                <li><a href="#">세탁기</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseEight">노트북 및 PC</a>
-									    </div>
-									    <div id="collapseEight" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">노트북</a></li>
-									                <li><a href="#">데스크탑</a></li>
-									            </ul>
-									        </div>
-									    </div> 
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseNine">카메라 및 캠코더</a>
-									    </div>
-									    <div id="collapseNine" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">DSLR</a></li>
-									                <li><a href="#">미러리스</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseTen">가구 및 인테리어</a>
-									    </div>
-									    <div id="collapseTen" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">침실가구 (침대 등)</a></li>
-									                <li><a href="#">거실가구</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseEleven">리빙 및 생활용품</a>
-									    </div>
-									    <div id="collapseEleven" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">주방용품 (조리도구 등)</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseTwelve">게임</a>
-									    </div>
-									    <div id="collapseTwelve" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">PC게임</a></li>
-									                <li><a href="#">콘솔게임 (플레이스테이션 등)</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseThirteen">반려동물 및 취미</a>
-									    </div>
-									    <div id="collapseThirteen" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">반려동물 용품 (강아지용품 등)</a></li>
-									                <li><a href="#">키덜트 (피규어 등)</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseFourteen">도서 및 문구</a>
-									    </div>
-									    <div id="collapseFourteen" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">유아동 도서</a></li>
-									                <li><a href="#">학습서 및 참고서</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseFifteen">스포츠</a>
-									    </div>
-									    <div id="collapseFifteen" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">골프 용품</a></li>
-									                <li><a href="#">자전거</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseSixteen">레저 및 여행</a>
-									    </div>
-									    <div id="collapseSixteen" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">캠핑용품 (텐트 등)</a></li>
-									            </ul>
-									        </div>
-									    </div> 
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseSeventeen">오토바이</a>
-									    </div>
-									    <div id="collapseSeventeen" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">125cc 이하 오토바이</a></li> 
-									            </ul> 
-									        </div> 
-									    </div> 
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseEighteen">공구 및 산업용품</a> 
-									    </div> 
-									    <div id="collapseEighteen" class="collapse" data-parent="#accordionExample"> 
-									        <div class="card-body"> 
-									            <ul> 
-									                <li><a href="#">전동공구</a></li> 
-									            </ul> 
-									        </div> 
-									    </div> 
-									</div> 
 
                                     
                                     
@@ -355,14 +198,14 @@
                         </div>
                         <div class="sidebar__filter">
                             <div class="section-title">
-                                <h4>Shop by price</h4>
+                                <h4>가격</h4>
                             </div>
                             <div class="filter-range-wrap">
                                 <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
                                 data-min="0" data-max="999999999"></div>
                                 <div class="range-slider">
                                     <div class="price-input">
-                                        <p>Price:</p>
+                                        <p>가격:</p>
                                         <input type="text" id="minamount">
                                         <input type="text" id="maxamount">
                                     </div>
@@ -371,100 +214,8 @@
                             <br/>
                             <a href="#">Filter</a>
                         </div>
-                        <div class="sidebar__sizes">
-                            <div class="section-title">
-                                <h4>Shop by size</h4>
-                            </div>
-                            <div class="size__list">
-                                <label for="xxs">
-                                    xxs
-                                    <input type="checkbox" id="xxs">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="xs">
-                                    xs
-                                    <input type="checkbox" id="xs">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="xss">
-                                    xs-s
-                                    <input type="checkbox" id="xss">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="s">
-                                    s
-                                    <input type="checkbox" id="s">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="m">
-                                    m
-                                    <input type="checkbox" id="m">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="ml">
-                                    m-l
-                                    <input type="checkbox" id="ml">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="l">
-                                    l
-                                    <input type="checkbox" id="l">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="xl">
-                                    xl
-                                    <input type="checkbox" id="xl">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="sidebar__color">
-                            <div class="section-title">
-                                <h4>Shop by size</h4>
-                            </div>
-                            <div class="size__list color__list">
-                                <label for="black">
-                                    Blacks
-                                    <input type="checkbox" id="black">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="whites">
-                                    Whites
-                                    <input type="checkbox" id="whites">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="reds">
-                                    Reds
-                                    <input type="checkbox" id="reds">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="greys">
-                                    Greys
-                                    <input type="checkbox" id="greys">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="blues">
-                                    Blues
-                                    <input type="checkbox" id="blues">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="beige">
-                                    Beige Tones
-                                    <input type="checkbox" id="beige">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="greens">
-                                    Greens
-                                    <input type="checkbox" id="greens">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label for="yellows">
-                                    Yellows
-                                    <input type="checkbox" id="yellows">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                        </div>
+
+                        
                     </div>
                 </div>
                 
@@ -630,24 +381,96 @@
         var searchInfo = document.getElementById("searchInfo");
         var searchType = searchInfo.dataset.searchType;
         var searchKeyword = searchInfo.dataset.searchKeyword;
-
         console.log(searchType);
         console.log(searchKeyword);
         
+        // 체크박스 요소 가져오기
+        var availableOnlyCheckbox = document.getElementById("availableOnlyCheckbox");
+
+        // 체크박스 변경 시 이벤트 처리
+        availableOnlyCheckbox.addEventListener("change", function() {
+            const availableOnly = availableOnlyCheckbox.checked;  // 체크 상태 확인
+
+            // URL을 작성하여 페이지 리디렉션
+            const url = "/post/posts?searchType=" + searchType +
+                        "&searchKeyword=" + searchKeyword +
+                        (availableOnly ? "&availableOnly=true" : "");
+            
+            console.log("체크박스 클릭 후 URL:", url);  // 디버깅용 로그
+            window.location.href = url;  // 페이지 리디렉션
+        });
+        
+        
+        // 카테고리 클릭 시 리디렉션
         document.querySelectorAll(".category").forEach(category => {
             category.addEventListener("click", function() {
                 
             	// HTML 요소에서 data-category-seq 값 가져오기
             	const categorySeq = this.dataset.categorySeq;
-                console.log(categorySeq);
-
+                console.log("선택한 카테고리:", categorySeq);
+				
+                const availableOnly = availableOnlyCheckbox.checked;  // 체크박스 상태 유지
+                
                 // URL을 한번에 작성하여 페이지 리디렉션
-                const url = "/post/posts?searchType="+searchType+"&searchKeyword="+searchKeyword+"&categorySeq="+categorySeq;
+                const url = "/post/posts?searchType=" + searchType +
+                			"&searchKeyword=" + searchKeyword +
+                			"&categorySeq=" + categorySeq +
+                			(availableOnly ? "&availableOnly=true" : "");
                 window.location.href = url;  // 페이지 리디렉션
             });
         });
+        
+        
+        // 페이지 로드 시 URL 파라미터에서 availableOnly 값을 확인하여 체크박스 상태 설정
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('availableOnly') === 'true') {
+            availableOnlyCheckbox.checked = true;  // 체크박스 체크 상태 유지
+        }
     });
 	</script>
+	
+	<script>
+        document.getElementById('sortByDistance').addEventListener('click', function() {
+            // 위치정보 제공 동의 여부 확인
+            const userConsent = confirm("나의 현재 위치를 제공하는것에 동의하십니까?");
+
+            if (userConsent) {
+                // 위치 정보 요청
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    console.log("위도:", latitude);
+                    console.log("경도:", longitude);
+
+                    // 서버로 위치 정보 전송
+                    fetch('/post/location', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            latitude: latitude,
+                            longitude: longitude
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log("서버 응답:", data);
+                        // 서버 응답에 따라 페이지 업데이트나 다른 동작 수행 가능
+                    })
+                    .catch(error => {
+                        console.error("에러 발생:", error);
+                    });
+                }, (error) => {
+                    console.error("위치 정보를 가져오는 데 실패했습니다:", error);
+                    alert("위치 정보를 가져오는 데 실패했습니다. 위치 설정을 확인하세요.");
+                });
+            } else {
+                alert("위치 정보 제공을 거부하셨습니다.");
+            }
+        });
+    </script>
 
 
 </body>

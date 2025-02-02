@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchVO {
-	private String searchKeyword;
-	private String searchType;
-	private int	   categorySeq;
-	private String availableOnly;
+public class LocationVO {
+    private Double latitude;		//위도
+    private Double longitude;		//경도
 }
