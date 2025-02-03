@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60b5a80c355b99117a9426ef4296a8c&autoload=false&libraries=services,clusterer,drawing"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>바로바로 | baro-borrow</title>
@@ -170,6 +171,8 @@ body {
 							<th>대여 시간</th>
 							<th>반납 시간</th>
 							<th>가격</th>
+							<th>대여 장소</th>
+							<th>반납 장소</th>
 							<th>상태</th>
 						</tr>
 					</thead>
@@ -201,30 +204,22 @@ body {
         }
     </script>
 	<script>
+	
 	document.addEventListener('DOMContentLoaded', function () {
+		kakao.maps.load(() => {});
 	    const calendarEl     = document.getElementById('calendar');
 	    const timeSlotsEl    = document.getElementById('timeSlots');
 	    const selectedDateEl = document.getElementById('selected_date'); // 선택한 날짜 저장
 	    const postSeq        = $("#post_seq").val();
 	    var postJsonKey      = ${KEY_POST_JSON};
 	    
-	    // 서버에서 받은 rentTimes 데이터를 활용하여 availableDates 배열 생성
 	    var rentTimes = postJsonKey.rentTimes; // rentTimes 리스트
 	    var availableDates = [];
 	    
 	    var standardDate = new Date();
 	    
-        // rentTimes에서 rent_at만 추출하여 availableDates 배열에 저장
         rentTimes.forEach(function(slot) {
            var rentDate = new Date(slot.rent_at);
-           //const year = rentDate.getFullYear();  // 연도
-           //const month = rentDate.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
-           //const day = rentDate.getDate();  // 일
-           //rentDate >= new Date()
-           
-           //standardDate.getFullYear() <= rentDate.getFullYear()
-        	//	&& standardDate.getMonth() <= rentDate.getMonth()
-        		//&& standardDate.getDate() <= rentDate.getDate()
            if (standardDate <= rentDate) { // 오늘 날짜 이후의 rent_at만 활성화
         		const year = rentDate.getFullYear();  // 연도
                const month = rentDate.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
@@ -257,7 +252,6 @@ body {
 
                 // 오늘 이전 날짜 클릭 방지
                 if (clickedDate < today) return;
-				//console.log("avail: " + availableDates + " / " + clickedDate);
                 // availableDates 배열에 해당 날짜가 없으면 클릭 방지
                 if (!availableDates.includes(clickedDayStr)) {
                     info.jsEvent.preventDefault();  // 클릭 이벤트 취소
@@ -283,19 +277,15 @@ body {
                 }
             },
             datesSet: function() {
-          	    // 달력 페이지 변경 시 기존 타임슬롯 데이터만 지우고 테이블 구조는 유지
           	    $("#timeSlotBody").empty().append('<tr><td colspan="4">날짜를 선택하세요.</td></tr>');
             }
       });
-	    calendar.render();
+		calendar.render();
 	});
 
-	// fetchTimeSlots 함수 (document.ready() 필요 없음)
 	function fetchTimeSlots(selectedDate) {
-		// KEY_POST_JSON.rentTimes를 JavaScript 객체로 변환
 	    var postJsonKey = ${KEY_POST_JSON};
 	    var rentTimes   = postJsonKey.rentTimes;
-	    //console.log(rentTimes);
 	    
 	    $("#timeSlotBody").empty();
 	    
@@ -306,14 +296,10 @@ body {
 	            	&& selectedDate.getMonth() == rentAt.getMonth()
 	            	&& selectedDate.getDate() == rentAt.getDate()
 	    	){
-	    	//if (new Date(element.rent_at).toISOString().split('T')[0] == selectedDate) {
-	    		//var rentAt   = new Date(element.rent_at);
 		        var returnAt = new Date(element.return_at);
 		        var status   = element.status === 1 ? "예약 가능" : "예약 불가능";
-	    		// 시간 값 포맷팅 (ISO 문자열을 활용하여 시각 정보 추출 HH:mm 형식)
 		        var rentAtTime   = rentAt;
 		        var returnAtTime = returnAt;
-		        //console.log(rentAtTime, returnAtTime, status);  // 시간값 확인
 		        
 		        var button;
 	            if (element.status === 1) {
@@ -321,16 +307,66 @@ body {
 	            } else {
 	                button = "<button style=\"background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px;\" disabled>대여 불가능</button>";
 	            }
-		        
-		        
-		        var row = "<tr>" +
+	            
+	            
+	            
+				var rentLoc = document.createElement('div');   
+	           	rentLoc.style.width = "200px";   
+	           	rentLoc.style.height = "100px";  
+	            var returnLoc = document.createElement('div');   
+	            returnLoc.style.width = "200px";   
+	            returnLoc.style.height = "100px";  
+	            
+	            
+	            var $tr = $("<tr></tr>");
+	            $tr.append( $("<td></td>").text(rentAtTime.toLocaleString('ko-KR')) );
+	            $tr.append( $("<td></td>").text(returnAtTime.toLocaleString('ko-KR')) );
+	            $tr.append( $("<td></td>").text(element.price + "원") );
+	            var $rentTd = $("<td></td>").append(element.rent_location);
+	            $rentTd.append(rentLoc); // rentLoc는 이미 DOM 요소
+	            $tr.append($rentTd);
+	            var $returnTd = $("<td></td>").append(element.return_location);
+	            $returnTd.append(returnLoc);
+	            $tr.append($returnTd);
+	            $tr.append( $("<td></td>").html(button) );
+
+	            $("#timeSlotBody").append($tr);
+	            
+	            
+	            var rentMarker = {
+	            	    position: new kakao.maps.LatLng(element.rent_rotate_x, element.rent_rotate_y), 
+	            	    text: '대여 장소' // text 옵션을 설정하면 마커 위에 텍스트를 함께 표시할 수 있습니다
+	            	};
+	            
+	            var returnMarker = {
+	            	    position: new kakao.maps.LatLng(element.return_rotate_x, element.return_rotate_y), 
+	            	    text: '반납 장소' // text 옵션을 설정하면 마커 위에 텍스트를 함께 표시할 수 있습니다
+	            	};
+	            
+	            rentStaticMapOption = { 
+	                    center: new kakao.maps.LatLng(element.rent_rotate_x, element.rent_rotate_y), // 이미지 지도의 중심좌표
+	                    level: 3, // 이미지 지도의 확대 레벨
+	                    marker: rentMarker // 이미지 지도에 표시할 마커
+	                };
+	            returnStaticMapOption = { 
+	                    center: new kakao.maps.LatLng(element.return_rotate_x, element.return_rotate_y), // 이미지 지도의 중심좌표
+	                    level: 3, // 이미지 지도의 확대 레벨
+	                    marker: returnMarker // 이미지 지도에 표시할 마커
+	                };
+	            
+	            var rentMap = new kakao.maps.StaticMap(rentLoc, rentStaticMapOption);
+	            var returnMap = new kakao.maps.StaticMap(returnLoc, returnStaticMapOption);
+	            
+		        /* var row = "<tr>" +
 		        "<td>" + rentAtTime.toLocaleString('ko-KR') + "</td>" +
 		        "<td>" + returnAtTime.toLocaleString('ko-KR') + "</td>" +
 		        "<td>" + element.price + "원</td>" +
+		        "<td>" + element.rent_location + rentLoc.outerHTML + "</td>" +
+		        "<td>" + element.return_location + returnLoc.outerHTML + "</td>" +
 		        "<td>" + button + "</td>" +
 		        "</tr>";
 
-		        $("#timeSlotBody").append(row);
+		        $("#timeSlotBody").append(row); */
 		    }
 		});
 	    $(document).on("click", ".request-btn", function () {
