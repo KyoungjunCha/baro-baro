@@ -312,10 +312,10 @@ body {
 	            
 				var rentLoc = document.createElement('div');   
 	           	rentLoc.style.width = "200px";   
-	           	rentLoc.style.height = "100px";  
+	           	rentLoc.style.height = "150px";  
 	            var returnLoc = document.createElement('div');   
 	            returnLoc.style.width = "200px";   
-	            returnLoc.style.height = "100px";  
+	            returnLoc.style.height = "150px";  
 	            
 	            
 	            var $tr = $("<tr></tr>");
@@ -356,17 +356,6 @@ body {
 	            
 	            var rentMap = new kakao.maps.StaticMap(rentLoc, rentStaticMapOption);
 	            var returnMap = new kakao.maps.StaticMap(returnLoc, returnStaticMapOption);
-	            
-		        /* var row = "<tr>" +
-		        "<td>" + rentAtTime.toLocaleString('ko-KR') + "</td>" +
-		        "<td>" + returnAtTime.toLocaleString('ko-KR') + "</td>" +
-		        "<td>" + element.price + "원</td>" +
-		        "<td>" + element.rent_location + rentLoc.outerHTML + "</td>" +
-		        "<td>" + element.return_location + returnLoc.outerHTML + "</td>" +
-		        "<td>" + button + "</td>" +
-		        "</tr>";
-
-		        $("#timeSlotBody").append(row); */
 		    }
 		});
 	    $(document).on("click", ".request-btn", function () {

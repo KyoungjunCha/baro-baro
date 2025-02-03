@@ -155,20 +155,31 @@ public class PostController {
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
 		mav.addObject("KEY_POST", postVO);
 		ObjectMapper om = new ObjectMapper();
+		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		try {
 			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
-		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return mav;
 	}
+	
+	@RequestMapping(value =  "/post/{postSeq}/update", method = RequestMethod.GET)
+	public ModelAndView updatePostPage(@PathVariable("postSeq") long postSeq){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("pages/post/update_post");
+		PostVO postVO = postService.getPostByPostSeq(postSeq);
+		mav.addObject("KEY_POST", postVO);
+		ObjectMapper om = new ObjectMapper();
+		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
+		try {
+			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return mav;
+	}
+	
 	
 //						/post/posts
 	@RequestMapping(value = "/posts", method = RequestMethod.GET)
