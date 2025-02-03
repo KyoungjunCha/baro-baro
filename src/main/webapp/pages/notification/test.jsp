@@ -76,6 +76,14 @@
 		// SSE 연결에 오류가 있을 때
 		eventSource.onerror = function() {
 			console.error("SSE connection error.", event);
+			
+			// 연결이 닫혔을 경우 다시 연결 시도
+		    if (event.target.readyState === EventSource.CLOSED) {
+		        console.log("🔄 SSE 연결 재시도...");
+		        setTimeout(() => {
+		            eventSource = new EventSource("http://localhost:8081/notification/subscribe/" + userSeq);
+		        }, 5000);
+		    }
 		};
 
 		// 알림이 오면 오른쪽 상단에 표시

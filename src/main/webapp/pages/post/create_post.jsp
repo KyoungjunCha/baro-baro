@@ -49,8 +49,8 @@
         }
     </style>
 </head>
-<body>
 
+<body>    
     <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
         <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/create">
             <table id="post-table">
@@ -454,7 +454,6 @@
 	        });
 	    }); */
 	});
-    </script>
-
+   </script>
 </body>
 </html>
