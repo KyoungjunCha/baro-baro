@@ -12,4 +12,6 @@ public class SearchVO {
 	private String searchType;
 	private int	   categorySeq;
 	private String availableOnly;
+    private Double latitude;		//위도
+    private Double longitude;		//경도
 }

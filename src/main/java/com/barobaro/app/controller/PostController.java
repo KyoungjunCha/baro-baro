@@ -182,16 +182,24 @@ public class PostController {
 		int categorySeq = svo.getCategorySeq();
 		String availableOnly = svo.getAvailableOnly();
 		
+        Double latitude = svo.getLatitude();
+        Double longitude = svo.getLongitude();
+        
 		System.out.println("검색타입 : " + searchType + ", 검색어 : " + searchKeyword + ", 카테고리 선택 : " + categorySeq);
 		System.out.println("availableOnly : " + availableOnly);
+        System.out.println("받은 사용자 위치 정보:");
+        System.out.println("위도: " + latitude);
+        System.out.println("경도: " + longitude);
+        
+		List<PostVO> plist = postService.getPostBySearchCondition(searchKeyword, searchType, categorySeq, availableOnly, latitude, longitude);
 		
-		List<PostVO> plist = postService.getPostBySearchKeywordAndCategory(searchKeyword, searchType, categorySeq, availableOnly);
 		System.out.println(plist.toString());
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/search_post_list_test2");
 		mav.addObject("KEY_PLIST", plist);
 		mav.addObject("KEY_SEARCH", svo);
 		mav.addObject("availableOnly", availableOnly);
+		
 		return mav;
 	}
 	

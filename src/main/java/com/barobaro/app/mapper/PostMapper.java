@@ -18,6 +18,5 @@ public interface PostMapper {
 	int insertPostFileByPostFileVO(PostFileVO postFileVO);
 	PostVO selectPostByPostSeq(@Param("postSeq")long postSeq);
 	int incrementPostViewCount(@Param("postSeq")long postSeq);
-	List<PostVO> selectPostBySearchKeywordAndCategory(@Param("searchKeyword") String searchKeyword, @Param("searchType") String searchType, @Param("categorySeq") int categorySeq, @Param("availableOnly") String availableOnly);
-	//List<PostVO> selectPostOrderByNearestRentLocation(@Param("latitude") double latitude, @Param("longitude") double longitude);
+	List<PostVO> selectPostBySearchCondition(@Param("searchKeyword") String searchKeyword, @Param("searchType") String searchType, @Param("categorySeq") int categorySeq, @Param("availableOnly") String availableOnly, @Param("latitude") Double latitude, @Param("longitude") Double longitude);
 }

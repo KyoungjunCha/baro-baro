@@ -9,6 +9,5 @@ import com.barobaro.app.vo.PostVO;
 public interface PostService {
 	void createPost(PostVO postVO, List<MultipartFile> files);
 	PostVO getPostByPostSeq(long postSeq);
-	List<PostVO> getPostBySearchKeywordAndCategory(String searchKeyword, String searchType, int categorySeq, String availableOnly);
-	//List<PostVO> getPostByNearestRentLocation(Double latitude, Double longitude);
+	List<PostVO> getPostBySearchCondition(String searchKeyword, String searchType, int categorySeq, String availableOnly, Double latitude, Double longitude);
 }

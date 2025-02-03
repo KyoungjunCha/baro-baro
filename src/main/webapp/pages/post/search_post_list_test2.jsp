@@ -25,6 +25,30 @@
     <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+<style>
+.sort-button {
+  background-color: #e3f2fd;  /* 연한 하늘색 배경 */
+  color: #0277bd;            /* 짙은 하늘색 글자 */
+  border: 1px solid #81d4fa; /* 테두리 하늘색 */
+  border-radius: 8px;        /* 모서리 둥글게 */
+  padding: 10px 20px;        /* 안쪽 여백 */
+  font-size: 16px;           /* 글자 크기 */
+  cursor: pointer;           /* 마우스 오버 시 포인터 */
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.sort-button:hover {
+  background-color: #bbdefb; /* 호버 시 약간 진한 하늘색 */
+  border-color: #4fc3f7;    /* 테두리 더 진한 하늘색 */
+}
+
+.sort-button.active {
+  background-color: #0288d1; /* 활성화 시 진한 하늘색 */
+  color: #ffffff;            /* 글자 색상 흰색 */
+  border-color: #0277bd;     /* 테두리 짙은 하늘색 */
+}
+</style>
 </head>
 
 <body>
@@ -103,8 +127,8 @@
 						</label>
                         
 
-                        <!-- 거리순 정렬 버튼 실패....(사용자 웹브라우저의 위치 받기) -->
-    					<button id="sortByDistance">가까운 거리순 정렬</button>
+                        <!-- 거리순 정렬 버튼(사용자 웹브라우저의 위치 받기) -->
+    					<button class="sort-button" id="sortByDistance">가까운 거리순 정렬</button>
      
     					
                             <div class="section-title">
@@ -426,16 +450,12 @@
         if (urlParams.get('availableOnly') === 'true') {
             availableOnlyCheckbox.checked = true;  // 체크박스 체크 상태 유지
         }
-    });
-	</script>
-	
-	<script>
+        
+        // 거리순 정렬 버튼 (sortByDistance) 클릭 시 위치 기반 정렬
         document.getElementById('sortByDistance').addEventListener('click', function() {
-            // 위치정보 제공 동의 여부 확인
-            const userConsent = confirm("나의 현재 위치를 제공하는것에 동의하십니까?");
+            const userConsent = confirm("나의 현재 위치를 제공하는 것에 동의하십니까?");
 
             if (userConsent) {
-                // 위치 정보 요청
                 navigator.geolocation.getCurrentPosition((position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
@@ -443,25 +463,20 @@
                     console.log("위도:", latitude);
                     console.log("경도:", longitude);
 
-                    // 서버로 위치 정보 전송
-                    fetch('/post/location', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            latitude: latitude,
-                            longitude: longitude
-                        })
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        console.log("서버 응답:", data);
-                        // 서버 응답에 따라 페이지 업데이트나 다른 동작 수행 가능
-                    })
-                    .catch(error => {
-                        console.error("에러 발생:", error);
-                    });
+                    // 선택된 카테고리 및 체크박스 상태 유지
+                    const categorySeq = urlParams.get('categorySeq') || '';
+                    const availableOnly = availableOnlyCheckbox.checked ? 'true' : '';
+
+                    // 위치 정보와 함께 URL 작성 후 리디렉션
+                    const url = "/post/posts?searchType=" + searchType +
+                                "&searchKeyword=" + searchKeyword +
+                                (categorySeq ? "&categorySeq=" + categorySeq : "") +
+                                (availableOnly ? "&availableOnly=true" : "") +
+                                "&latitude=" + latitude + 
+                                "&longitude=" + longitude;
+
+                    console.log("위치 기반 정렬 URL:", url);
+                    window.location.href = url;
                 }, (error) => {
                     console.error("위치 정보를 가져오는 데 실패했습니다:", error);
                     alert("위치 정보를 가져오는 데 실패했습니다. 위치 설정을 확인하세요.");
@@ -470,7 +485,10 @@
                 alert("위치 정보 제공을 거부하셨습니다.");
             }
         });
-    </script>
+    });
+	</script>
+	
+
 
 
 </body>
