@@ -81,7 +81,9 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public List<PostVO> getPostBySearchKeyword(String searchKeyword, String searchType) {
-		return postMapper.selectPostBySearchKeyword(searchKeyword, searchType);
+	public List<PostVO> getPostBySearchCondition(String searchKeyword, String searchType, int categorySeq, String availableOnly, Double latitude, Double longitude) {
+		return postMapper.selectPostBySearchCondition(searchKeyword, searchType, categorySeq, availableOnly, latitude, longitude);
 	}
+	
+	
 }

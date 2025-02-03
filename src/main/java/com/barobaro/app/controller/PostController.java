@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
+
+import org.apache.ibatis.annotations.Param;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -21,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +37,7 @@ import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.CategoryService;
 import com.barobaro.app.service.PostService;
+import com.barobaro.app.vo.LocationVO;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.RentTimeSlotVO;
@@ -175,13 +179,41 @@ public class PostController {
 	public ModelAndView searchPost( @ModelAttribute SearchVO svo ) {
 		String searchKeyword = svo.getSearchKeyword();
 		String searchType = svo.getSearchType();
-		System.out.println("검색타입 : " + searchType + ", 검색어 : " + searchKeyword);
+		int categorySeq = svo.getCategorySeq();
+		String availableOnly = svo.getAvailableOnly();
 		
-		List<PostVO> plist = postService.getPostBySearchKeyword(searchKeyword, searchType);
+        Double latitude = svo.getLatitude();
+        Double longitude = svo.getLongitude();
+        
+		System.out.println("검색타입 : " + searchType + ", 검색어 : " + searchKeyword + ", 카테고리 선택 : " + categorySeq);
+		System.out.println("availableOnly : " + availableOnly);
+        System.out.println("받은 사용자 위치 정보:");
+        System.out.println("위도: " + latitude);
+        System.out.println("경도: " + longitude);
+        
+		List<PostVO> plist = postService.getPostBySearchCondition(searchKeyword, searchType, categorySeq, availableOnly, latitude, longitude);
+		
 		System.out.println(plist.toString());
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/search_post_list_test2");
 		mav.addObject("KEY_PLIST", plist);
+		mav.addObject("KEY_SEARCH", svo);
+		mav.addObject("availableOnly", availableOnly);
+		
 		return mav;
+	}
+	
+//						/post/location   사용자 위치 받아오기 테스트
+	@RequestMapping(value = "/location", method = RequestMethod.POST)
+    public void receiveLocation(@RequestBody LocationVO locationVO) {
+
+        Double latitude = locationVO.getLatitude();
+        Double longitude = locationVO.getLongitude();
+
+        if (latitude != null && longitude != null) {
+            System.out.println("받은 사용자 위치 정보:");
+            System.out.println("위도: " + latitude);
+            System.out.println("경도: " + longitude);
+        }
 	}
 }
