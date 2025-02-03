@@ -131,37 +131,81 @@
 	    </collection>
 	</resultMap>
     
-    <select id="selectPostBySearchKeyword" resultMap="postResultMap2">
+    <select id="selectPostBySearchCondition" resultMap="postResultMap2">
 		SELECT	p.TITLE, p.ITEM_CONTENT, p.RENT_CONTENT,
-	     		p.POST_AT, p.COUNT, p.PRODUCT_NAME,
+	     		p.POST_AT, p.COUNT, p.PRODUCT_NAME, p.POST_SEQ,
 	     		c.CATEGORY_NAME,
          		pf.STORAGE_PATH
+         		
 	    FROM POST p
+	    
 	    LEFT JOIN CATEGORY c 
 	    		ON p.CATEGORY_SEQ = c.CATEGORY_SEQ
+	    		
         LEFT JOIN (SELECT FILE_SEQ, STORAGE_PATH, POST_SEQ, 
         		   		  ROW_NUMBER() OVER (PARTITION BY POST_SEQ ORDER BY FILE_SEQ ASC) AS rownumber
-                   FROM POST_FILE) pf
+                   FROM POST_FILE
+                   ) pf
             	ON pf.rownumber = 1 AND p.POST_SEQ = pf.POST_SEQ
+
+		<if test=" availableOnly != null and availableOnly != '' and availableOnly = 'true' ">
+        RIGHT JOIN
+	       	( SELECT DISTINCT POST_SEQ
+	         FROM RENT_TIME_SLOT
+	         WHERE TIME_SLOT_SEQ IN (SELECT TIME_SLOT_SEQ
+	                                 FROM RENT_TIME_SLOT
+	                                 WHERE STATUS = 1 )
+	        ) RTS 
+        		ON p.POST_SEQ = RTS.POST_SEQ
+        </if>
+        
+        <if test=" latitude != null and latitude != '' and longitude != null and longitude != '' ">
+        RIGHT JOIN 
+        		(SELECT post_seq, max(
+		                    6371 * ACOS(
+		                    COS(${latitude} * 3.14159 / 180) *
+		                    COS(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180) *
+		                    COS((RENT_TIME_SLOT.RENT_ROTATE_Y - ${longitude}) * 3.14159 / 180) +
+		                    SIN(${latitude} * 3.14159 / 180) * SIN(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180))
+		        ) AS distance
+		        FROM RENT_TIME_SLOT
+		        GROUP BY post_seq
+		        ORDER BY distance asc
+		     ) st1 
+                ON st1.post_seq = p.post_seq
+        </if>
+        	
 		<where>
-            <if test="searchType == 'product'">
-						  p.TITLE LIKE '%' || #{searchKeyword} || '%'
+		    <if test=" categorySeq != null and categorySeq != '' ">
+		        c.CATEGORY_SEQ = #{categorySeq}
+		    </if>
+    
+            <if test=" searchType != null and searchType != '' and searchType == 'product'">
+				    AND ( p.TITLE LIKE '%' || #{searchKeyword} || '%'
 		        OR p.ITEM_CONTENT LIKE '%' || #{searchKeyword} || '%'
-		        OR p.PRODUCT_NAME LIKE '%' || #{searchKeyword} || '%'
+		        OR p.PRODUCT_NAME LIKE '%' || #{searchKeyword} || '%' )
 			</if>
 			
-			<if test="searchType == 'user'">
-				USER_SEQ = (SELECT USER_SEQ
-							FROM USER_TABLE
-							WHERE NICKNAME LIKE '%' || #{searchKeyword} || '%'
-							)
+			<if test="searchType != null and searchType != '' and searchType == 'user'">
+				AND USER_SEQ = (SELECT USER_SEQ
+								FROM USER_TABLE
+								WHERE NICKNAME LIKE '%' || #{searchKeyword} || '%'
+								)
 			</if>
 		</where>
-		ORDER BY COUNT DESC, POST_AT DESC
+		
+	    <if test=" latitude != null and latitude != '' and longitude != null and longitude != '' ">
+	        ORDER BY st1.distance ASC, p.COUNT DESC, p.POST_AT DESC
+	    </if>
+	    
+	    <if test=" latitude == null or latitude == '' or longitude == null or longitude == '' ">
+	        ORDER BY p.COUNT DESC, p.POST_AT DESC
+	    </if>
     </select>
     
     <resultMap id="postResultMap2" type="com.barobaro.app.vo.PostVO">
 	    <!-- 기본 필드 매핑 -->
+	    <id property="postSeq" 			column="post_seq"/>
 	    <result property="title" 		column="title"/>
 	    <result property="itemContent"  column="item_content"/>
 	    <result property="rentContent"  column="rent_content"/>
@@ -174,6 +218,27 @@
 	        <result property="storagePath" column="storage_path"/>
 	    </association>
 	</resultMap>
+	
+	<!-- 사용자의 위치에서 대여장소가 가까운 순으로 정렬 -->
+<!--   	<select id="selectPostOrderByNearestRentLocation" resultType="postResultMap2"> -->
+<!-- 	    <![CDATA[ -->
+<!-- 	    SELECT st1.*, st2.* -->
+<!-- 		FROM (SELECT post_seq, max( -->
+<!-- 		                    6371 * ACOS( -->
+<!-- 		                    COS(${latitude} * 3.14159 / 180) * -->
+<!-- 		                    COS(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180) * -->
+<!-- 		                    COS((RENT_TIME_SLOT.RENT_ROTATE_Y - ${longitude}) * 3.14159 / 180) + -->
+<!-- 		                    SIN(${latitude} * 3.14159 / 180) * SIN(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180)) -->
+<!-- 		        ) AS distance -->
+<!-- 		        FROM RENT_TIME_SLOT -->
+<!-- 		        GROUP BY post_seq -->
+<!-- 		        ORDER BY distance asc -->
+<!-- 		     )st1  -->
+<!-- 		        LEFT OUTER JOIN (SELECT * FROM post) st2 -->
+<!-- 		            ON st1.post_seq = st2.post_seq -->
+<!-- 		ORDER BY st1.distance asc -->
+<!--  		]]> -->
+<!--   	</select> -->
 </mapper>
 
 
