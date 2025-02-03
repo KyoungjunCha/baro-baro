@@ -316,7 +316,23 @@ body {
 	            var returnLoc = document.createElement('div');   
 	            returnLoc.style.width = "200px";   
 	            returnLoc.style.height = "100px";  
-	            console.log(element.rent_rotate_x, element.rent_rotate_y);
+	            
+	            
+	            var $tr = $("<tr></tr>");
+	            $tr.append( $("<td></td>").text(rentAtTime.toLocaleString('ko-KR')) );
+	            $tr.append( $("<td></td>").text(returnAtTime.toLocaleString('ko-KR')) );
+	            $tr.append( $("<td></td>").text(element.price + "원") );
+	            var $rentTd = $("<td></td>").append(element.rent_location);
+	            $rentTd.append(rentLoc); // rentLoc는 이미 DOM 요소
+	            $tr.append($rentTd);
+	            var $returnTd = $("<td></td>").append(element.return_location);
+	            $returnTd.append(returnLoc);
+	            $tr.append($returnTd);
+	            $tr.append( $("<td></td>").html(button) );
+
+	            $("#timeSlotBody").append($tr);
+	            
+	            
 	            var rentMarker = {
 	            	    position: new kakao.maps.LatLng(element.rent_rotate_x, element.rent_rotate_y), 
 	            	    text: '대여 장소' // text 옵션을 설정하면 마커 위에 텍스트를 함께 표시할 수 있습니다
@@ -337,24 +353,10 @@ body {
 	                    level: 3, // 이미지 지도의 확대 레벨
 	                    marker: returnMarker // 이미지 지도에 표시할 마커
 	                };
+	            
 	            var rentMap = new kakao.maps.StaticMap(rentLoc, rentStaticMapOption);
 	            var returnMap = new kakao.maps.StaticMap(returnLoc, returnStaticMapOption);
-	            	
-	            var $tr = $("<tr></tr>");
-	            $tr.append( $("<td></td>").text(rentAtTime.toLocaleString('ko-KR')) );
-	            $tr.append( $("<td></td>").text(returnAtTime.toLocaleString('ko-KR')) );
-	            $tr.append( $("<td></td>").text(element.price + "원") );
-	            var $rentTd = $("<td></td>").append(element.rent_location);
-	            $rentTd.append(rentLoc); // rentLoc는 이미 DOM 요소
-	            $tr.append($rentTd);
-	            var $returnTd = $("<td></td>").append(element.return_location);
-	            $returnTd.append(returnLoc);
-	            $tr.append($returnTd);
-	            $tr.append( $("<td></td>").html(button) );
-
-	            $("#timeSlotBody").append($tr);
-	            rentMap.relayout();
-	            returnMap.relayout();
+	            
 		        /* var row = "<tr>" +
 		        "<td>" + rentAtTime.toLocaleString('ko-KR') + "</td>" +
 		        "<td>" + returnAtTime.toLocaleString('ko-KR') + "</td>" +
