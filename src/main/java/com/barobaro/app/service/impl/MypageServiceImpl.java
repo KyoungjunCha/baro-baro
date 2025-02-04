@@ -28,32 +28,26 @@ public class MypageServiceImpl implements MypageService {
 	
 	@Override
 	public List<PostVO> svcGetAllMyPosts(int userSeq) {
-		System.out.println("유저 seq : " + userSeq);
-		System.out.println("제대로 나오나1 : " + userMapper.allPosts(userSeq));
 		return userMapper.allPosts(userSeq);
 	}
 
 	@Override
-	public List<NotificationVO> svcGetAllMyNotifications() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<NotificationVO> svcGetAllMyNotifications(int userSeq) {
+		return userMapper.allNotifications(userSeq);
 	}
 
 	@Override
-	public List<UserReviewAnswerVO> svcGetAllMyReviews() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<UserReviewAnswerVO> svcGetAllMyReviews(int userSeq) {
+		return userMapper.allAnswers(userSeq);
 	}
 
 	@Override
-	public List<FavoriteVO> svcGetAllMyFavorites() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<FavoriteVO> svcGetAllMyFavorites(int userSeq) {
+		return userMapper.allFavorites(userSeq);
 	}
 
 	@Override
-	public List<CommentVO> svcGetAllMyComments() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<CommentVO> svcGetAllMyComments(int userSeq) {
+		return userMapper.allComments(userSeq);
 	}	
 }

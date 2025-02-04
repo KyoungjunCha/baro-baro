@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.barobaro.app.service.NotificationService;
 import com.barobaro.app.vo.NotificationVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/notification")
