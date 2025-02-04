@@ -33,7 +33,7 @@ public class MypageServiceImpl implements MypageService {
 
 	@Override
 	public List<NotificationVO> svcGetAllMyNotifications(int userSeq) {
-		return userMapper.allNotification(userSeq);
+		return userMapper.allNotifications(userSeq);
 	}
 
 	@Override
