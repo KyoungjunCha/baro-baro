@@ -36,13 +36,21 @@ public class CommonCode {
 	
 	//session, addAttribute("user_info", userinfo)
 	@Data
-	@AllArgsConstructor
 	public static class UserInfo{
 		private long userSeq;
 		private String email;
-		private String nickname;
+		private String profile_nickname;
+		private String profile_image;
 		private UserStatus userStatus;
+		private Role userRole;
 	}
+//	@AllArgsConstructor
+//	public static class UserInfo{
+//		private long userSeq;
+//		private String email;
+//		private String nickname;
+//		private UserStatus userStatus;
+//	}
 	
 	
 	@AllArgsConstructor
