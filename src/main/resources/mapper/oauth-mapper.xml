@@ -4,92 +4,150 @@
 <!--  interface UserMapper.java를 사용할 경우 -->
 <mapper namespace="com.barobaro.app.mapper.UserMapper">
 
-    <!-- ResultMap for users_tbl and users_oauth -->
+    <!-- ResultMap for user_table and user_detail -->
     <resultMap id="userResultMap" type="com.barobaro.app.vo.UsersTblVO">
-        <id property="userSeq" 			column="user_seq" />
-        <result property="userEmail" 	column="user_email" />
-        <result property="userPw" 		column="user_pw" />
-        <result property="userName" 	column="user_name" />
-        <result property="userGubun" 	column="user_gubun" />
-        <result property="regdate" 		column="regdate" />
-        <result property="provider" 	column="provider" />
+        <id property="userSeq" 		column="user_seq" />
+        <result property="email" 	column="email" />
+        <result property="nickname" column="nickname" />
+        <result property="phone" 	column="phone" />
+        <result property="address" 	column="address" />
+        <result property="regdate" 	column="regdate" />
+        <result property="status" 	column="status" />
+        <result property="role" 	column="role" />
         <association property="usersOauthVO" javaType="com.barobaro.app.vo.UsersOauthVO" resultMap="oauthResultMap"/>
+        <collection property="postVO" javaType="List" resultMap="postResultMap"/>
     </resultMap>
-	<resultMap id="oauthResultMap" type="com.barobaro.app.vo.UsersOauthVO">
-	        <id property="userSeq" 				column="user_seq" />
-	        <result property="picture" 			column="picture" />
-	        <result property="access_token" 	column="accessToken" />
-	        <result property="refresh_token" 	column="refreshToken" />
-	        <result property="uptdate" 			column="uptdate" />
-	    </resultMap>
+
+<!--     <resultMap id="oauthResultMap" type="com.barobaro.app.vo.UsersOauthVO">
+        <id property="userSeq" column="user_seq" />
+        <result property="picture" column="picture" />
+        <result property="accessToken" column="access_token" />
+        <result property="refreshToken" column="refresh_token" />
+        <result property="uptdate" column="uptdate" />
+    </resultMap> -->
 	    
-	<!-- 전체회원 조회 -->  
-	<select id="allUser"   resultMap="userResultMap">
-		select u.user_seq, u.user_email, u.user_pw, u.user_name, u.user_gubun, u.regdate, u.provider
-		, o.picture, o.access_token, o.refresh_token
-		from users_tbl u, users_oauth o
-		where u.user_seq = o.user_seq(+)
-	</select>
+    <resultMap id="oauthResultMap" type="com.barobaro.app.vo.UsersOauthVO">
+        <id property="userSeq" 				column="user_seq" />
+        <result property="userDetailSeq" 	column="user_detail_seq" />
+        <result property="accessToken" 		column="access_token" />
+		<result property="refreshToken" 	column="refresh_token" />
+		<result property="regdate" 			column="regdate" />
+    </resultMap>    
 	
-	<!-- 일반유저 :: 비밀번호 변경  -->
-	<update id="updateUsersTbl" parameterType="com.barobaro.app.vo.UsersTblVO">
-		update users_tbl set user_pw=#{userPw} where user_email=#{userEmail}
-	</update>
+
+	<resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
+	    <id property="userSeq"			column="user_seq"/>
+	    <result property="title" 		column="title"/>
+	    <result property="itemContent" 	column="item_content"/>
+	    <result property="rentContent" 	column="rent_content"/>
+	    <result property="postAt" 		column="post_at"/>
+	    <result property="count" 		column="count"/>
+	    <result property="productName" 	column="product_name"/>
+	    <result property="categorySeq" 	column="category_seq"/>
+	    <result property="postSeq" 		column="post_seq"/>
+	</resultMap>
 	
-	<!-- 회원탈퇴 --> 
-	<delete id="userDelete" parameterType="int">
-        delete from users_oauth where user_seq=#{userSeq};
-        delete from users_tbl   where user_seq=#{userSeq};
+	<!-- 전체회원 조회 -->
+    <select id="allUser" resultMap="userResultMap">
+        select u.user_seq, u.email, u.nickname, u.phone, u.address, u.regdate, u.status, u.role,
+               o.access_token, o.refresh_token
+        from user_table u
+        left join user_detail o on u.user_seq = o.user_seq
+    </select>
+    
+    <!-- 내가 쓴 글 전체 조회 -->
+ 	<select id="allPosts" resultMap = "postResultMap">
+		select u.user_seq, p.post_seq, p.title, p.item_content, p.rent_content, p.post_at, p.count, p.product_name, p.category_seq
+		from post p
+		left join user_table u on u.user_seq = p.user_seq
+		where u.user_seq = #{userSeq}
+    </select>
+    
+    
+    <!-- 관리자 유저 권한 상태 -->
+    <update id="updateAdminUsersTbl" parameterType="com.barobaro.app.vo.UsersTblVO">
+        update user_table 
+        set role=#{role} ,status = #{status}
+        where user_seq=#{userSeq}
+    </update>
+	
+	
+	
+	<!-- 가입유저 주소, 전화번호 변경 -->
+    <update id="updateUsersTbl" parameterType="com.barobaro.app.vo.UsersTblVO">
+        update user_table 
+        set phone=#{phone} ,address = #{address}
+        where email=#{email}
+    </update>
+	
+	<!-- 회원탈퇴 -->
+    <delete id="userDelete" parameterType="int">
+        delete from user_detail where user_seq=#{userSeq};
+        delete from user_table where user_seq=#{userSeq};
     </delete>
-	
-	<!-- 일반회원 로그인 -->    
-	<select id="formLogin" parameterType="com.barobaro.app.vo.UsersTblVO" resultMap="userResultMap">
-		select * from users_tbl where user_email=#{userEmail} and user_pw=#{userPw}
-	</select>
+
+<!--     일반회원 로그인
+    <select id="formLogin" parameterType="com.barobaro.app.vo.UsersTblVO" resultMap="userResultMap">
+        select * from user_table where email=#{email} and user_pw=#{userPw}
+    </select> -->
 	
 	<!-- 일반회원 회원가입 -->
-	<insert id="formJoin" parameterType="com.barobaro.app.vo.UsersTblVO">
-		 INSERT INTO users_tbl (
-            user_seq, user_email, user_pw, user_name, provider
+    <!-- <insert id="formJoin" parameterType="com.barobaro.app.vo.UsersTblVO">
+        INSERT INTO user_table (
+            user_seq, email, user_pw, user_name, nickname, phone, address, status, role, provider
         ) VALUES (
-            users_tbl_seq.nextval, #{userEmail}, #{userPw}, #{userName}, #{provider}
+            user_table_seq.nextval, #{email}, #{userPw}, #{userName}, #{nickname}, #{phone}, #{address}, #{status}, #{role}, #{provider}
         )
-	</insert>
-	
-	<!-- OAuth :: 기존회원/신규회원 구분을 위한 DB조회 -->
-	<select id="findUserByEmail" parameterType="String"  resultMap="userResultMap">
-		SELECT * FROM users_tbl WHERE user_email = #{userEmail}
-	</select>
-	
-    <!-- OAuth/일반유저 :: 신규회원 회원가입 시 회원정보 저장  -->
+    </insert> -->
+
+    <!-- OAuth :: 기존회원/신규회원 구분을 위한 DB조회 -->
+    <select id="findUserByEmail" parameterType="String" resultMap="userResultMap">
+        SELECT * FROM user_table WHERE email = #{email}
+    </select>
+    
+    <select id="findUserByNickname" parameterType="String" resultMap="userResultMap">
+        SELECT * FROM user_table WHERE nickname = #{nickname}
+    </select>
+
+    <!-- OAuth/일반유저 :: 신규회원 회원가입 시 회원정보 저장 -->
     <insert id="insertUsersTbl" parameterType="com.barobaro.app.vo.UsersTblVO" useGeneratedKeys="false">
         <selectKey keyProperty="userSeq" resultType="int" order="BEFORE">
-            SELECT users_tbl_seq.NEXTVAL FROM dual
+            SELECT user_table_seq.NEXTVAL FROM dual
         </selectKey>
-        INSERT INTO users_tbl (
-            user_seq, user_email, user_pw, user_name, provider
+        INSERT INTO user_table (
+            user_seq, email, nickname, phone, address, status, role, provider, profile_image
         ) VALUES (
-            #{userSeq}, #{userEmail}, #{userPw}, #{userName}, #{provider}
+            #{userSeq}, #{email}, #{nickname}, #{phone}, #{address}, #{status}, #{role}, #{provider}, #{profile_image}
         )
     </insert>
-    
-    
-    <!-- OAuth :: 신규회원 토큰저장  -->
-    <insert id="insertUsersOauthTbl" parameterType="com.barobaro.app.vo.UsersOauthVO">
-        INSERT INTO users_oauth (
+
+    <!-- OAuth :: 신규회원 토큰저장 -->
+    <!-- <insert id="insertUsersOauthTbl" parameterType="com.barobaro.app.vo.UsersOauthVO">
+        INSERT INTO user_detail (
             user_seq, picture, access_token, refresh_token
         ) VALUES (
             #{userSeq}, #{picture}, #{accessToken}, #{refreshToken}
         )
+    </insert> -->
+    
+    <insert id="insertUsersOauthTbl" parameterType="com.barobaro.app.vo.UsersOauthVO" useGeneratedKeys="false">
+        <selectKey keyProperty="userSeq" resultType="int" order="BEFORE">
+            SELECT user_detail_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO user_detail (
+            user_detail_seq, user_seq, access_token, refresh_token
+        ) VALUES (
+            #{userDetailSeq}, #{userSeq}, #{accessToken}, #{refreshToken}
+        )
     </insert>
-     
-    <!-- OAuth :: 기존회원:토큰갱신  -->
-	<update id="updateUserOauthTbl" parameterType="com.barobaro.app.vo.UsersOauthVO">
-		UPDATE users_oauth 
-		SET picture=#{picture}, access_token = #{accessToken}, refresh_token = #{refreshToken} 
-		WHERE user_seq = #{userSeq} 
-	</update>
-	
+
+    <!-- OAuth :: 기존회원:토큰갱신 -->
+    <update id="updateUserOauthTbl" parameterType="com.barobaro.app.vo.UsersOauthVO">
+        UPDATE user_detail
+        SET access_token=#{accessToken}, refresh_token=#{refreshToken}
+        WHERE user_seq=#{userSeq}
+    </update>
+
 </mapper>
 
 
