@@ -13,6 +13,7 @@ import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.SearchVO;
 
 @Service
 public class PostServiceImpl implements PostService{
@@ -81,8 +82,8 @@ public class PostServiceImpl implements PostService{
 	}
 
 	@Override
-	public List<PostVO> getPostBySearchCondition(String searchKeyword, String searchType, int categorySeq, String availableOnly, Double latitude, Double longitude) {
-		return postMapper.selectPostBySearchCondition(searchKeyword, searchType, categorySeq, availableOnly, latitude, longitude);
+	public List<PostVO> getPostBySearchCondition(SearchVO searchVO) {
+		return postMapper.selectPostBySearchCondition(searchVO);
 	}
 	
 	
