@@ -3,6 +3,8 @@ package com.barobaro.app.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -165,13 +167,16 @@ public class PostController {
 		
 		for(KeywordVO kvo : keywordList) {
 			// 게시글에 키워드가 포함되어 있으면
-			if(postVO.getItemContent().contains(kvo.getContents())) {
+			if(postVO.getTitle().contains(kvo.getContents())) {
 				NotificationVO notification = new NotificationVO();
+				
 				// 키워드 설정한 사용자에게 알림
 				notification.setUserSeq(kvo.getUserSeq());
 				notification.setTitle("관심 키워드 알림");
-				notification.setContents("'" + kvo.getContents() + "' 키워드가 포함된 게시글이 등록되었습니다.");
-				
+				notification.setContents(kvo.getContents() + " - " + postVO.getTitle());
+				notification.setNotificationType("KEYWORD_MATCH");
+				notification.setIsRead(0);
+				notification.setCreatedAt(new Date(System.currentTimeMillis()));
 				System.out.print("----------" + notification);
 				notificationService.sendNotification(notification);
 			}

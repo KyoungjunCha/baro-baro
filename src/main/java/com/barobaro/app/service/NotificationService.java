@@ -12,4 +12,5 @@ public interface NotificationService {
 	public void markNotificationAsRead(int notificationSeq);
 	public SseEmitter subscribe(int userSeq);
 	public void sendNotification(NotificationVO nvo);
+	public List<NotificationVO> getAllNotifications(int userSeq);
 }

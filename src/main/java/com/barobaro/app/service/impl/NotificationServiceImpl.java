@@ -44,8 +44,8 @@ public class NotificationServiceImpl implements NotificationService {
 		SseEmitter emitter = new SseEmitter(30 * 60 * 1000L); // 30분 타임아웃
 		emitters.put(userSeq, emitter);
 
-		emitter.onTimeout(() -> emitters.remove(userSeq));
 		emitter.onCompletion(() -> emitters.remove(userSeq));
+		emitter.onTimeout(() -> emitters.remove(userSeq));
 
 		System.out.println("SSE 연결이 열렸습니다. 사용자 ID: " + userSeq);
 		return emitter;
@@ -53,7 +53,14 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void sendNotification(NotificationVO nvo) {
-		// 사용자에게 SSE로 알림 전송
+		try {
+			addNotification(nvo);
+			System.out.println("알림 저장: " + nvo.getTitle());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// 사용자에게 SSE로 실시간 알림 전송
 		SseEmitter emitter = emitters.get(nvo.getUserSeq());
 
 		if (emitter == null) {
@@ -65,13 +72,21 @@ public class NotificationServiceImpl implements NotificationService {
 			try {
 				String notificationJson = new ObjectMapper().writeValueAsString(nvo);
 				emitter.send(SseEmitter.event().name("notification").data(notificationJson));
-				System.out.println("Notification sent to user: " + nvo.getUserSeq());
+				System.out.println("알림 전송 완료: " + nvo.getUserSeq());
 			} catch (IOException e) {
-				System.err.println("Error sending notification: " + e.getMessage());
+				System.err.println("알림 전송 오류: " + e.getMessage());
 				emitters.remove(nvo.getUserSeq());
-			}
+			} catch (IllegalStateException e) {
+		        System.err.println("알림 전송 시 응답 오류: " + e.getMessage());
+		        emitters.remove(nvo.getUserSeq());
+		    }
 		});
 
+	}
+
+	@Override
+	public List<NotificationVO> getAllNotifications(int userSeq) {
+		return mapper.selectAllNotifications(userSeq);
 	}
 
 }
