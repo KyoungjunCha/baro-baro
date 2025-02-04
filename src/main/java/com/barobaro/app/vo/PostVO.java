@@ -23,6 +23,7 @@ public class PostVO {
 	private long userSeq;
 	private String categoryName;
 	private PostFileVO postImage;
+	private long pricePerTenMinute;
 	private List<PostFileVO> postImages;
 	private List<CommentTest> comments;
 	private List<RentTimeSlotVO> rentTimes; 

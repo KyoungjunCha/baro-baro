@@ -191,7 +191,7 @@ public class PostController {
         System.out.println("위도: " + latitude);
         System.out.println("경도: " + longitude);
         
-		List<PostVO> plist = postService.getPostBySearchCondition(searchKeyword, searchType, categorySeq, availableOnly, latitude, longitude);
+		List<PostVO> plist = postService.getPostBySearchCondition(svo);
 		
 		System.out.println(plist.toString());
 		ModelAndView mav = new ModelAndView();
@@ -199,6 +199,7 @@ public class PostController {
 		mav.addObject("KEY_PLIST", plist);
 		mav.addObject("KEY_SEARCH", svo);
 		mav.addObject("availableOnly", availableOnly);
+		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		
 		return mav;
 	}

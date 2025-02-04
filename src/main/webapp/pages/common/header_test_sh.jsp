@@ -71,7 +71,8 @@
 		    border: none;
 		    outline: none;
 		    padding: 10px;
-		    width: 250px;
+		    /* width: 250px; */
+		    width:100%
 		    font-size: 16px;
 		    border-radius: 20px;
 		    margin-right: 40px; /* 버튼과 간격을 위한 여백 */
