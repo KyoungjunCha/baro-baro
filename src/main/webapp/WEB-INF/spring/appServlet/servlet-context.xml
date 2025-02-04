@@ -23,6 +23,8 @@
 	<mvc:resources mapping="/img/**" location="/img/" />
 	<mvc:resources mapping="/js/**" location="/js/" />
 	<mvc:resources mapping="/uploads/**" location="file:///c:/uploads/" />
+	<mvc:resources mapping="/lec_oauth/**" location="/lec_oauth" />
+	
 	
 	
 	<bean id="MY_tomcat_ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

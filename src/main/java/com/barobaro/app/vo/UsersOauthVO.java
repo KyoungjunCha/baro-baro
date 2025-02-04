@@ -7,9 +7,11 @@ import lombok.Data;
 @Component   
 @Data     
 public class UsersOauthVO {
-	private int userSeq;
-	private String picture;
-	private String accessToken;
-	private String refreshToken;
-	private String uptdate;
+	private int userDetailSeq;
+	private int userSeq;       // user_seq
+    private String accessToken;// access_token
+    private String refreshToken; // refresh_token
+    private String regdate;
+//    private String uptdate;    // uptdate
+    
 }
