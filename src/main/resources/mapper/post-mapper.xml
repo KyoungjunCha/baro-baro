@@ -132,41 +132,56 @@
 	</resultMap>
     
     <select id="selectPostBySearchCondition" resultMap="postResultMap2">
+    
 		SELECT	p.TITLE, p.ITEM_CONTENT, p.RENT_CONTENT,
 	     		p.POST_AT, p.COUNT, p.PRODUCT_NAME, p.POST_SEQ,
 	     		c.CATEGORY_NAME,
          		pf.STORAGE_PATH
+         		, st2.price_per_ten_minute
+         		<!-- , ( SELECT
+					(SUM(rts.PRICE) / SUM((rts.RETURN_AT - rts.RENT_AT) * 1440)) * 10
+					FROM
+					RENT_TIME_SLOT rts
+					WHERE rts.post_seq = p.post_seq
+					) AS price_per_ten_minute -->
          		
 	    FROM POST p
-	    
 	    LEFT JOIN CATEGORY c 
 	    		ON p.CATEGORY_SEQ = c.CATEGORY_SEQ
-	    		
+	    LEFT OUTER JOIN (
+	    	SELECT
+					rts.post_seq , (SUM(rts.PRICE) / SUM((rts.RETURN_AT - rts.RENT_AT) * 1440)) * 10 AS price_per_ten_minute
+					FROM
+						RENT_TIME_SLOT rts
+					GROUP BY
+						rts.post_seq
+	    ) st2 ON p.post_seq = st2.post_seq
         LEFT JOIN (SELECT FILE_SEQ, STORAGE_PATH, POST_SEQ, 
         		   		  ROW_NUMBER() OVER (PARTITION BY POST_SEQ ORDER BY FILE_SEQ ASC) AS rownumber
                    FROM POST_FILE
                    ) pf
             	ON pf.rownumber = 1 AND p.POST_SEQ = pf.POST_SEQ
 
-		<if test=" availableOnly != null and availableOnly != '' and availableOnly = 'true' ">
+		<if test=" searchVO.availableOnly != null and searchVO.availableOnly != '' and searchVO.availableOnly == 'true' ">
         RIGHT JOIN
 	       	( SELECT DISTINCT POST_SEQ
 	         FROM RENT_TIME_SLOT
 	         WHERE TIME_SLOT_SEQ IN (SELECT TIME_SLOT_SEQ
 	                                 FROM RENT_TIME_SLOT
 	                                 WHERE STATUS = 1 )
+	               AND RENT_AT >= SYSDATE
 	        ) RTS 
         		ON p.POST_SEQ = RTS.POST_SEQ
         </if>
         
-        <if test=" latitude != null and latitude != '' and longitude != null and longitude != '' ">
+        <if test=" searchVO.latitude != null and searchVO.latitude != '' and searchVO.longitude != null and searchVO.longitude != '' ">
         RIGHT JOIN 
         		(SELECT post_seq, max(
 		                    6371 * ACOS(
-		                    COS(${latitude} * 3.14159 / 180) *
+		                    COS(${searchVO.latitude} * 3.14159 / 180) *
 		                    COS(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180) *
-		                    COS((RENT_TIME_SLOT.RENT_ROTATE_Y - ${longitude}) * 3.14159 / 180) +
-		                    SIN(${latitude} * 3.14159 / 180) * SIN(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180))
+		                    COS((RENT_TIME_SLOT.RENT_ROTATE_Y - ${searchVO.longitude}) * 3.14159 / 180) +
+		                    SIN(${searchVO.latitude} * 3.14159 / 180) * SIN(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180))
 		        ) AS distance
 		        FROM RENT_TIME_SLOT
 		        GROUP BY post_seq
@@ -176,29 +191,30 @@
         </if>
         	
 		<where>
-		    <if test=" categorySeq != null and categorySeq != '' ">
-		        c.CATEGORY_SEQ = #{categorySeq}
+		    <if test=" searchVO.categorySeq != null and searchVO.categorySeq != '' ">
+		        c.CATEGORY_SEQ = #{searchVO.categorySeq}
 		    </if>
     
-            <if test=" searchType != null and searchType != '' and searchType == 'product'">
-				    AND ( p.TITLE LIKE '%' || #{searchKeyword} || '%'
-		        OR p.ITEM_CONTENT LIKE '%' || #{searchKeyword} || '%'
-		        OR p.PRODUCT_NAME LIKE '%' || #{searchKeyword} || '%' )
+            <if test=" searchVO.searchType != null and searchVO.searchType != '' and searchVO.searchType == 'product'">
+				    AND ( p.TITLE LIKE '%' || #{searchVO.searchKeyword} || '%'
+		        OR p.ITEM_CONTENT LIKE '%' || #{searchVO.searchKeyword} || '%'
+		        OR p.PRODUCT_NAME LIKE '%' || #{searchVO.searchKeyword} || '%' )
 			</if>
 			
-			<if test="searchType != null and searchType != '' and searchType == 'user'">
-				AND USER_SEQ = (SELECT USER_SEQ
-								FROM USER_TABLE
-								WHERE NICKNAME LIKE '%' || #{searchKeyword} || '%'
-								)
+			<if test="searchVO.minPrice != null and searchVO.minPrice != ''">
+				AND st2.price_per_ten_minute <![CDATA[ >=]]> #{searchVO.minPrice}
+			</if>
+			
+			<if test="searchVO.maxPrice != null and searchVO.maxPrice != ''">
+				AND st2.price_per_ten_minute  <![CDATA[ <=]]> #{searchVO.maxPrice}
 			</if>
 		</where>
 		
-	    <if test=" latitude != null and latitude != '' and longitude != null and longitude != '' ">
+	    <if test=" searchVO.latitude != null and searchVO.latitude != '' and searchVO.longitude != null and searchVO.longitude != '' ">
 	        ORDER BY st1.distance ASC, p.COUNT DESC, p.POST_AT DESC
 	    </if>
 	    
-	    <if test=" latitude == null or latitude == '' or longitude == null or longitude == '' ">
+	    <if test=" searchVO.latitude == null or searchVO.latitude == '' or searchVO.longitude == null or searchVO.longitude == '' ">
 	        ORDER BY p.COUNT DESC, p.POST_AT DESC
 	    </if>
     </select>
@@ -213,6 +229,7 @@
 	    <result property="count" 		column="count"/>
 	    <result property="productName"  column="product_name"/>
 	    <result property="categoryName" column="category_name"/>
+	    <result property="pricePerTenMinute" column="price_per_ten_minute" />
 	    <!-- 하나의 사진만 매핑 (PostFileVO) -->
 	    <association property="postImage" javaType="com.barobaro.app.vo.PostFileVO">
 	        <result property="storagePath" column="storage_path"/>

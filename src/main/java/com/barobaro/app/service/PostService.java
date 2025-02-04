@@ -5,9 +5,10 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.SearchVO;
 
 public interface PostService {
 	void createPost(PostVO postVO, List<MultipartFile> files);
 	PostVO getPostByPostSeq(long postSeq);
-	List<PostVO> getPostBySearchCondition(String searchKeyword, String searchType, int categorySeq, String availableOnly, Double latitude, Double longitude);
+	List<PostVO> getPostBySearchCondition(SearchVO searchVO);
 }
