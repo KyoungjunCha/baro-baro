@@ -14,9 +14,6 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.annotations.Param;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.barobaro.app.common.CommonCode.Role;
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.mapper.PostMapper;
@@ -48,6 +46,7 @@ import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.RentTimeSlotVO;
 import com.barobaro.app.vo.SearchVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/post")
@@ -81,7 +80,7 @@ public class PostController {
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
 	public String login(@RequestParam("id") String id, @RequestParam("pw") String pw, HttpSession session) {
 		try {
-			session.setAttribute("user_info", new UserInfo(1, "test@test.com", "test nickname", UserStatus.ACTIVE));
+			session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		}catch(Exception e) {
 			return "redirect: /pages/test/login_fail.jsp";
 		}
@@ -98,7 +97,7 @@ public class PostController {
 	
 	@RequestMapping(value =  "/create_page", method = RequestMethod.GET)
 	public ModelAndView getCreatePostPage(HttpSession session) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
+		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		mav.setViewName("pages/post/create_post");
@@ -123,7 +122,7 @@ public class PostController {
             @RequestParam(value = "return_rotate_y[]", required = false) List<Double> returnRotateY,
             @RequestParam("ufile") List<MultipartFile> files
             ) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
+		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo)session.getAttribute("user_info");
 		PostVO postVO = PostVO.builder()
 				.title(title)
@@ -149,7 +148,7 @@ public class PostController {
 							.return_location(rentLocations.get(i))
 							.return_rotate_x(returnRotateX.get(i))
 							.return_rotate_y(rentRotateY.get(i))
-							.regid(userInfo.getNickname())
+							.regid(userInfo.getProfile_nickname())
 							.build());
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -194,16 +193,10 @@ public class PostController {
 		ObjectMapper om = new ObjectMapper();
 		try {
 			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
-		} catch (JsonGenerationException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return mav;
 	}
 	
