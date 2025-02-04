@@ -16,4 +16,6 @@ public interface NotificationMapper {
 	public List<NotificationVO> selectUnreadNotifications(int userSeq);
 	// 특정 알림 읽음 처리
 	public void markAsRead(int notificationSeq);
+	// 전체 알림 가져오기
+	public List<NotificationVO> selectAllNotifications(int userSeq);
 }
