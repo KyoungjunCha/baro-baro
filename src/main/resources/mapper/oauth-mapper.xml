@@ -60,6 +60,18 @@
 	</resultMap>
 	
 	
+	<resultMap id="userReviewAnswerResultMap" type="com.barobaro.app.vo.UserReviewAnswerVO">
+	    <id property="postSeq"						column="NOTIFICATION_SEQ"/>
+	    <result property="title" 					column="NOTIFICATION_TYPE"/>
+	    <result property="itemContent" 				column="TITLE"/>
+	    <result property="rentContent" 				column="CONTENTS"/>
+	    <result property="isRead" 					column="IS_READ"/>
+	    <result property="createdAt" 				column="CREATED_AT"/>
+	    <result property="link" 					column="LINK"/>
+	    <result property="userSeq" 					column="USER_SEQ"/>
+	</resultMap>
+	
+	
 	<!-- 전체회원 조회 -->
     <select id="allUser" resultMap="userResultMap">
         select u.user_seq, u.email, u.nickname, u.phone, u.address, u.regdate, u.status, u.role,
@@ -92,6 +104,17 @@
 		where user_seq = #{userSeq}
     </select>
     
+    
+    <!-- 내 리뷰 전체 조회 -->
+    <select id= "allAnswers" resultMap = "notificationResultMap">
+		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
+			CATEGORY_NAME 
+			FROM category cn
+			WHERE cn.category_seq = p.category_seq
+			) AS categoryName
+		from post p
+		where user_seq = #{userSeq}
+    </select>
     
     
     <!-- 관리자 유저 권한 상태 -->
