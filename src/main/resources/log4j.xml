@@ -32,7 +32,7 @@
 		<level value="info" />
 	</logger>
 	
-		<!-- Mybatis SQL 로그  -->
+	<!-- Mybatis SQL 로그 (sql문과 결과테이블 보여줌) -->
 	<logger name="jdbc.sqlonly" additivity="false">
 		<level value="info" />
 		<appender-ref ref="console" />
@@ -41,7 +41,7 @@
             <level value="info" /> 
             <appender-ref ref="console" />
     </logger>
-
+    
 	<!-- Root Logger -->
 	<root>
 		<priority value="warn" />

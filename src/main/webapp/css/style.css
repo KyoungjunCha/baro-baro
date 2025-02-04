@@ -1460,6 +1460,9 @@ ol {
 	background: #0d0d0d;
 	content: "";
 }
+.filter-range-wrap {
+	width: 300px;
+}
 
 .filter-range-wrap .range-slider .price-input input {
 	font-size: 16px;

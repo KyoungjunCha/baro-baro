@@ -177,19 +177,23 @@ Created: Colorib
     minamount = $("#minamount"),
     maxamount = $("#maxamount"),
     minPrice = rangeSlider.data('min'),
-    maxPrice = rangeSlider.data('max');
+    maxPrice = rangeSlider.data('max'); // 불필요한 공백 제거
+	$("#minamount").css("width", "100px");
+    $("#maxamount").css("width", "100px");
+    $("#price-input").css("width", "300px");
+    
     rangeSlider.slider({
     range: true,
     min: minPrice,
     max: maxPrice,
     values: [minPrice, maxPrice],
     slide: function (event, ui) {
-        minamount.val('$' + ui.values[0]);
-        maxamount.val('$' + ui.values[1]);
+        minamount.val(ui.values[0] + ' 원');
+        maxamount.val(ui.values[1] + ' 원');
         }
     });
-    minamount.val('$' + rangeSlider.slider("values", 0));
-    maxamount.val('$' + rangeSlider.slider("values", 1));
+    minamount.val(rangeSlider.slider("values", 0) + ' 원');
+    maxamount.val(rangeSlider.slider("values", 1) + ' 원');
 
     /*------------------
 		Single Product

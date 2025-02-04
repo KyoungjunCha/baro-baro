@@ -130,6 +130,10 @@ body {
 </head>
 
 <body>
+
+
+	<jsp:include page="/pages/common/header_test_sh.jsp" />
+
 	<div id="detail-post-container">
 		<div class="post-info-container">
 			<h1 class="post-title">${KEY_POST.title}</h1>
@@ -303,7 +307,7 @@ body {
 		        
 		        var button;
 	            if (element.status === 1) {
-	                button = "<button class=\"request-btn\" data-time-slot-seq=\"" + element.time_slot_seq + "\" style=\"background-color: blue; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;\">대여 가능</button>";
+	                button = "<button type=\"button\" class=\"request-btn\" data-time-slot-seq=\"" + element.time_slot_seq + "\" style=\"background-color: blue; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;\">대여 가능</button>";
 	            } else {
 	                button = "<button style=\"background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px;\" disabled>대여 불가능</button>";
 	            }
@@ -357,10 +361,34 @@ body {
 	            var rentMap = new kakao.maps.StaticMap(rentLoc, rentStaticMapOption);
 	            var returnMap = new kakao.maps.StaticMap(returnLoc, returnStaticMapOption);
 		    }
-		});
-	    $(document).on("click", ".request-btn", function () {
-	        var timeSlotSeq = $(this).data("time-slot-seq");
+	    	const buttons = document.querySelectorAll(".request-btn");
 
+	        // 각 버튼에 클릭 이벤트 리스너 추가
+	        buttons.forEach(button => {
+	          button.addEventListener("click", function() {
+	        	var timeSlotSeq = $(this).data("time-slot-seq");  
+	        	console.log('히히: ' + timeSlotSeq);
+	        	if (confirm("예약을 요청보낼까요?")) {
+		            $.ajax({
+		                url: "/reservation/request-reservation",
+		                type: "POST",
+		                data: { timeSlotSeq: timeSlotSeq },
+		                success: function (response) {
+							console.log(response);	                	
+		                    alert(response);
+		                    location.reload(); // 페이지 새로고침 (필요 시)
+		                },
+		                error: function (xhr, status, error) {
+		                    alert("예약 요청에 실패했습니다." + xhr.responseText);
+		                }
+		            });
+		        }
+	          });
+	        });
+		});
+	    /* $(document).on("click", ".request-btn", function () {
+	        var timeSlotSeq = $(this).data("time-slot-seq");
+			
 	        // 확인 알림창 띄우기
 	        if (confirm("예약을 요청보낼까요?")) {
 	            $.ajax({
@@ -377,7 +405,7 @@ body {
 	                }
 	            });
 	        }
-	    });
+	    }); */
 	}
 </script>
 
