@@ -3,6 +3,8 @@ package com.barobaro.app.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,9 +14,6 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.annotations.Param;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,16 +31,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.barobaro.app.common.CommonCode.Role;
 import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.CategoryService;
+import com.barobaro.app.service.KeywordService;
+import com.barobaro.app.service.NotificationService;
 import com.barobaro.app.service.PostService;
+import com.barobaro.app.vo.KeywordVO;
+import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.LocationVO;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.RentTimeSlotVO;
 import com.barobaro.app.vo.SearchVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/post")
@@ -52,6 +57,12 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+	
+	@Autowired
+	private NotificationService notificationService;
+	
+	@Autowired
+	private KeywordService keywordService;
 
 	
 //	@Autowired
@@ -69,7 +80,7 @@ public class PostController {
 	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
 	public String login(@RequestParam("id") String id, @RequestParam("pw") String pw, HttpSession session) {
 		try {
-			session.setAttribute("user_info", new UserInfo(1, "test@test.com", "test nickname", UserStatus.ACTIVE));
+			session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		}catch(Exception e) {
 			return "redirect: /pages/test/login_fail.jsp";
 		}
@@ -86,7 +97,7 @@ public class PostController {
 	
 	@RequestMapping(value =  "/create_page", method = RequestMethod.GET)
 	public ModelAndView getCreatePostPage(HttpSession session) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
+		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		mav.setViewName("pages/post/create_post");
@@ -111,7 +122,7 @@ public class PostController {
             @RequestParam(value = "return_rotate_y[]", required = false) List<Double> returnRotateY,
             @RequestParam("ufile") List<MultipartFile> files
             ) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname", UserStatus.ACTIVE));
+		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo)session.getAttribute("user_info");
 		PostVO postVO = PostVO.builder()
 				.title(title)
@@ -137,7 +148,7 @@ public class PostController {
 							.return_location(rentLocations.get(i))
 							.return_rotate_x(returnRotateX.get(i))
 							.return_rotate_y(rentRotateY.get(i))
-							.regid(userInfo.getNickname())
+							.regid(userInfo.getProfile_nickname())
 							.build());
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -149,6 +160,27 @@ public class PostController {
 
 		mav.setStatus(HttpStatus.CREATED);
 		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
+		
+		// 관심 키워드 알림
+		List<KeywordVO> keywordList = keywordService.getKeywordsByUserSeq(1001);
+		
+		for(KeywordVO kvo : keywordList) {
+			// 게시글에 키워드가 포함되어 있으면
+			if(postVO.getTitle().contains(kvo.getContents())) {
+				NotificationVO notification = new NotificationVO();
+				
+				// 키워드 설정한 사용자에게 알림
+				notification.setUserSeq(kvo.getUserSeq());
+				notification.setTitle("관심 키워드 알림");
+				notification.setContents(kvo.getContents() + " - " + postVO.getTitle());
+				notification.setNotificationType("KEYWORD_MATCH");
+				notification.setIsRead(0);
+				notification.setCreatedAt(new Date(System.currentTimeMillis()));
+				System.out.print("----------" + notification);
+				notificationService.sendNotification(notification);
+			}
+		}
+		
 		return mav;
 	}
 	
@@ -159,31 +191,14 @@ public class PostController {
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
 		mav.addObject("KEY_POST", postVO);
 		ObjectMapper om = new ObjectMapper();
-		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		try {
 			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		return mav;
 	}
-	
-	@RequestMapping(value =  "/post/{postSeq}/update", method = RequestMethod.GET)
-	public ModelAndView updatePostPage(@PathVariable("postSeq") long postSeq){
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("pages/post/update_post");
-		PostVO postVO = postService.getPostByPostSeq(postSeq);
-		mav.addObject("KEY_POST", postVO);
-		ObjectMapper om = new ObjectMapper();
-		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
-		try {
-			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		return mav;
-	}
-	
 	
 //						/post/posts
 	@RequestMapping(value = "/posts", method = RequestMethod.GET)
