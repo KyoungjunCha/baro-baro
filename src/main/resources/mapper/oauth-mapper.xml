@@ -36,16 +36,29 @@
 	
 
 	<resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
-	    <id property="userSeq"			column="user_seq"/>
+	    <id property="postSeq"			column="post_seq"/>
 	    <result property="title" 		column="title"/>
 	    <result property="itemContent" 	column="item_content"/>
 	    <result property="rentContent" 	column="rent_content"/>
 	    <result property="postAt" 		column="post_at"/>
 	    <result property="count" 		column="count"/>
 	    <result property="productName" 	column="product_name"/>
-	    <result property="categorySeq" 	column="category_seq"/>
-	    <result property="postSeq" 		column="post_seq"/>
+	    <result property="categoryName" 	column="categoryName"/>
+	    <result property="userSeq" 		column="user_seq"/>
 	</resultMap>
+	
+	
+	<resultMap id="notificationResultMap" type="com.barobaro.app.vo.NotificationVO">
+	    <id property="notificationSeq"				column="NOTIFICATION_SEQ"/>
+	    <result property="notificationType" 		column="NOTIFICATION_TYPE"/>
+	    <result property="title" 					column="TITLE"/>
+	    <result property="contents" 				column="CONTENTS"/>
+	    <result property="isRead" 					column="IS_READ"/>
+	    <result property="createdAt" 				column="CREATED_AT"/>
+	    <result property="link" 					column="LINK"/>
+	    <result property="userSeq" 					column="USER_SEQ"/>
+	</resultMap>
+	
 	
 	<!-- 전체회원 조회 -->
     <select id="allUser" resultMap="userResultMap">
@@ -55,13 +68,30 @@
         left join user_detail o on u.user_seq = o.user_seq
     </select>
     
+	
+    
     <!-- 내가 쓴 글 전체 조회 -->
  	<select id="allPosts" resultMap = "postResultMap">
-		select u.user_seq, p.post_seq, p.title, p.item_content, p.rent_content, p.post_at, p.count, p.product_name, p.category_seq
+		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
+			CATEGORY_NAME 
+			FROM category cn
+			WHERE cn.category_seq = p.category_seq
+			) AS categoryName
 		from post p
-		left join user_table u on u.user_seq = p.user_seq
-		where u.user_seq = #{userSeq}
+		where user_seq = #{userSeq}
     </select>
+    
+    <!-- 내 알림 전체 조회 -->
+    <select id= "allNotifications" resultMap = "notificationResultMap">
+		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
+			CATEGORY_NAME 
+			FROM category cn
+			WHERE cn.category_seq = p.category_seq
+			) AS categoryName
+		from post p
+		where user_seq = #{userSeq}
+    </select>
+    
     
     
     <!-- 관리자 유저 권한 상태 -->

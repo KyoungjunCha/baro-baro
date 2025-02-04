@@ -11,6 +11,18 @@
 <title>Insert title here</title>
 </head>
 <body>
+<style>
+	table {
+	    width: 100%;
+	    border-collapse: collapse;
+	}
+	
+	th, td {
+	    padding: 8px;
+	    border: 1px solid #ddd;
+	    text-align: left;
+	}
+</style>
 <h1>My Page</h1><hr>
 
 <p>세션 이메일: ${sessionScope['SESS_EMAIL']}</p>
@@ -53,12 +65,15 @@
 	<input type="submit" value="로그아웃">
 </form>	
 
-
+<button id="mypostBtn" onClick="loadPosts()">
+	내 글 정보 가져오기
+</button>
 
 <table id="postTable">
 	<thead>
 		<tr>
 			<th>대여품 번호</th>
+			<th>유저 번호</th>
 			<th>대여품 제목</th>
 			<th>대여품 아이템스펙</th>
 			<th>대여품 내용</th>
@@ -66,10 +81,14 @@
 			<th>대여품 조회수</th>
 			<th>대여품 이름</th>
 			<th>대여품 카테고리</th>
+			<th>대여품 코멘트</th>
+			<th>대여품 이미지1</th>
+			<th>대여품 이미지2</th>
+			<th>대여품 대여시간</th>
 		</tr>
 	</thead>
 	<tbody>
-	
+		
 	</tbody>
 </table>
 
@@ -103,27 +122,44 @@
             height: '100%'
         }).embed(document.getElementById('addressWrap'));
     }
-
-    // AJAX 요청으로 게시물 목록을 가져오는 함수
+    
+    
     function loadPosts() {
         fetch('/myposts') // 서버로 AJAX 요청 보내기
             .then(response => response.json())  // JSON 형식으로 응답 받기
             .then(posts => {
+            	console.log("hear1: ",posts);
                 const postTable = document.querySelector('#postTable tbody');
+                console.log(postTable); // 제대로 선택되었는지 확인
+                console.log("hear",posts);
                 postTable.innerHTML = ''; // 기존 게시물 목록 초기화
 
                 // 가져온 게시물 목록을 테이블에 추가
                 posts.forEach(post => {
-                    const row = document.createElement('tr');
+                	console.log(post);
+                	const postDate = new Date(post.postAt);
+                    const formattedDate = postDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
+					
+                   	console.log(post.title);
+                   	console.log(formattedDate);
+                   	
+                   	
+                   	
+                    const row = document.createElement('td');
                     row.innerHTML = `
-                        <td>${post.postSeq}</td>
-                        <td>${post.title}</td>
-                        <td>${post.itemContent}</td>
+                    	<td>${post.postSeq}</td>
+                    	<td>${post.title}</td>
+                    	<td>${post.userSeq}</td>
+                    	<td>${post.itemContent}</td>
                         <td>${post.rentContent}</td>
-                        <td>${post.postAt}</td>
+                        <td>${formattedDate}</td>
                         <td>${post.count}</td>
                         <td>${post.productName}</td>
-                        <td>${post.categorySeq}</td>
+                        <td>${post.categoryName}</td>
+                    	<td>${post.comment}</td>
+                    	<td>${post.postImage}</td>
+                    	<td>${post.postImages}</td>
+                    	<td>${post.rentTimes}</td>
                     `;
                     postTable.appendChild(row);
                 });
@@ -131,8 +167,6 @@
             .catch(error => console.error('Error loading posts:', error));
     }
 
-    // 페이지 로드 시 게시물 목록을 자동으로 가져오기
-    window.onload = loadPosts;
 </script>
 
 
