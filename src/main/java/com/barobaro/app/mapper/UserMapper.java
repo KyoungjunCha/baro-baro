@@ -1,16 +1,17 @@
 package com.barobaro.app.mapper;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.barobaro.app.vo.CommentVO;
+import com.barobaro.app.vo.FavoriteVO;
+import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.UserReviewAnswerVO;
 import com.barobaro.app.vo.UsersOauthVO;
 import com.barobaro.app.vo.UsersTblVO;
 
@@ -37,6 +38,11 @@ public interface UserMapper {
     public void updateUserOauthTbl(UsersOauthVO usersOauthVO);
 	
 	
-    public ArrayList<PostVO> allPosts(int userSeq);
+    public List<PostVO> allPosts(@Param("userSeq") int userSeq);
+    public List<FavoriteVO> allFavorites(@Param("userSeq") int userSeq);
+    public List<CommentVO> allComments(@Param("userSeq") int userSeq);
+    public List<UserReviewAnswerVO> allAnswers(@Param("userSeq") int userSeq);
+    public List<NotificationVO> allNotifications(@Param("userSeq") int userSeq);
+    
     
 }

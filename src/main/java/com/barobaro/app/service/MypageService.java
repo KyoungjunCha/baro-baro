@@ -24,16 +24,16 @@ public interface MypageService {
 	public List<PostVO> svcGetAllMyPosts(int userSeq);
 	
 	//나에게 오는 모든 알림
-	public List<NotificationVO> svcGetAllMyNotifications();
+	public List<NotificationVO> svcGetAllMyNotifications(int userSeq);
 	
 	//내가 작성한 리뷰
-	public List<UserReviewAnswerVO> svcGetAllMyReviews();
+	public List<UserReviewAnswerVO> svcGetAllMyReviews(int userSeq);
 	
 	//내가 추가한 즐겨찾기
-	public List<FavoriteVO> svcGetAllMyFavorites();
+	public List<FavoriteVO> svcGetAllMyFavorites(int userSeq);
 	
 	//내가 작성한 댓글
-	public List<CommentVO> svcGetAllMyComments();
+	public List<CommentVO> svcGetAllMyComments(int userSeq);
 	
 	
 }
