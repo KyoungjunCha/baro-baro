@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.codehaus.jackson.map.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.barobaro.app.mapper.NotificationMapper;
 import com.barobaro.app.service.NotificationService;
 import com.barobaro.app.vo.NotificationVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {

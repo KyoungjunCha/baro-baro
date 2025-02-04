@@ -249,7 +249,7 @@
 	        const userSeq = 1001; // 로그인된 사용자 ID (서버에서 동적으로 설정해야 함)
 	
 	        // SSE 연결
-	        const eventSource = new EventSource("http://localhost:8081/notification/subscribe/" + userSeq);
+	        const eventSource = new EventSource("http://localhost:8089/notification/subscribe/" + userSeq);
 	
 	     	// SSE 연결에 오류가 있을 때
 	    	eventSource.onerror = function(event) {
@@ -259,7 +259,7 @@
 	    	    if (event.target.readyState === EventSource.CLOSED) {
 	    	        console.log("SSE 연결 재시도...");
 	    	        setTimeout(() => {
-	    	            eventSource = new EventSource("http://localhost:8081/notification/subscribe/" + userSeq);
+	    	            eventSource = new EventSource("http://localhost:8089/notification/subscribe/" + userSeq);
 	    	        }, 5000);
 	    	    }
 	    	};
