@@ -9,6 +9,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <style>
@@ -72,19 +73,41 @@
 <table id="postTable">
 	<thead>
 		<tr>
-			<th>대여품 번호</th>
-			<th>유저 번호</th>
+
 			<th>대여품 제목</th>
 			<th>대여품 아이템스펙</th>
-			<th>대여품 내용</th>
+			<th>대여품 공지사항</th>
 			<th>대여품 작성시간</th>
 			<th>대여품 조회수</th>
 			<th>대여품 이름</th>
 			<th>대여품 카테고리</th>
 			<th>대여품 코멘트</th>
 			<th>대여품 이미지1</th>
-			<th>대여품 이미지2</th>
-			<th>대여품 대여시간</th>
+			<th>대여시작일</th>
+			<th>대여반납일</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+	</tbody>
+</table>
+
+
+<table id="favoriteTable">
+	<thead>
+		<tr>
+
+			<th>대여품 제목</th>
+			<th>대여품 아이템스펙</th>
+			<th>대여품 공지사항</th>
+			<th>대여품 작성시간</th>
+			<th>대여품 조회수</th>
+			<th>대여품 이름</th>
+			<th>대여품 카테고리</th>
+			<th>대여품 코멘트</th>
+			<th>대여품 이미지1</th>
+			<th>대여시작일</th>
+			<th>대여반납일</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -94,6 +117,7 @@
 
 
 
+<a href = "/pages/post/my_rent_post.jsp">나의 대여 예약현황</a>
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
@@ -122,51 +146,113 @@
             height: '100%'
         }).embed(document.getElementById('addressWrap'));
     }
+</script>
     
-    
-    function loadPosts() {
-        fetch('/myposts') // 서버로 AJAX 요청 보내기
-            .then(response => response.json())  // JSON 형식으로 응답 받기
-            .then(posts => {
-            	console.log("hear1: ",posts);
-                const postTable = document.querySelector('#postTable tbody');
-                console.log(postTable); // 제대로 선택되었는지 확인
-                console.log("hear",posts);
-                postTable.innerHTML = ''; // 기존 게시물 목록 초기화
+<script>    
+function loadPosts() {
+    // AJAX로 데이터를 가져옵니다
+    $.ajax({
+        url: '/myposts', // 서버에서 게시물 목록을 받아올 URL
+        method: 'GET',  // GET 요청
+        success: function(posts) {
+            console.log(posts); // 받아온 게시물 로그 출력
 
-                // 가져온 게시물 목록을 테이블에 추가
-                posts.forEach(post => {
-                	console.log(post);
-                	const postDate = new Date(post.postAt);
-                    const formattedDate = postDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
+            // 테이블의 tbody를 비우고 새롭게 데이터 추가
+            const postTable = $('#postTable tbody');
+            postTable.empty();
+
+            // 게시물 데이터를 테이블에 추가
+            posts.forEach(post => {
+                const postDate = new Date(post.postAt);
+                const formattedDate = postDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
+
+                var rentAt = post.rentTimes[0].rent_at ? new Date(post.rentTimes[0].rent_at).toLocaleString() : '없음';
+                const formattedRentAt = rentAt.toLocaleString();
 					
-                   	console.log(post.title);
-                   	console.log(formattedDate);
-                   	
-                   	
-                   	
-                    const row = document.createElement('td');
-                    row.innerHTML = `
-                    	<td>${post.postSeq}</td>
-                    	<td>${post.title}</td>
-                    	<td>${post.userSeq}</td>
-                    	<td>${post.itemContent}</td>
-                        <td>${post.rentContent}</td>
-                        <td>${formattedDate}</td>
-                        <td>${post.count}</td>
-                        <td>${post.productName}</td>
-                        <td>${post.categoryName}</td>
-                    	<td>${post.comment}</td>
-                    	<td>${post.postImage}</td>
-                    	<td>${post.postImages}</td>
-                    	<td>${post.rentTimes}</td>
-                    `;
-                    postTable.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error loading posts:', error));
-    }
+                var returnAt = post.rentTimes[0].return_at ? new Date(post.rentTimes[0].return_at).toLocaleString() : '없음';
+                const formattedReturnAt = returnAt.toLocaleString();
+                
+                const row = $('<tr>');  // 새 행(<tr>) 생성
 
+/*                 <td>${'${post.postSeq}'}</td>
+                <td>${'${post.userSeq}'}</td> */
+                // 데이터 추가
+                row.append(`
+                    <td><a href = "/post/post/${'${post.postSeq}'}"> ${'${post.title}'}</a></td>
+                    <td>${'${post.itemContent}'}</td>
+                    <td>${'${post.rentContent}'}</td>
+                    <td>${'${formattedDate}'}</td>
+                    <td>${'${post.count}'}</td>
+                    <td>${'${post.productName}'}</td>
+                    <td>${'${post.categoryName}'}</td>
+                    <td>${'${post.comment || "없음"}'}</td>  <!-- 댓글이 비어 있으면 '없음' 표시 -->
+                    <td>${'${post.postImage || "없음"}'}</td> <!-- 이미지가 비어 있으면 '없음' 표시 -->
+                    <td>${'${formattedRentAt.length ? formattedRentAt : "없음"}'}</td> <!-- 첫 번째 대여 시간 또는 '없음' 표시 -->
+                    <td>${'${formattedReturnAt.length ? formattedReturnAt : "없음"}'}</td> <!-- 첫 번째 대여 시간 또는 '없음' 표시 -->
+                `);
+
+                // 행을 테이블에 추가
+                postTable.append(row);
+            });
+        },
+        error: function(error) {
+            console.error('Error loading posts:', error);
+        }
+    });
+}
+
+
+function loadFavorites() {
+    // AJAX로 데이터를 가져옵니다
+    $.ajax({
+        url: '/myfavorite', // 서버에서 게시물 목록을 받아올 URL
+        method: 'GET',  // GET 요청
+        success: function(favorites) {
+            console.log(favorites); // 받아온 게시물 로그 출력
+
+            // 테이블의 tbody를 비우고 새롭게 데이터 추가
+            const postTable = $('#favoriteTable tbody');
+            postTable.empty();
+
+            // 게시물 데이터를 테이블에 추가
+            posts.forEach(post => {
+                const postDate = new Date(post.postAt);
+                const formattedDate = postDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
+
+                var rentAt = post.rentTimes[0].rent_at ? new Date(post.rentTimes[0].rent_at).toLocaleString() : '없음';
+                const formattedRentAt = rentAt.toLocaleString();
+					
+                var returnAt = post.rentTimes[0].return_at ? new Date(post.rentTimes[0].return_at).toLocaleString() : '없음';
+                const formattedReturnAt = returnAt.toLocaleString();
+                
+                const row = $('<tr>');  // 새 행(<tr>) 생성
+
+/*                 <td>${'${post.postSeq}'}</td>
+                <td>${'${post.userSeq}'}</td> */
+                // 데이터 추가
+                row.append(`
+                    <td><a href = "/post/post/${'${post.postSeq}'}"> ${'${post.title}'}</a></td>
+                    <td>${'${favorite.itemContent}'}</td>
+                    <td>${'${post.rentContent}'}</td>
+                    <td>${'${formattedDate}'}</td>
+                    <td>${'${post.count}'}</td>
+                    <td>${'${post.productName}'}</td>
+                    <td>${'${post.categoryName}'}</td>
+                    <td>${'${post.comment || "없음"}'}</td>  <!-- 댓글이 비어 있으면 '없음' 표시 -->
+                    <td>${'${post.postImage || "없음"}'}</td> <!-- 이미지가 비어 있으면 '없음' 표시 -->
+                    <td>${'${formattedRentAt.length ? formattedRentAt : "없음"}'}</td> <!-- 첫 번째 대여 시간 또는 '없음' 표시 -->
+                    <td>${'${formattedReturnAt.length ? formattedReturnAt : "없음"}'}</td> <!-- 첫 번째 대여 시간 또는 '없음' 표시 -->
+                `);
+
+                // 행을 테이블에 추가
+                postTable.append(row);
+            });
+        },
+        error: function(error) {
+            console.error('Error loading posts:', error);
+        }
+    });
+}
 </script>
 
 

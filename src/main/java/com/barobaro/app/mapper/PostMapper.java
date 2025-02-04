@@ -19,4 +19,10 @@ public interface PostMapper {
 	PostVO selectPostByPostSeq(@Param("postSeq")long postSeq);
 	int incrementPostViewCount(@Param("postSeq")long postSeq);
 	List<PostVO> selectPostBySearchCondition(@Param("searchKeyword") String searchKeyword, @Param("searchType") String searchType, @Param("categorySeq") int categorySeq, @Param("availableOnly") String availableOnly, @Param("latitude") Double latitude, @Param("longitude") Double longitude);
+	
+    public List<PostVO> selectUserPostByPostSeq(@Param("userSeq") int userSeq);
+    
+    //나의 대여 예약 현황
+    public List<PostVO> selectUserPostRent(@Param("usernickname") String usernickname);
+    
 }

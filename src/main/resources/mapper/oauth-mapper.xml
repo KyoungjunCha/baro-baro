@@ -15,8 +15,11 @@
         <result property="status" 	column="status" />
         <result property="role" 	column="role" />
         <association property="usersOauthVO" javaType="com.barobaro.app.vo.UsersOauthVO" resultMap="oauthResultMap"/>
-        <collection property="postVO" javaType="List" resultMap="postResultMap"/>
     </resultMap>
+    
+<!--    <collection property="postVO" javaType="List" resultMap="postResultMap"/>
+        <collection property="postVO" javaType="List" resultMap="postResultMap"/>
+        <collection property="postVO" javaType="List" resultMap="postResultMap"/> -->
 
 <!--     <resultMap id="oauthResultMap" type="com.barobaro.app.vo.UsersOauthVO">
         <id property="userSeq" column="user_seq" />
@@ -35,7 +38,7 @@
     </resultMap>    
 	
 
-	<resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
+	<!-- <resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
 	    <id property="postSeq"			column="post_seq"/>
 	    <result property="title" 		column="title"/>
 	    <result property="itemContent" 	column="item_content"/>
@@ -45,10 +48,10 @@
 	    <result property="productName" 	column="product_name"/>
 	    <result property="categoryName" 	column="categoryName"/>
 	    <result property="userSeq" 		column="user_seq"/>
-	</resultMap>
+	</resultMap> -->
 	
 	
-	<resultMap id="notificationResultMap" type="com.barobaro.app.vo.NotificationVO">
+	<!-- <resultMap id="notificationResultMap" type="com.barobaro.app.vo.NotificationVO">
 	    <id property="notificationSeq"				column="NOTIFICATION_SEQ"/>
 	    <result property="notificationType" 		column="NOTIFICATION_TYPE"/>
 	    <result property="title" 					column="TITLE"/>
@@ -57,19 +60,39 @@
 	    <result property="createdAt" 				column="CREATED_AT"/>
 	    <result property="link" 					column="LINK"/>
 	    <result property="userSeq" 					column="USER_SEQ"/>
-	</resultMap>
+	</resultMap> -->
 	
 	
-	<resultMap id="userReviewAnswerResultMap" type="com.barobaro.app.vo.UserReviewAnswerVO">
-	    <id property="postSeq"						column="NOTIFICATION_SEQ"/>
-	    <result property="title" 					column="NOTIFICATION_TYPE"/>
-	    <result property="itemContent" 				column="TITLE"/>
-	    <result property="rentContent" 				column="CONTENTS"/>
-	    <result property="isRead" 					column="IS_READ"/>
-	    <result property="createdAt" 				column="CREATED_AT"/>
-	    <result property="link" 					column="LINK"/>
-	    <result property="userSeq" 					column="USER_SEQ"/>
-	</resultMap>
+	<!-- <resultMap id="userReviewAnswerResultMap" type="com.barobaro.app.vo.UserReviewAnswerVO">
+	    <id property="reviewSeq"						column="REVIEW_SEQ"/>
+	    <result property="revieweeSeq" 					column="REVIEWEE_SEQ"/>
+	    <result property="reviewerSeq" 					column="REVIEWER_SEQ"/>
+	    <result property="userReviewAnswerSeq" 			column="USER_REVIEW_ANSWER_SEQ"/>
+	    <result property="content" 						column="CONTENT"/>
+	</resultMap> -->
+	
+	
+	<!-- <resultMap id="userReviewAnswerResultMap" type="com.barobaro.app.vo.UserReviewAnswerVO">
+	    <id property="reviewSeq"						column="REVIEW_SEQ"/>
+	    <result property="revieweeSeq" 					column="REVIEWEE_SEQ"/>
+	    <result property="reviewerSeq" 					column="REVIEWER_SEQ"/>
+	    <result property="userReviewAnswerSeq" 			column="USER_REVIEW_ANSWER_SEQ"/>
+	    <result property="content" 						column="CONTENT"/>
+	</resultMap> -->
+	
+	
+	
+	<!-- <resultMap id="commentResultMap" type="com.barobaro.app.vo.CommentVO">
+	    <id property="commentSeq"						column="COMMENT_SEQ"/>
+	    <result property="parentSeq" 					column="PARENT_SEQ"/>
+	    <result property="content" 						column="CONTENT"/>
+	    <result property="secret" 						column="SECRET"/>
+	    <result property="status" 						column="CONTENT"/>
+   	    <result property="createAt" 					column="STATUS"/>
+   	    <result property="updateAt" 					column="CREATED_AT"/>
+   	    <result property="postSeq" 						column="UPDATED_AT"/>
+   	    <result property="userSeq" 						column="POST_SEQ"/>
+	</resultMap> -->
 	
 	
 	<!-- 전체회원 조회 -->
@@ -82,8 +105,11 @@
     
 	
     
-    <!-- 내가 쓴 글 전체 조회 -->
- 	<select id="allPosts" resultMap = "postResultMap">
+    <!-- 내가 대여해주는 글 전체 조회 
+    	 대여해주는 글에는 예약전에 가능여부 체크하고 
+    	 예약이 들어왔다면 해당 게시글 유저가 예약 확정 취소를 누르게 해야
+    -->
+ 	<!-- <select id="allPosts" resultMap = "postResultMap">
 		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
 			CATEGORY_NAME 
 			FROM category cn
@@ -91,10 +117,17 @@
 			) AS categoryName
 		from post p
 		where user_seq = #{userSeq}
-    </select>
+    </select> -->
+    
+    <!-- 내가 대여한 글 전체 조회 
+    	 내가 대여한 물품 리스트에서 빨간 버튼으로 예약 취소가 가능해야함
+         상기 기능은 72시간 전이어야 가능 (예약 기준)
+    -->
+    
+    
     
     <!-- 내 알림 전체 조회 -->
-    <select id= "allNotifications" resultMap = "notificationResultMap">
+   <!--  <select id= "allNotifications" resultMap = "notificationResultMap">
 		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
 			CATEGORY_NAME 
 			FROM category cn
@@ -102,11 +135,11 @@
 			) AS categoryName
 		from post p
 		where user_seq = #{userSeq}
-    </select>
+    </select> -->
     
     
     <!-- 내 리뷰 전체 조회 -->
-    <select id= "allAnswers" resultMap = "notificationResultMap">
+    <!-- <select id= "allAnswers" resultMap = "userReviewAnswerResultMap">
 		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
 			CATEGORY_NAME 
 			FROM category cn
@@ -114,7 +147,21 @@
 			) AS categoryName
 		from post p
 		where user_seq = #{userSeq}
-    </select>
+    </select> -->
+    
+    
+    <!-- 내 댓글 전체 조회 -->
+   <!--  <select id= "allComments" resultMap = "commentResultMap">
+		select user_seq, post_seq, title, item_content, rent_content, post_at, count, product_name, (SELECT 
+			CATEGORY_NAME 
+			FROM category cn
+			WHERE cn.category_seq = p.category_seq
+			) AS categoryName
+		from post p
+		where user_seq = #{userSeq}
+    </select> -->
+    
+    
     
     
     <!-- 관리자 유저 권한 상태 -->

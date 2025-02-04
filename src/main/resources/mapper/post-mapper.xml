@@ -89,6 +89,94 @@
     </select>
     
     
+    <select id="selectUserPostByPostSeq" resultMap="postResultMap">
+        SELECT
+            p.post_seq,
+            p.title,
+            p.item_content,
+            p.rent_content,
+            p.post_at,
+            p.count,
+            p.product_name,
+            p.user_seq,
+            (SELECT c.category_name FROM category c
+            WHERE c.category_seq = p.category_seq 
+            ) AS category_name,
+            
+            pf.file_seq,
+            pf.name,
+            pf.storage_path,
+            pf.post_seq,
+            
+            rt.time_slot_seq,
+            rt.rent_at,
+            rt.return_at,
+            rt.status,
+            rt.post_seq,
+            rt.regdate,
+            rt.regid,
+            rt.price,
+            rt.rent_location,
+            rt.rent_rotate_x,
+            rt.rent_rotate_y,
+            rt.return_location,
+            rt.return_rotate_x,
+            rt.return_rotate_y
+        FROM
+            post p
+        LEFT JOIN
+            post_file pf ON p.post_seq = pf.post_seq
+        LEFT JOIN
+            (SELECT * FROM rent_time_slot ORDER BY rent_at ASC) rt ON p.post_seq = rt.post_seq
+        WHERE
+            p.user_seq = #{userSeq}
+    </select>
+    
+    
+    <select id="selectUserPostRent" resultMap="postResultMap">
+        SELECT
+            p.post_seq,
+            p.title,
+            p.item_content,
+            p.rent_content,
+            p.post_at,
+            p.count,
+            p.product_name,
+            p.user_seq,
+            (SELECT c.category_name FROM category c
+            WHERE c.category_seq = p.category_seq 
+            ) AS category_name,
+            
+            pf.file_seq,
+            pf.name,
+            pf.storage_path,
+            pf.post_seq,
+            
+            rt.time_slot_seq,
+            rt.rent_at,
+            rt.return_at,
+            rt.status,
+            rt.post_seq,
+            rt.regdate,
+            rt.regid,
+            rt.price,
+            rt.rent_location,
+            rt.rent_rotate_x,
+            rt.rent_rotate_y,
+            rt.return_location,
+            rt.return_rotate_x,
+            rt.return_rotate_y
+        FROM
+            post p
+        LEFT JOIN
+            post_file pf ON p.post_seq = pf.post_seq
+        LEFT JOIN
+            (SELECT * FROM rent_time_slot ORDER BY rent_at ASC) rt ON p.post_seq = rt.post_seq
+        WHERE
+            rt.regid = #{usernickname}
+    </select>
+    
+    
     <resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
 	    <!-- 기본 필드 매핑 -->
 	    <id property="postSeq" column="post_seq"/>

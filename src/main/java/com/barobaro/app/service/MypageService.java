@@ -23,17 +23,25 @@ public interface MypageService {
 	//내가 등록한 대여글
 	public List<PostVO> svcGetAllMyPosts(int userSeq);
 	
+	//나의 대여 예약 현황
+	public List<PostVO> svcGetAllUserPostRent(String usernickname);
+	
+	
 	//나에게 오는 모든 알림
 	public List<NotificationVO> svcGetAllMyNotifications(int userSeq);
 	
-	//내가 작성한 리뷰
-	public List<UserReviewAnswerVO> svcGetAllMyReviews(int userSeq);
 	
 	//내가 추가한 즐겨찾기
 	public List<FavoriteVO> svcGetAllMyFavorites(int userSeq);
 	
-	//내가 작성한 댓글
-	public List<CommentVO> svcGetAllMyComments(int userSeq);
 	
+	//내가 작성한 댓글
+//	public List<CommentVO> svcGetAllMyComments(int userSeq);
+
+	//내가 작성한 리뷰
+//	public List<UserReviewAnswerVO> svcGetAllMyReviews(int userSeq);
+
+	
+//	public List<>
 	
 }
