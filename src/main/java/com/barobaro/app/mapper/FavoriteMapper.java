@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.barobaro.app.vo.FavoriteVO;
+import com.barobaro.app.vo.PostVO;
 
 @Repository
 @Mapper
@@ -15,4 +16,7 @@ public interface FavoriteMapper {
 	public int checkFavorite(@Param("userSeq") int userSeq, @Param("postSeq") int postSeq);
 	public int favoriteInsert(FavoriteVO fvo);
 	public int favoriteDelete(@Param("userSeq") int userSeq, @Param("postSeq") int postSeq);
+	
+	public List<FavoriteVO> favoritesListByUser(@Param("userSeq") int userSeq);
+
 }

@@ -74,32 +74,9 @@ public class PostController {
 //		
 //		return mav;
 //	}
-
-	// /post/test/login
-	@RequestMapping(value = "/test/login", method = RequestMethod.GET)
-	public String login(@RequestParam("id") String id, @RequestParam("pw") String pw, HttpSession session) {
-		try {
-			session.setAttribute("user_info",
-					new UserInfo(1001, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
-		} catch (Exception e) {
-			return "redirect: /pages/test/login_fail.jsp";
-		}
-		return "redirect: /pages/test/login_success.jsp";
-	}
-
-	// /post/test/login_success
-	@GetMapping("/test/login_success")
-	@ResponseBody
-	public String test(HttpSession session) {
-		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
-		System.out.println(userInfo.getEmail());
-		return "OK";
-	}
-
+	
 	@RequestMapping(value = "/create_page", method = RequestMethod.GET)
 	public ModelAndView getCreatePostPage(HttpSession session) {
-		session.setAttribute("user_info",
-				new UserInfo(1001, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("categories", categoryService.getAllCategoryNameAndSeq());
 		mav.setViewName("pages/post/create_post");
@@ -172,7 +149,9 @@ public class PostController {
 	}
 
 	@RequestMapping(value = "/post/{postSeq}", method = RequestMethod.GET)
-	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq) {
+	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
+		session.setAttribute("user_info",
+				new UserInfo(1002, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/detail_post");
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
