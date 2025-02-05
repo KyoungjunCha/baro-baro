@@ -48,6 +48,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SET STATUS = 6, UPDATED_AT = SYSDATE
 		WHERE RESERVATION_SEQ = #{reservation_seq}
 	</update>
+	
+	<!-- 예약 취소요청 거절 상태(STATUS=7)로 변경 -->
+	<update id="cancleReject">
+		UPDATE RESERVATION_HISTORY
+		SET STATUS = 7, UPDATED_AT = SYSDATE
+		WHERE RESERVATION_SEQ = #{reservation_seq}
+	</update>
     
     
 <!--  ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 대여타임 테이블 (RENT_TIME_SLOT) ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
@@ -75,4 +82,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			SET STATUS = 2
 			WHERE TIME_SLOT_SEQ = #{time_slot_seq}
     </update>
+    
+<!--  ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 목록 가져오기 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+    
+    <!-- 로그인유저의 등록물품 RENT_TIME_SLOT 모두 가져오기 -->
+    <select id="getAllTimeSlots" resultType="com.barobaro.app.vo.RentTimeSlotVO">
+	        SELECT  rts.time_slot_seq,
+			        rts.rent_at,
+			        rts.return_at,
+			        rts.price,
+			        rts.regdate,
+		            rts.rent_location,
+		            rts.return_location,
+		                  
+			        p.post_seq,
+			        p.title,
+			        p.product_name,
+			        p.item_content,
+			        
+			        rh.status,
+			        rh.reservation_seq,
+        
+                 	-- 대여 물품 주인 (글 등록자) 정보
+			        u.nickname AS owner_nickname,
+			        u.user_seq AS owner_user_seq,
+                 
+	                -- Self Join으로 가져온 대여 요청자 정보
+	                ut.nickname AS requestor_nickname,
+	                ut.user_seq AS requestor_user_seq
+			        
+			FROM RENT_TIME_SLOT rts
+			
+			LEFT JOIN POST p 
+                 	ON rts.post_seq = p.post_seq
+                 
+			LEFT JOIN RESERVATION_HISTORY rh 
+                 	ON rts.TIME_SLOT_SEQ = rh.TIME_SLOT_SEQ
+                    
+			LEFT JOIN USER_TABLE u 
+                 	ON rts.regid = u.nickname
+            
+            -- SELF JOIN 적용 (같은 RESERVATION_HISTORY 테이블을 두 개 사용)
+            LEFT JOIN RESERVATION_HISTORY r  
+                	ON rh.reservation_seq = r.reservation_seq  -- 같은 예약인지 확인
+                	
+            LEFT JOIN USER_TABLE ut
+                	ON r.user_seq = ut.user_seq  	-- 예약요청한 요청자 정보 가져오기     
+			
+            WHERE u.user_seq = #{userSeq}
+			ORDER BY post_seq DESC, regdate DESC, reservation_seq DESC
+    </select>
 </mapper>

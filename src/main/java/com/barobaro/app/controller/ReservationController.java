@@ -3,7 +3,11 @@ package com.barobaro.app.controller;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.service.ReservationService;
 import com.barobaro.app.vo.RentTimeSlotVO;
 import com.barobaro.app.vo.ReservationVO;
@@ -108,5 +115,42 @@ public class ReservationController {
             return new ResponseEntity<String>("실패했습니다. 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
         }
     }
-    
+	
+	// 예약 취소요청 거절		/reservation/cancle-reject  테스트완료
+	@RequestMapping(value = "/cancle-reject", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> cancleReject(@RequestParam("reservationSeq") long reservationSeq) {
+		System.out.println("컨트롤러 호출됨, reservationSeq 는 : " + reservationSeq);
+		int rows = reservationService.processCancleReject(reservationSeq);
+		System.out.println("업데이트한 행 수 : " + rows + "건이 취소요청 거절됨");
+        if (rows == 1) {
+            return new ResponseEntity<String>("취소요청을 거절하였습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("취소요청을 거절하는데에 실패했습니다. 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+        }
+    }
+	
+	// 로그인유저의 등록물품 RENT_TIME_SLOT 모두 가져오기  /reservation/getAllTimeSlots
+	@RequestMapping(value = "/getAllTimeSlots", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@ResponseBody  //JSON 응답을 반환하도록 설정
+	public List<RentTimeSlotVO> getAllTimeSlots() { //HttpSession session) {
+		
+		Logger logger = LoggerFactory.getLogger(this.getClass()); // SLF4J Logger 사용
+		
+//		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+//		long userSeq = userInfo.getUserSeq();
+		long userSeq = 1001; // (테스트용으로 1001 설정)
+		
+//	    long userSeq = Long.parseLong(requestData.get("userSeq").toString()); // 요청 받은 userSeq
+	    logger.info("✅ 요청받은 userSeq: " + userSeq); // userSeq 값 확인
+	    
+	    List<RentTimeSlotVO> timeSlotList = reservationService.getAllTimeSlots(userSeq);
+	    
+	    logger.info("🔄 조회된 대여 목록: " + timeSlotList.size() + "개"); // 데이터 개수 확인
+	    for (RentTimeSlotVO slot : timeSlotList) {
+	        logger.info("📌 대여 정보: " + slot.toString()); // 개별 데이터 확인
+	    }
+	    
+	    return timeSlotList; //JSON 리스트 반환
+	}
+
 }

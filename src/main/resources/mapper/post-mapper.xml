@@ -175,7 +175,7 @@
         </if>
         
         <if test=" searchVO.latitude != null and searchVO.latitude != '' and searchVO.longitude != null and searchVO.longitude != '' ">
-        RIGHT JOIN 
+        LEFT JOIN 
         		(SELECT post_seq, max(
 		                    6371 * ACOS(
 		                    COS(${searchVO.latitude} * 3.14159 / 180) *
