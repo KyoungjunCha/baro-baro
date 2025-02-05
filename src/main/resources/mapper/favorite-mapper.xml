@@ -79,6 +79,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		ON f.post_seq = p.post_seq
 		WHERE f.user_seq = #{userSeq}
 	</select>
+	
+	<select id="favoriteListByUser2" resultMap="favoriteMap">
+		SELECT 
+	        p.post_seq, 
+	        p.title, 
+	        p.rent_location, 
+	        f.user_seq,
+	        ut.nickname AS user_nickname,  
+	        pf.storage_path AS post_image 
+	    FROM favorite f
+	    JOIN post p 
+	        ON f.post_seq = p.post_seq
+	    JOIN user_table ut  
+	        ON f.user_seq = ut.user_seq
+	    LEFT JOIN post_file pf 
+	        ON p.post_seq = pf.post_seq
+  </select>
 
 	<select id="favoriteListInfo" parameterType="long" resultMap="postResultMap">
 		SELECT 

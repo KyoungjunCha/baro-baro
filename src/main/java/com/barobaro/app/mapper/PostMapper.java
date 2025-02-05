@@ -21,6 +21,9 @@ public interface PostMapper {
 	int incrementPostViewCount(@Param("postSeq")long postSeq);
 	List<PostVO> selectPostBySearchCondition(@Param("searchVO")SearchVO searchVO);
 	
+	public List<PostVO> selectUserPostByPostSeq(@Param("userSeq") int userSeq);
+	public List<PostVO> selectUserPostRent(@Param("usernickname") String usernickname);
+
 	int updatePostByPostVO(PostVO postVO);
 	
 }
