@@ -49,7 +49,8 @@ public class KeywordController {
 		List<KeywordVO> list = service.getKeywordsByUserSeq((int)userSeq);
 		model.addAttribute("KEYWORD_LIST", list);
 
-		return "pages/notification/keyword";
+//		return "pages/notification/keyword";
+		return "pages/notification/keyword2";
 	}
 
 	@RequestMapping(value = "/{keywordSeq}", method = RequestMethod.GET)
@@ -57,7 +58,8 @@ public class KeywordController {
 		KeywordVO kvo = service.getKeywordBySeq(keywordSeq);
 		model.addAttribute("KEYWORD_LIST", kvo);
 
-		return "pages/notification/keyword";
+//		return "pages/notification/keyword";
+		return "pages/notification/keyword2";
 	}
 
 	@RequestMapping(value = "/{keywordSeq}", method = RequestMethod.POST)
