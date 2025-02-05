@@ -114,7 +114,7 @@ $(document).ready(function(){
 	                    <td>${'${post.rentTimes[0].price}'}</td>
 	                    <td>${'${formattedRentAt.length ? formattedRentAt : "없음"}'}</td> 
 	                    <td>${'${formattedReturnAt.length ? formattedReturnAt : "없음"}'}</td>
-	                    <td>$</td>
+	                    <td>${'${post.rentTimes[0].status}'}</td>
 	                `);
 	
 	                // 행을 테이블에 추가
