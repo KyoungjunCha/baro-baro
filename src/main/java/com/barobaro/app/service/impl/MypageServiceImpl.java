@@ -65,7 +65,7 @@ public class MypageServiceImpl implements MypageService {
 
 	@Override
 	public List<FavoriteVO> svcGetAllMyFavorites(int userSeq) {
-		return favoriteMapper.favoritesListByUser(userSeq);
+		return favoriteMapper.favoriteListByUser2(userSeq);
 	}
 
 //	@Override
