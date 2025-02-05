@@ -126,7 +126,7 @@ public class PostController {
 		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
 
 		// 관심 키워드 알림
-		List<KeywordVO> keywordList = keywordService.getKeywordsByUserSeq(1001);
+		List<KeywordVO> keywordList = keywordService.getKeywordsByUserSeq(1001); // 해당 카테고리를 가진 모든 userSeq에게 알림 보내기(수정사항)
 
 		for (KeywordVO kvo : keywordList) {
 			// 게시글에 키워드가 포함되어 있으면
