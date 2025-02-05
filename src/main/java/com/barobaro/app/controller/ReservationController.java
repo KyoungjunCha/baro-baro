@@ -129,16 +129,16 @@ public class ReservationController {
         }
     }
 	
-	// 로그인유저의 등록물품 RENT_TIME_SLOT 모두 가져오기  /reservation/getAllTimeSlots
+	// 로그인유저가 등록한 물품의 타임목록 현황 가져오기  /reservation/getAllTimeSlots
 	@RequestMapping(value = "/getAllTimeSlots", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	@ResponseBody  //JSON 응답을 반환하도록 설정
-	public List<RentTimeSlotVO> getAllTimeSlots(HttpSession session) {
+	public List<RentTimeSlotVO> getAllTimeSlots() { //HttpSession session) {
 		
 		Logger logger = LoggerFactory.getLogger(this.getClass()); // SLF4J Logger 사용
 		
-		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
-		long userSeq = userInfo.getUserSeq();
-//		long userSeq = 1001; // (테스트용으로 1001 설정)
+//		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+//		long userSeq = userInfo.getUserSeq();
+		long userSeq = 1001; // (테스트용으로 로그인유저 1001로 설정)
 		
 //	    long userSeq = Long.parseLong(requestData.get("userSeq").toString()); // 요청 받은 userSeq
 	    logger.info("✅ 요청받은 userSeq: " + userSeq);
@@ -151,6 +151,30 @@ public class ReservationController {
 	    }
 	    
 	    return timeSlotList; //JSON 리스트 반환
+	}
+	
+	// 로그인유저가 예약한 내역 현황 가져오기  /reservation/getAllReservation
+	@RequestMapping(value = "/getAllReservation", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@ResponseBody  //JSON 응답을 반환하도록 설정
+	public List<RentTimeSlotVO> getAllReservation() { //HttpSession session) {
+		
+		Logger logger = LoggerFactory.getLogger(this.getClass()); // SLF4J Logger 사용
+		
+//		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+//		long userSeq = userInfo.getUserSeq();
+		long userSeq = 1001; // (테스트용으로 로그인유저 1001로 설정)
+		
+//	    long userSeq = Long.parseLong(requestData.get("userSeq").toString()); // 요청 받은 userSeq
+	    logger.info("✅ 요청받은 userSeq: " + userSeq);
+	    
+	    List<RentTimeSlotVO> reservationList = reservationService.getAllReservation(userSeq);
+	    
+	    logger.info("🔄 조회된 예약 목록: " + reservationList.size() + "개"); // 데이터 개수 확인
+	    for (RentTimeSlotVO rvo : reservationList) {
+	        logger.info("📌 예약 정보: " + rvo.toString()); // 개별 데이터 확인
+	    }
+	    
+	    return reservationList; //JSON 리스트 반환
 	}
 
 }

@@ -3,6 +3,7 @@ package com.barobaro.app.service;
 import java.util.List;
 
 import com.barobaro.app.vo.RentTimeSlotVO;
+import com.barobaro.app.vo.ReservationVO;
 
 public interface ReservationService {
 	public int processReservation(long timeSlotSeq);
@@ -13,5 +14,6 @@ public interface ReservationService {
 	public int done(long reservationSeq);
 	public int processCancleReject(long reservationSeq);
 	
-	public List<RentTimeSlotVO> getAllTimeSlots(long UserSeq);
+	public List<RentTimeSlotVO> getAllTimeSlots(long userSeq);
+	public List<RentTimeSlotVO> getAllReservation(long userSeq);
 }

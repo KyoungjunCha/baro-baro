@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.barobaro.app.vo.RentTimeSlotVO;
+import com.barobaro.app.vo.ReservationVO;
 
 @Repository
 @Mapper
@@ -24,4 +25,5 @@ public interface ReservationMapper {
 	public int updateStatusUnavailable(@Param("time_slot_seq") long timeSlotSeq);
 	
 	public List<RentTimeSlotVO> getAllTimeSlots(@Param("userSeq") long userSeq);
+	public List<RentTimeSlotVO> getAllReservation(@Param("userSeq") long userSeq);
 }
