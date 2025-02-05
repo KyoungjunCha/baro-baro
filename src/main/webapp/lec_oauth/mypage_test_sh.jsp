@@ -75,7 +75,7 @@
 
 <body>
 
-<h2> 😍나의 등록 물품 현황 관리하기😍 </h2>
+<h2> 😍내가 등록한 물품 요청관리하기😍 </h2>
 
     <table id="rentalTable">
         <thead>
@@ -129,19 +129,21 @@
 
 // 페이지가 로드되면 데이터 요청
 document.addEventListener("DOMContentLoaded", () => {
+	
+	// 로그인한 사용자인지 확인하기
     let sessionUserSeq = "<%= session.getAttribute("userSeq") %>";
-//     if (!sessionUserSeq || sessionUserSeq === "null") {
-//         console.error("세션 정보가 없습니다.");
-//         return; // 세션 정보 없으면 요청하지 않음
-//     }
+    if (!sessionUserSeq || sessionUserSeq === "null") {
+        console.error("세션 정보가 없습니다. 로그인 후 이용해주세요");
+        return; // 세션 정보 없으면 요청하지 않음
+    }
     
     fetch("/reservation/getAllTimeSlots", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        credentials: "include" //, // JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-//         body: JSON.stringify({ userSeq: sessionUserSeq }) // 서버에서 userSeq 받는다면 필요
+        credentials: "include" , 							// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+        body: JSON.stringify({ userSeq: sessionUserSeq }) 	// 서버에서 userSeq 받는다면 필요. 테스트용으로 막아둠
     })
     .then(response => {
         if (!response.ok) {
@@ -260,7 +262,7 @@ function populateTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 
 		            // 확인창 표시
-		            const confirmResult = confirm(`${requestorNickname}의 대여 요청을 수락하시겠습니까?`);
+		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 요청을 수락하시겠습니까?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -298,7 +300,7 @@ function populateTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm(`${requestorNickname}의 대여 요청을 거절하시겠습니까?`);
+		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 요청을 거절하시겠습니까?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -337,7 +339,7 @@ function populateTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm(`${requestorNickname}의 대여 취소 요청을 수락하시겠습니까?`);
+		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 취소요청을 수락하시겠습니까?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -374,7 +376,7 @@ function populateTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm(`${requestorNickname}의 대여 취소 요청을 거절하시겠습니까?`);
+		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 취소요청을 거절하시겠습니까?');
 		            if (!confirmResult) return;
 
 		            try {
