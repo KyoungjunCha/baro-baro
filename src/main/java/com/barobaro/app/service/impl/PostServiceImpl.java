@@ -85,6 +85,56 @@ public class PostServiceImpl implements PostService{
 	public List<PostVO> getPostBySearchCondition(SearchVO searchVO) {
 		return postMapper.selectPostBySearchCondition(searchVO);
 	}
+
+	@Override
+	public void updatePost(PostVO postVO, List<MultipartFile> files) {
+		postMapper.updatePostByPostVO(postVO);
+		postVO.getRentTimes().forEach(e -> {
+			e.setPost_seq((int)postVO.getPostSeq());
+			postMapper.insertRentTimeSlotByRentTimeSlotVO(e);
+		});
+		
+		
+		try {
+			String baseDirectoryPath = "c:/uploads/post/";  // 기본 디렉토리 경로
+			
+			for(MultipartFile file : files) {
+				String originalFileName = file.getOriginalFilename();
+				if (originalFileName != null && !originalFileName.isEmpty()) {
+					// UUID로 디렉토리 이름 생성
+					String uuidDirectoryName = UUID.randomUUID().toString();
+					
+					// 디렉토리 경로 설정 (UUID 디렉토리 생성)
+					File directory = new File(baseDirectoryPath + uuidDirectoryName);
+					
+					// 디렉토리가 없으면 생성
+					if (!directory.exists()) {
+						directory.mkdirs();
+					}
+
+					// 파일을 UUID 디렉토리에 원본 파일 이름으로 저장
+					File destFile = new File(directory.getAbsolutePath() + File.separator + originalFileName);
+
+					// 파일 저장
+					file.transferTo(destFile);
+					
+					postVO.getPostImages().add(PostFileVO.builder()
+							.name(originalFileName)
+							.storagePath(destFile.getAbsolutePath())
+							.postSeq(postVO.getPostSeq())
+							.build());
+				} else {
+					throw new IOException("파일이 비어 있습니다.");
+				}
+			}
+		} catch (IllegalStateException | IOException e) {
+			System.out.println("게시물 저장 중 에러 발생: " + e.getMessage());
+		}
+		
+		postVO.getPostImages().forEach(e->
+			postMapper.insertPostFileByPostFileVO(e)
+		);
+	}
 	
 	
 }

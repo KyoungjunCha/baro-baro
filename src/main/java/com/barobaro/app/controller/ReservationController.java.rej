@@ -1,0 +1,9 @@
+diff a/src/main/java/com/barobaro/app/controller/ReservationController.java b/src/main/java/com/barobaro/app/controller/ReservationController.java	(rejected hunks)
+@@ -142,6 +142,7 @@
+ //		long userSeq = 1001; // (테스트용으로 1001 설정)
+ 		
+ //	    long userSeq = Long.parseLong(requestData.get("userSeq").toString()); // 요청 받은 userSeq
++	    logger.info("✅ 요청받은 userSeq: " + userSeq);
+ 	    
+ 	    List<RentTimeSlotVO> timeSlotList = reservationService.getAllTimeSlots(userSeq);
+ 	    

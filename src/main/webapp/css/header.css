@@ -5,6 +5,8 @@
 	top: 65px;
 	right: 0;
 	width: 300px;
+	max-height: 500px;
+	overflow-y: auto;
 	background: white;
 	border: 1px solid #ccc;
 	border-radius: 5px;
@@ -14,16 +16,26 @@
 }
 
 .notification-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	font-weight: bold;
 	padding-bottom: 5px;
 	border-bottom: 1px solid #ddd;
+}
+
+#mark-all-read {
+	background-color: #f1f1f1;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .notification {
 	padding: 10px;
 	border-bottom: 1px solid #ddd;
 	cursor: pointer;
-	/* font-size: 14px; */
 }
 
 .notification:last-child {
@@ -41,6 +53,7 @@
 }
 
 #notification-list li {
+	display: block;
 	padding: 1px;
 	border-bottom: 1px solid #eee;
 	cursor: pointer;

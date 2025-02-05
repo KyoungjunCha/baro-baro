@@ -23,4 +23,7 @@ public interface PostMapper {
 	
 	public List<PostVO> selectUserPostByPostSeq(@Param("userSeq") int userSeq);
 	public List<PostVO> selectUserPostRent(@Param("usernickname") String usernickname);
+
+	int updatePostByPostVO(PostVO postVO);
+	
 }
