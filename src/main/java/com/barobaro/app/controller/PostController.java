@@ -39,6 +39,7 @@ import com.barobaro.app.service.CategoryService;
 import com.barobaro.app.service.KeywordService;
 import com.barobaro.app.service.NotificationService;
 import com.barobaro.app.service.PostService;
+import com.barobaro.app.vo.CategoryVO;
 import com.barobaro.app.vo.KeywordVO;
 import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.LocationVO;
@@ -96,7 +97,8 @@ public class PostController {
 			@RequestParam(value = "return_location[]", required = false) List<String> returnLocations,
 			@RequestParam(value = "return_rotate_x[]", required = false) List<Double> returnRotateX,
 			@RequestParam(value = "return_rotate_y[]", required = false) List<Double> returnRotateY,
-			@RequestParam("ufile") List<MultipartFile> files) {
+			@RequestParam("ufile") List<MultipartFile> files,
+			@RequestParam(value = "isUpdate", required = false, defaultValue = "0")long isUpdate) {
 		session.setAttribute("user_info",
 				new UserInfo(1001, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
@@ -108,18 +110,26 @@ public class PostController {
 			for (int i = 0; i < prices.size(); i++) {
 				try {
 					postVO.getRentTimes()
-							.add(RentTimeSlotVO.builder().rent_at(sdf.parse(rentAt.get(i)))
-									.return_at(sdf.parse(returnAt.get(i))).price(prices.get(i))
-									.rent_location(rentLocations.get(i)).rent_rotate_x(rentRotateX.get(i))
-									.rent_rotate_y(rentRotateY.get(i)).return_location(rentLocations.get(i))
-									.return_rotate_x(returnRotateX.get(i)).return_rotate_y(rentRotateY.get(i))
-									.regid(userInfo.getProfile_nickname()).build());
+						.add(RentTimeSlotVO.builder().rent_at(sdf.parse(rentAt.get(i)))
+								.return_at(sdf.parse(returnAt.get(i))).price(prices.get(i))
+								.rent_location(rentLocations.get(i)).rent_rotate_x(rentRotateX.get(i))
+								.rent_rotate_y(rentRotateY.get(i)).return_location(rentLocations.get(i))
+								.return_rotate_x(returnRotateX.get(i)).return_rotate_y(rentRotateY.get(i))
+								.regid(userInfo.getProfile_nickname()).build());
 				} catch (ParseException e) {
 					e.printStackTrace();
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+					continue;
 				}
 			}
 		}
-		postService.createPost(postVO, files);
+		if(isUpdate != 0) {
+			postVO.setPostSeq(isUpdate);
+			postService.updatePost(postVO, files);
+		} else {
+			postService.createPost(postVO, files);
+		}
 		ModelAndView mav = new ModelAndView();
 
 		mav.setStatus(HttpStatus.CREATED);
@@ -195,6 +205,35 @@ public class PostController {
 
 		return mav;
 	}
+	
+	@RequestMapping(value = "/update_page/{postSeq}", method = RequestMethod.GET)
+	public ModelAndView getUpdatePostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
+		session.setAttribute("user_info",
+				new UserInfo(1002, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("pages/post/update_post");
+		PostVO postVO = postService.getPostByPostSeq(postSeq);
+		mav.addObject("KEY_POST", postVO);
+		ObjectMapper om = new ObjectMapper();
+		try {
+			mav.addObject("KEY_POST_JSON", om.writeValueAsString(postVO));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		List<CategoryVO> categories = categoryService.getAllCategoryNameAndSeq();
+		for(int i = 0; i < categories.size(); i++) {
+			if(categories.get(i).getCategoryName().equals(postVO.getCategoryName())) {
+				CategoryVO target = categories.get(i);
+				categories.remove(i);
+				categories.add(0, target);
+				break;
+			}
+		}
+		mav.addObject("categories", categories);
+		
+		return mav;
+	}
+	
 
 //						/post/location   사용자 위치 받아오기 테스트
 	@RequestMapping(value = "/location", method = RequestMethod.POST)

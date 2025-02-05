@@ -20,4 +20,7 @@ public interface PostMapper {
 	PostVO selectPostByPostSeq(@Param("postSeq")long postSeq);
 	int incrementPostViewCount(@Param("postSeq")long postSeq);
 	List<PostVO> selectPostBySearchCondition(@Param("searchVO")SearchVO searchVO);
+	
+	int updatePostByPostVO(PostVO postVO);
+	
 }

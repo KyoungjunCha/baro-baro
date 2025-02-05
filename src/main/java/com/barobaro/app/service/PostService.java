@@ -11,4 +11,5 @@ public interface PostService {
 	void createPost(PostVO postVO, List<MultipartFile> files);
 	PostVO getPostByPostSeq(long postSeq);
 	List<PostVO> getPostBySearchCondition(SearchVO searchVO);
+	void updatePost(PostVO postVO, List<MultipartFile> files);
 }
