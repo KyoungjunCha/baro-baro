@@ -64,7 +64,8 @@ public class CommonCode {
 		REFUSED(3, "예약거절"),
 		CANCLE_REQUESTED(4, "예약취소요청"),
 		CANCLE_COMPLETED(5, "예약취소완료"),
-		DONE(6, "거래완료");
+		DONE(6, "거래완료"),
+		CANCLE_REJECTED(7, "예약취소요청 거절됨");
 		
 		private int code; 
 		private String desc;
