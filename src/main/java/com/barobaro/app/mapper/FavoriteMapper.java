@@ -18,5 +18,6 @@ public interface FavoriteMapper {
 	public int favoriteDelete(@Param("userSeq") int userSeq, @Param("postSeq") int postSeq);
 	
 	public List<FavoriteVO> favoritesListByUser(@Param("userSeq") int userSeq);
+	public List<PostVO> favoriteListInfo(long userSeq);
 
 }

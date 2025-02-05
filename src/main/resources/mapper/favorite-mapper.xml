@@ -4,64 +4,127 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.barobaro.app.mapper.FavoriteMapper">
 	<resultMap id="favoriteMap" type="com.barobaro.app.vo.FavoriteVO">
-		<id property="favoriteSeq" column="favorite_seq"/>
-		<result property="createdAt" column="created_at"/>
-		<result property="userSeq" column="user_seq"/>
-		<result property="postSeq" column="post_seq"/>
-		<collection property="postList" resultMap="postMap"/>
+		<id property="favoriteSeq" column="favorite_seq" />
+		<result property="createdAt" column="created_at" />
+		<result property="userSeq" column="user_seq" />
+		<result property="postSeq" column="post_seq" />
+		<collection property="postList" resultMap="postMap" />
 	</resultMap>
 	<resultMap id="postMap" type="com.barobaro.app.vo.PostVO2">
-		<id property="postSeq" column="post_seq"/>
-		<result property="title" column="title"/>
-		<result property="itemContent" column="item_content"/>
-		<result property="rentContent" column="rent_content"/>
-		<result property="rentLocation" column="rent_location"/>
-		<result property="postAt" column="post_at"/>
-		<result property="rotateX" column="rotate_x"/>
-		<result property="rotateY" column="rotate_y"/>
-		<result property="count" column="count"/>
-		<result property="productName" column="product_name"/>
-		<result property="userSeq" column="user_seq"/>
-		<result property="categorySeq" column="category_seq"/>
+		<id property="postSeq" column="post_seq" />
+		<result property="title" column="title" />
+		<result property="itemContent" column="item_content" />
+		<result property="rentContent" column="rent_content" />
+		<result property="rentLocation" column="rent_location" />
+		<result property="postAt" column="post_at" />
+		<result property="rotateX" column="rotate_x" />
+		<result property="rotateY" column="rotate_y" />
+		<result property="count" column="count" />
+		<result property="productName" column="product_name" />
+		<result property="userSeq" column="user_seq" />
+		<result property="categorySeq" column="category_seq" />
+	</resultMap>
+	<!-- ================================================================= -->
+	<resultMap id="postResultMap" type="com.barobaro.app.vo.PostVO">
+		<!-- 기본 필드 매핑 -->
+		<id property="postSeq" column="post_seq" />
+		<result property="title" column="title" />
+		<result property="itemContent" column="item_content" />
+		<result property="rentContent" column="rent_content" />
+		<result property="postAt" column="post_at" />
+		<result property="count" column="count" />
+		<result property="productName" column="product_name" />
+		<result property="userSeq" column="user_seq" />
+		<result property="categoryName" column="category_name" />
+		<result property="pricePerTenMinute" column="price_per_ten_minute" />
+
+		<!-- postImages (PostFileVO) 리스트 매핑 -->
+		<collection property="postImages"
+			ofType="com.barobaro.app.vo.PostFileVO">
+			<result property="fileSeq" column="file_seq" />
+			<result property="name" column="name" />
+			<result property="storagePath" column="storage_path" />
+			<result property="postSeq" column="post_seq" />
+		</collection>
+
+		<!-- <collection property="comments" ofType="com.barobaro.app.vo.PostVO.CommentTest"> 
+			</collection> -->
+
+		<!-- rentTimes (RentTimeSlotVO) 리스트 매핑 -->
+		<collection property="rentTimes"
+			ofType="com.barobaro.app.vo.RentTimeSlotVO">
+			<result property="time_slot_seq" column="time_slot_seq" />
+			<result property="rent_at" column="rent_at" />
+			<result property="return_at" column="return_at" />
+			<result property="status" column="status" />
+			<result property="post_seq" column="post_seq" />
+			<result property="regdate" column="regdate" />
+			<result property="regid" column="regid" />
+			<result property="price" column="price" />
+			<result property="rent_location" column="rent_location" />
+			<result property="rent_rotate_x" column="rent_rotate_x" />
+			<result property="rent_rotate_y" column="rent_rotate_y" />
+			<result property="return_location" column="return_location" />
+			<result property="return_rotate_x" column="return_rotate_x" />
+			<result property="return_rotate_y" column="return_rotate_y" />
+		</collection>
 	</resultMap>
 
 	<!-- 유저별 즐겨찾기 목록 조회 -->
 	<select id="favoriteListByUser" parameterType="int" resultMap="favoriteMap">
-		SELECT p.post_seq, p.title, p.rent_location, f.user_seq
+		SELECT p.post_seq, p.title, f.user_seq
 		FROM favorite f
-		JOIN post p 
+		JOIN
+		post p
 		ON f.post_seq = p.post_seq
 		WHERE f.user_seq = #{userSeq}
 	</select>
-	
-	<select id="favoritesListByUser" resultMap="favoriteMap">
-		SELECT p.post_seq, p.title, p.rent_location, f.user_seq
-		FROM favorite f
-		JOIN post p 
-		ON f.post_seq = p.post_seq
-		WHERE f.user_seq = #{userSeq}
+
+	<select id="favoriteListInfo" parameterType="long" resultMap="postResultMap">
+		SELECT 
+        p.post_seq,
+        p.title,
+        p.item_content,
+        p.post_at,
+        p.product_name,
+        p.user_seq,
+        (SELECT 
+            TRUNC((SUM(rts.PRICE) / SUM((rts.RETURN_AT - rts.RENT_AT) * 1440)) * 10) 
+         FROM RENT_TIME_SLOT rts 
+         WHERE rts.post_seq = p.post_seq 
+         GROUP BY rts.post_seq
+        ) AS price_per_ten_minute,
+        pf.storage_path
+	    FROM favorite f
+	    JOIN post p ON f.post_seq = p.post_seq
+	    LEFT JOIN post_file pf ON p.post_seq = pf.post_seq
+	    WHERE f.user_seq = #{userSeq}
 	</select>
-	
+
 	<!-- 즐겨찾기 여부 확인 -->
 	<select id="checkFavorite" resultType="int">
 		SELECT COUNT(*)
-		FROM favorite
+		FROM
+		favorite
 		WHERE user_seq = #{userSeq}
 		AND post_seq = #{postSeq}
 	</select>
 
 	<!-- 즐겨찾기 추가 -->
-	<insert id="favoriteInsert" parameterType="com.barobaro.app.vo.FavoriteVO">
+	<insert id="favoriteInsert"
+		parameterType="com.barobaro.app.vo.FavoriteVO">
 		INSERT INTO favorite (
-		favorite_seq, created_at, user_seq, post_seq
+		favorite_seq, created_at,
+		user_seq, post_seq
 		) VALUES
-		(favorite_seq.nextval, SYSDATE, #{userSeq}, #{postSeq})
+		(favorite_seq.nextval, SYSDATE, #{userSeq},
+		#{postSeq})
 	</insert>
-	
+
 	<!-- 즐겨찾기 삭제 -->
 	<delete id="favoriteDelete">
 		DELETE FROM favorite
-		WHERE user_seq = #{userSeq} 
+		WHERE user_seq = #{userSeq}
 		AND post_seq = #{postSeq}
 	</delete>
 </mapper>
