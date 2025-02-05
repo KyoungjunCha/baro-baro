@@ -16,8 +16,8 @@
     <ul>
         <c:forEach var="r" items="${rooms}">
             <li>
-                <a href="#" onclick="selectRoom('${r.roomId}')">
-                    방번호: ${r.roomId}, 제목: ${r.title}
+                <a href="#" onclick="selectRoom('${r.chatRoomSeq}')">
+                    유저닉네임: ${r.userNickName}, 유저 seq: ${r.userSeq}
                 </a>
             </li>
         </c:forEach>

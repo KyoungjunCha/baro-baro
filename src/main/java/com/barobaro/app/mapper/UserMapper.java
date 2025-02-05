@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.barobaro.app.vo.CommentVO;
 import com.barobaro.app.vo.FavoriteVO;
 import com.barobaro.app.vo.NotificationVO;
-import com.barobaro.app.vo.PostVO;
+//import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.UserReviewAnswerVO;
 import com.barobaro.app.vo.UsersOauthVO;
 import com.barobaro.app.vo.UsersTblVO;
@@ -38,11 +38,11 @@ public interface UserMapper {
     public void updateUserOauthTbl(UsersOauthVO usersOauthVO);
 	
 	
-    public List<PostVO> allPosts(@Param("userSeq") int userSeq);
-    public List<FavoriteVO> allFavorites(@Param("userSeq") int userSeq);
-    public List<CommentVO> allComments(@Param("userSeq") int userSeq);
-    public List<UserReviewAnswerVO> allAnswers(@Param("userSeq") int userSeq);
-    public List<NotificationVO> allNotifications(@Param("userSeq") int userSeq);
+//    public List<PostVO> allPosts(@Param("userSeq") int userSeq);
+//    public List<FavoriteVO> allFavorites(@Param("userSeq") int userSeq);
+//    public List<CommentVO> allComments(@Param("userSeq") int userSeq);
+//    public List<UserReviewAnswerVO> allAnswers(@Param("userSeq") int userSeq);
+//    public List<NotificationVO> allNotifications(@Param("userSeq") int userSeq);
     
     
 }

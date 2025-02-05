@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class ChatMessageVO {
-    private long messageId;
-    private long roomId;
+    private long chatMessageSeq;
+    private long chatRoomSeq;
     private long sender;
     private String content;
     private Date regdate;
