@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.barobaro.app.mapper.FavoriteMapper;
 import com.barobaro.app.service.FavoriteService;
 import com.barobaro.app.vo.FavoriteVO;
+import com.barobaro.app.vo.PostVO;
 
 @Service
 public class FavoriteServiceImpl implements FavoriteService {
@@ -34,4 +35,8 @@ public class FavoriteServiceImpl implements FavoriteService {
 		mapper.favoriteDelete(userSeq, postSeq);
 	}
 
+	@Override
+	public List<PostVO> favoriteListInfo(long userSeq) {
+		return mapper.favoriteListInfo(userSeq);
+	}
 }
