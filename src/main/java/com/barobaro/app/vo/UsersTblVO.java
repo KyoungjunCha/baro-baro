@@ -26,5 +26,9 @@ public class UsersTblVO {
     
     private UsersOauthVO usersOauthVO; // 1:1 or 1:0 관계 매핑
     private List<PostVO> postVO; //1:N 관계
+    private List<NotificationVO> notificationVO;
+    private List<UserReviewAnswerVO> userReviewAnswerVO;
+    private List<CommentVO> commentVO;
+    
 
 }
