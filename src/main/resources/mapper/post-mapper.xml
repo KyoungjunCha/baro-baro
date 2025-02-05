@@ -334,26 +334,17 @@
 	    </association>
 	</resultMap>
 	
-	<!-- 사용자의 위치에서 대여장소가 가까운 순으로 정렬 -->
-<!--   	<select id="selectPostOrderByNearestRentLocation" resultType="postResultMap2"> -->
-<!-- 	    <![CDATA[ -->
-<!-- 	    SELECT st1.*, st2.* -->
-<!-- 		FROM (SELECT post_seq, max( -->
-<!-- 		                    6371 * ACOS( -->
-<!-- 		                    COS(${latitude} * 3.14159 / 180) * -->
-<!-- 		                    COS(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180) * -->
-<!-- 		                    COS((RENT_TIME_SLOT.RENT_ROTATE_Y - ${longitude}) * 3.14159 / 180) + -->
-<!-- 		                    SIN(${latitude} * 3.14159 / 180) * SIN(RENT_TIME_SLOT.RENT_ROTATE_X * 3.14159 / 180)) -->
-<!-- 		        ) AS distance -->
-<!-- 		        FROM RENT_TIME_SLOT -->
-<!-- 		        GROUP BY post_seq -->
-<!-- 		        ORDER BY distance asc -->
-<!-- 		     )st1  -->
-<!-- 		        LEFT OUTER JOIN (SELECT * FROM post) st2 -->
-<!-- 		            ON st1.post_seq = st2.post_seq -->
-<!-- 		ORDER BY st1.distance asc -->
-<!--  		]]> -->
-<!--   	</select> -->
+	<update id="updatePostByPostVO" parameterType="com.barobaro.app.vo.PostVO">
+        UPDATE post
+        SET 
+        	TITLE = #{title}
+        	, ITEM_CONTENT = #{itemContent}
+        	, RENT_CONTENT = #{rentContent}
+        	, PRODUCT_NAME = #{productName}
+        	, CATEGORY_SEQ = #{categoryName}
+        WHERE post_seq = #{postSeq}
+    </update>
+    
 </mapper>
 
 

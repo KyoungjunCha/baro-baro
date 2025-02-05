@@ -4,114 +4,143 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>게시글 수정</title>
+    <title>바로바로 | baroborrow</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script> <!-- jQuery 라이브러리 로드 -->
     <style>
-        /* 모달 창 스타일 */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        #additional-items {
-            margin-left: 10px;
-        }
-        
-        /* 이미지 관련 */
-        .post-images {
-		    position: relative;
-		    max-width: 500px;
-		    margin: auto;
-		    overflow: hidden;
+    	/* 전체 레이아웃 */
+		body {
+		    font-family: 'Arial', sans-serif;
+		    background-color: #f9f9f9;
+		    margin: 0;
+		    padding: 0;
 		}
-		.post-images img {
-		    width: 100%;
-		    display: none;
-		}
-		.post-images img.active {
-		    display: block;
-		}
-		.post-image-buttons {
-		    position: absolute;
-		    top: 50%;
-		    width: 100%;
+		
+		#create-post-container {
 		    display: flex;
-		    justify-content: space-between;
-		    transform: translateY(-50%);
+		    justify-content: center;
+		    align-items: center;
+		    height: 100vh;
+		    
 		}
-		.post-image-buttons button {
-		    background-color: rgba(0, 0, 0, 0.5);
-		    color: white;
-		    border: none;
+		
+		#post-table {
+		    width: 1200px;
+		    border-collapse: collapse;
+		    background-color: #ffffff;
+		    border-radius: 8px;
+		    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+		}
+		
+		#post-table caption {
+		    font-size: 1.5rem;
+		    font-weight: bold;
 		    padding: 10px;
+		    color: #333333;
+		}
+		
+		#post-table td {
+		    padding: 10px 15px;
+		    border-bottom: 1px solid #eaeaea;
+		}
+		
+		#post-table td:first-child {
+		    text-align: left;
+		    font-weight: bold;
+		    color: #555555;
+		}
+		
+		#post-table td:last-child {
+		    text-align: left;
+		}
+		
+		#post-table textarea,
+		#post-table select,
+		#post-table input[type="file"] {
+		    width: calc(100% - 20px);
+		    padding: 8px 10px;
+		    border-radius: 4px;
+		    border: 1px solid #ccc;
+		    font-size: 14px;
+		}
+		button {
+		    background-color: #007bff; /* Primary color */
+		    color: white;
+		    padding: 8px 15px;
+		    border-radius: 4px;
+		    border: none;
 		    cursor: pointer;
 		}
-		.post-container {
-		    margin: 20px;
+		#post-table button {
+		    background-color: #007bff; /* Primary color */
+		    color: white;
+		    padding: 8px 15px;
+		    border-radius: 4px;
+		    border: none;
+		    cursor: pointer;
 		}
-		.post-title {
-		    font-size: 24px;
-		    font-weight: bold;
+		
+		#post-table button:hover {
+		    background-color: #0056b3; /* Darker shade for hover */
 		}
-		.post-content {
-		    margin-top: 10px;
+		
+		/* 추가 항목 스타일 */
+		#additional-items td {
+		    text-align: center; /* Center-align added items */
 		}
-		.post-footer {
-		    margin-top: 20px;
-		    font-size: 14px;
-		} 
-        
+		
+		/* 모달 창 스타일 */
+		.modal {
+		    display: none; 
+		    position: fixed; 
+		    z-index: 1000; 
+		    left: 0; 
+		    top: 0; 
+		    width: 100%; 
+		    height: 100%; 
+		    overflow-y: auto; 
+		    background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
+		}
+		
+		.modal-content {
+		    background-color: white; 
+		    margin: auto; 
+		    padding: 20px; 
+		    border-radius: 8px; 
+		    width: 50%; 
+		}
+		
+		.close {
+		    color: #aaa; 
+		    float:right; 
+		    font-size:28px; 
+		}
+		
+		.close:hover,
+		.close:focus {
+		   color:black; 
+		   cursor:pointer; 
+		}
     </style>
 </head>
-<body>
 
+<body>    
+	<%--  <jsp:include page="/pages/common/header_test_sh.jsp" /> --%>
     <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/" + ${KEY_POST.postSeq} + "/update">
+        <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/create?isUpdate=${KEY_POST.postSeq}">
             <table id="post-table">
-                <caption>게시글 수정</caption>
+                <caption>게시글 작성</caption>
                 <tr>
                     <td><label for="title">제목</label></td>
-                    <td><input type="text" id="title" name="title" value="${KEY_POST.title}" required></td>
+                    <td colspan="5"><textarea id="title" name="title">${KEY_POST.title}</textarea></td>
                 </tr>
                 <tr>
                 	<td><label for="category">카테고리</label></td>
-          			<td>
+          			<td colspan="5">
 		                <select id="category" name="category" required>
 							<c:choose>
                 <c:when test="${not empty categories}">
                     <c:forEach var="item" items="${categories}">
-                        <option value="${item.categorySeq}">${KEY_POST.categoryName}</option>
+                        <option value="${item.categorySeq}">${item.categoryName}</option>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
@@ -122,55 +151,35 @@
             		</td>
                 </tr>
                 <tr>
-                	<td>등록된 이미지</td>
-                	<td>
-                		<div class="post-images">
-				            <c:forEach var="image" items="${KEY_POST.postImages}" varStatus="status">
-				                <img src="${image.storagePath.replace('c:\\uploads', '/uploads')}" alt="Post image" class="${status.index == 0 ? 'active' : ''}" />
-				            </c:forEach>
-				            <div class="post-image-buttons">
-				                <button type="button" onclick="changeImage(-1)">◁</button>
-				                <button type="button" onclick="changeImage(1)">▷</button>
-				           	</div>
-	        			</div>
-	        		</td>
-                </tr>
-                <tr>
-                    <td><label for="ufile">이미지 다시 올리기</label></td>
-                    <td><input type="file" id="ufile" name="ufile" multiple></td>
+                    <td><label for="ufile">관련 이미지</label></td>
+                    <td colspan="4"><input type="file" id="ufile" name="ufile" multiple></td>
                 </tr>
                 <tr>
                     <td><label for="product_name">제품명 상세 이름</label></td>
-                    <td><input type="text" id="product_name" name="product_name" value="${KEY_POST.productName}" required></td>
+                    <td colspan="4"><textarea id="product_name" name="product_name">${KEY_POST.productName}</textarea></td>
                 </tr>
                 <tr>
                     <td><label for="item_content">상품에 관한 설명</label></td>
-                    <td><input type="text" id="item_content" name="item_content" value="${KEY_POST.itemContent}" required></td>
+                    <td colspan="4"><textarea id="item_content" name="item_content">${KEY_POST.itemContent}</textarea></td>
                 </tr>
                 <tr>
                     <td><label for="rent_content">대여에 관한 설명</label></td>
-                    <td><input type="text" id="rent_content" name="rent_content" value="${KEY_POST.rentContent}" required></td>
+                    <td colspan="4"><textarea id="rent_content" name="rent_content">${KEY_POST.rentContent}</textarea></td>
                 </tr>
                 <tr>
-                    <td colspan="2">
-                        <button type="button" id="add-item-button">대여 일정 추가</button> 
+                	<td>대여일 ~ 반납일</td>
+                	<td>요금</td>
+                	<td>대여 장소</td>
+                	<td>반납 장소</td>
+                	<td>
+                        <button type="button" id="add-item-button">일정 추가</button> 
                     </td>
                 </tr>
                 <tr id="additional-items">
-                </tr>
-                
-                <c:forEach var="item" items="${KEY_POST.rentTimes}">
-				    <tr>
-				        <td>${item.rent_at}, ${item.return_at}, ${item.price}, ${item.rent_location}, ${item.return_location}</td>
-				        <td><button type="button" class="delete-time-slot">해당 일정 삭제</button></td>
-				    </tr>
-				</c:forEach>
-                <tr>
-                    <td colspan="2">
-                        <button type="submit">게시글 수정</button>
-                    </td>
+                    <!-- 추가된 항목들이 들어갈 곳 -->
                 </tr>
             </table>
+            <button type="submit">게시글 수정</button>
         </form>
     </div>
 
@@ -205,7 +214,7 @@
             script.onload = callback; // API가 로드되면 콜백 함수 실행
             document.head.appendChild(script); // 문서에 스크립트 추가
         }
-
+        
         // 모달 창 관련 처리
         var modal = document.getElementById("myModal");
         var btn = document.getElementById("add-item-button");
@@ -313,20 +322,22 @@
 	            var returnLocation = locations[1];
 	
 	            if (rentAt && returnAt && rentLocation && rentRotateX && rentRotateY && returnLocation && returnRotateX && returnRotateY) {
-	                // 새로운 행 추가
+	               	const rentDateTT = new Date(rentAt);
+	               	const returnDateTT = new Date(returnAt);
+	            	// 새로운 행 추가
 	                var newRow = $('<tr>').append(
-	                    $('<td>').text(rentAt),
-	                    $('<td>').text(returnAt),
-	                    $('<td>').text(price),
-	                    $('<td>').text(rentLocation),
-	                    $('<td>').text(rentRotateX),
-	                    $('<td>').text(rentRotateY),
-	                    $('<td>').text(returnLocation),
-	                    $('<td>').text(returnRotateX),
-	                    $('<td>').text(returnRotateY)
+	                    $('<td>').text(rentDateTT.getFullYear() + "-" + (rentDateTT.getMonth() + 1) + "-" + rentDateTT.getDate() + "/"
+	                    		+ rentDateTT.getHours() + ":" + rentDateTT.getMinutes()
+	                    		+ "\n"
+	                    		+ " ~ " + returnDateTT.getFullYear() + "-" + (returnDateTT.getMonth() + 1) + "-" + returnDateTT.getDate() + "/" 
+	                    		+ returnDateTT.getHours() + ":" + returnDateTT.getMinutes()
+	                    ),
+	                    $('<td>').text(price + "원"),
+	                    $('<td>').text("대여장소: " + rentLocation + " / 반납장소: " + returnLocation).attr('colspan', 2),
+	                    $('<button>').text("X").on('click', deleteSchedule).attr('type', 'button'),
 	                );
-	                $('#additional-items').append(newRow);  // '대여 일정 추가' 버튼 오른쪽에 추가
-	
+	                $('#post-table').append(newRow);  // '대여 일정 추가' 버튼 오른쪽에 추가
+						                
 	                // 추가된 대여 일정을 폼에 숨겨진 입력 필드로 추가
 	                var rentAtInput = $('<input>').attr('type', 'hidden').attr('name', 'rent_at[]').val(rentAt);
 	                var returnAtInput = $('<input>').attr('type', 'hidden').attr('name', 'return_at[]').val(returnAt);
@@ -340,7 +351,18 @@
 	
 	                // 폼에 숨겨진 필드 추가
 	                $('#create-post-form').append(rentAtInput, returnAtInput, priceInput, rentLocationInput, rentRotateXInput, rentRotateYInput, returnLocationInput, returnRotateXInput, returnRotateYInput);
-	
+	                function deleteSchedule() {
+	                	newRow.remove();
+	                	rentAtInput.remove(); 
+		                returnAtInput.remove(); 
+		                priceInput.remove(); 
+		                rentLocationInput.remove(); 
+		                rentRotateXInput.remove();
+		                rentRotateYInput.remove();
+		                returnLocationInput.remove();
+		                returnRotateXInput.remove();
+		                returnRotateYInput.remove();
+	                }
 	                modal.style.display = "none"; // 모달 닫기
 	            } else {
 	                alert("모든 항목을 입력하세요.");
@@ -375,7 +397,6 @@
 
 	        // 추가된 대여 일정 항목들 추출
 	        $('#additional-items tr').each(function() {
-	        	console.log($(this).find('td').eq(0).text());
 	            rentAt.push($(this).find('td').eq(0).text());
 	            returnAt.push($(this).find('td').eq(1).text());
 	            price.push($(this).find('td').eq(2).text());
@@ -417,32 +438,71 @@
 	        //$('#create-post-form')[0].submit();
 	        $('#create-post-form').submit();
 	    });
+	    
 	});
-    </script>
-	<script>
-        let currentImageIndex = 0;
-        const images = document.querySelectorAll('.post-images img');
-
-        function changeImage(direction) {
-            images[currentImageIndex].classList.remove('active');
-            currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
-            images[currentImageIndex].classList.add('active');
-        }
-    </script>
-    <script>
-	    document.addEventListener('DOMContentLoaded', function () {
-	        const deleteButtons = document.querySelectorAll('.delete-time-slot');
-	        console.log("실행되었다.");
-	        $('#additional-items tr').each(function() {
-	        	console.log($(this).find('td').eq(0).text());
-	        });
-	        deleteButtons.forEach(button => {
-	            button.addEventListener('click', function () {
-	                const row = button.closest('tr'); 
-	                row.remove(); 
-	            });
-	        });
-	    });
-    </script>
+   </script>
+   
+   <script>
+	   function formatLongToDateString(longValue) {
+		    const date = new Date(longValue);
+	
+		    // 각 구성 요소 추출
+		    const year = date.getFullYear();
+		    const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+		    const day = String(date.getDate()).padStart(2, '0');
+		    const hours = String(date.getHours()).padStart(2, '0');
+		    const minutes = String(date.getMinutes()).padStart(2, '0');
+	
+		    // 원하는 형식으로 반환
+		    return year + "-" + month + "-" + day + "T" + hours + ":" + minutes;
+		}
+   
+   
+   		const KEY_POST_JSON_VAL = ${KEY_POST_JSON};
+   		KEY_POST_JSON_VAL.rentTimes.forEach(function(rentTime) {
+   			const rentDateTT = new Date(rentTime.rent_at);
+   	      	const returnDateTT = new Date(rentTime.return_at);
+   	  		
+   	      	// 새로운 행 추가
+   			var newRow = $('<tr>').append(
+   	           $('<td>').text(rentDateTT.getFullYear() + "-" + (rentDateTT.getMonth() + 1) + "-" + rentDateTT.getDate() + "/"
+   	           		+ rentDateTT.getHours() + ":" + rentDateTT.getMinutes()
+   	           		+ "\n"
+   	           		+ " ~ " + returnDateTT.getFullYear() + "-" + (returnDateTT.getMonth() + 1) + "-" + returnDateTT.getDate() + "/" 
+   	           		+ returnDateTT.getHours() + ":" + returnDateTT.getMinutes()
+   	           ),
+   	           $('<td>').text(rentTime.price + "원"),
+   	           $('<td>').text("대여장소: " + rentTime.rent_location + " / 반납장소: " + rentTime.return_location).attr('colspan', 2),
+   	           /* $('<button>').text("X").on('click', deleteSchedule).attr('type', 'button'), */
+   	       );
+   			$('#post-table').append(newRow);  // '대여 일정 추가' 버튼 오른쪽에 추가
+   			// 추가된 대여 일정을 폼에 숨겨진 입력 필드로 추가
+   	       /* var rentAtInput = $('<input>').attr('type', 'hidden').attr('name', 'rent_at[]').val(formatLongToDateString(rentTime.rent_at));
+   	       var returnAtInput = $('<input>').attr('type', 'hidden').attr('name', 'return_at[]').val(formatLongToDateString(rentTime.return_at));
+   	       var priceInput = $('<input>').attr('type', 'hidden').attr('name', 'price[]').val(rentTime.price);
+   	       var rentLocationInput = $('<input>').attr('type', 'hidden').attr('name', 'rent_location[]').val(rentTime.rent_location);
+   	       var rentRotateXInput = $('<input>').attr('type', 'hidden').attr('name', 'rent_rotate_x[]').val(rentTime.rent_rotate_x);
+   	       var rentRotateYInput = $('<input>').attr('type', 'hidden').attr('name', 'rent_rotate_y[]').val(rentTime.rent_rotate_y);
+   	       var returnLocationInput = $('<input>').attr('type', 'hidden').attr('name', 'return_location[]').val(rentTime.return_location);
+   	       var returnRotateXInput = $('<input>').attr('type', 'hidden').attr('name', 'return_rotate_x[]').val(rentTime.return_rotate_x);
+   	       var returnRotateYInput = $('<input>').attr('type', 'hidden').attr('name', 'return_rotate_y[]').val(rentTime.return_rotate_y);
+		
+   	       // 폼에 숨겨진 필드 추가
+   	       $('#create-post-form').append(rentAtInput, returnAtInput, priceInput, rentLocationInput, rentRotateXInput, rentRotateYInput, returnLocationInput, returnRotateXInput, returnRotateYInput);
+   	       function deleteSchedule() {
+   	       	newRow.remove();
+   	       	rentAtInput.remove(); 
+   	           returnAtInput.remove(); 
+   	           priceInput.remove(); 
+   	           rentLocationInput.remove(); 
+   	           rentRotateXInput.remove();
+   	           rentRotateYInput.remove();
+   	           returnLocationInput.remove();
+   	           returnRotateXInput.remove();
+   	           returnRotateYInput.remove();
+   	       } */
+   			
+   		});
+   </script>
 </body>
 </html>
