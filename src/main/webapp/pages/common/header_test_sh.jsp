@@ -93,7 +93,7 @@
 }
 
 .search-button {
-	background: #007bff;
+	background: #12c1c0;
 	border: none;
 	color: white;
 	padding: 10px 15px;
@@ -105,7 +105,7 @@
 }
 
 .search-button:hover {
-	background: #0056b3;
+	background: #12c1c0;
 }
 </style>
 </head>
@@ -197,7 +197,9 @@
 	    			if(res !== -1) {
 	    				userSeq = res;
 	    				console.log("userSeq: ", userSeq);
-    		            connectSSE(userSeq);
+	    				if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
+	                        connectSSE(userSeq);  // ✅ AJAX 요청 후 한 번만 실행됨
+	                    }
 	    			} else {
 	    				console.log("로그인 정보 없음");
 	    			}
@@ -207,33 +209,21 @@
 	            }
 	    	});
 	    	
-	    	if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
-	            connectSSE(userSeq);
-	        }
-	    	
 	    	// 종 아이콘 클릭 시
-	    	$("#notification-bell").click(function (e) {
-	    		e.preventDefault();
-	            $("#notification-dropdown").toggle();
-
-	    		// SSE 연결 확인 후 다시 연결
-    	       if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
-				    console.log("SSE 재연결 시도...");
-				    connectSSE(userSeq);
-				}
-	    	}); 
+			$("#notification-bell").click(function (e) {
+			    e.preventDefault();
+			    $("#notification-dropdown").toggle();
+			
+			    // ✅ 기존 연결이 존재하면 다시 연결하지 않음
+			    if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
+			        console.log("SSE 재연결 시도...");
+			        connectSSE(userSeq);
+			    }
+			});
 	        
 	        loadNotification();
 	        
 	        $('#mark-all-read').click(function() {
-	            // 모든 체크박스 선택
-	           /*  $('#notification-list .notification').each(function() {
-	                // 읽지 않은 알림만 체크
-	                if ($(this).hasClass('unread')) {
-	                    $(this).find('input[type="checkbox"]').prop('checked', true); // 체크박스 체크
-	                    $(this).removeClass('unread');
-                	}
-	        	}); */
 	            markAllAsRead();
 	        });
 	
@@ -388,7 +378,7 @@
 	    function markAllAsRead() {
 	    	var userSeq = 1001;
 	        $.ajax({
-	            url: '/notification/mark-all-read', // 서버 엔드포인트
+	            url: '/notification/mark-all-read',
 	            method: 'POST',
 	            data: {userSeq: userSeq},
 	            success: function(response) {
@@ -396,8 +386,7 @@
 	                    $(this).removeClass('unread').addClass('read');
 	                    $(this).find('input[type="checkbox"]').prop('checked', true);
 	                });
-	            	
-	                //$('#notification-count').text('0');
+
 	                updateUnreadCount();
 	            },
 	            error: function(error) {
@@ -409,10 +398,11 @@
 	    // SSE 연결
 	    function connectSSE(userSeq) {
     		 if (eventSource !== null) {
-    	        eventSource.close();
     	        console.log("기존 SSE 연결 종료 후 재연결");
+    	        eventSource.close();
+    	        eventSource = null;
     	    }
-	        // SSE 연결
+/* 	        // SSE 연결
 	        eventSource = new EventSource("/notification/subscribe");
 	        
 	        eventSource.onopen = function() {
@@ -420,9 +410,14 @@
 	            reconnectAttempts = 0;
 	        };
 	
-	        eventSource.onmessage = function(event) {
+ 	        eventSource.onmessage = function(event) {
 	            console.log("새로운 알림: ", event.data);
-	        };
+	        };  */
+	        
+	       /*  eventSource.onmessage = function(event) {
+	            if (event.data === "ping") return;
+	            console.log("알림 수신: ", event.data);
+	        }; 
 	        
 	     	// 알림 이벤트 수신
 	        eventSource.addEventListener('notification', function(event) {
@@ -434,17 +429,48 @@
 	    	eventSource.onerror = function(event) {
 	    		console.error("SSE 연결 오류 발생", event);
 	    		
-	    		// 연결 끊어졌을 때 재시도
-/* 	            eventSource.close();
-	            setTimeout(() => connectSSE(userSeq), 5000); */
-	            if (reconnectAttempts < maxReconnectAttempts) {
-	                reconnectAttempts++;
-	                setTimeout(() => connectSSE(userSeq), 5000); // 5초 후 재연결 시도
-	            } else {
-	                console.warn("SSE 연결 최대 재시도 횟수를 초과했습니다.");
-	                alert("서버와의 연결이 원활하지 않습니다. 나중에 다시 시도해 주세요.");
+	    		 // 연결이 종료된 경우 재연결 시도 (최대 5회)
+	            if (eventSource.readyState === EventSource.CLOSED) {
+	                if (reconnectAttempts < maxReconnectAttempts) {
+	                    reconnectAttempts++;
+	                    setTimeout(() => connectSSE(userSeq), 5000);
+	                } else {
+	                    console.warn("SSE 최대 재연결 횟수 초과");
+	                    alert("서버와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
+	                }
 	            }
-	    	};
+	    		
+	    	}; */
+	    	
+	    	 setTimeout(() => {  // ✅ SSE가 완전히 닫힌 후 다시 연결
+	    	        eventSource = new EventSource("/notification/subscribe");
+
+	    	        eventSource.onopen = function() {
+	    	            console.log("SSE 연결 성공!");
+	    	            reconnectAttempts = 0;
+	    	        };
+	    	        
+	    	        eventSource.onerror = function(event) {
+	    	            console.error("SSE 연결 오류 발생", event);
+
+	    	            if (eventSource.readyState === EventSource.CLOSED) {
+	    	                if (reconnectAttempts < maxReconnectAttempts) {
+	    	                    reconnectAttempts++;
+	    	                    console.log("SSE 재연결 시도 (" + reconnectAttempts + "/" + maxReconnectAttempts + ")");
+	    	                    connectSSE(userSeq);
+	    	                } else {
+	    	                    console.warn("SSE 최대 재연결 횟수 초과");
+	    	                    alert("서버와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
+	    	                }
+	    	            }
+	    	        };
+	    	        
+	    	        eventSource.addEventListener('notification', function(event) {
+	    	            const notification = JSON.parse(event.data);
+	    	            addNotification(notification);
+	    	        });
+
+	    	    }, 1000); 
     	}
     </script>
 </body>
