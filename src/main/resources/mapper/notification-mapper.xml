@@ -4,50 +4,65 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.barobaro.app.mapper.NotificationMapper">
 	<resultMap id="notificationMap" type="com.barobaro.app.vo.NotificationVO">
-		<id property="notificationSeq" column="notification_seq"/>
-		<result property="notificationType" column="notification_type"/>
-		<result property="title" column="title"/>
-		<result property="contents" column="contents"/>
-		<result property="isRead" column="is_read"/>
-		<result property="createdAt" column="created_at"/>
-		<result property="link" column="link"/>
-		<result property="userSeq" column="user_seq"/>
+		<id property="notificationSeq" column="notification_seq" />
+		<result property="notificationType" column="notification_type" />
+		<result property="title" column="title" />
+		<result property="contents" column="contents" />
+		<result property="isRead" column="is_read" />
+		<result property="createdAt" column="created_at" />
+		<result property="link" column="link" />
+		<result property="userSeq" column="user_seq" />
 	</resultMap>
 
-	<insert id="insertNotification" parameterType="com.barobaro.app.vo.NotificationVO">
-		INSERT INTO notification(notification_seq, notification_type, title, contents, is_read, created_at, link, user_seq)
-		VALUES (notification_seq.nextval, #{notificationType}, #{title}, #{contents}, #{isRead}, sysdate, #{link}, #{userSeq})
+	<insert id="insertNotification"
+		parameterType="com.barobaro.app.vo.NotificationVO">
+		INSERT INTO notification(notification_seq,
+		notification_type, title, contents, is_read, created_at, link,
+		user_seq)
+		VALUES (notification_seq.nextval, #{notificationType},
+		#{title}, #{contents}, #{isRead}, sysdate, #{link}, #{userSeq})
 	</insert>
-	
+
 	<!-- 전체 알림 가져오기 -->
-	<select id="selectAllNotifications" parameterType="int" resultMap="notificationMap">
-	    SELECT *
-	    FROM notification
-	    WHERE user_seq = #{userSeq}
-	    ORDER BY created_at DESC
-	</select>
-	
-	<!-- 읽지 않은 알림 가져오기 -->
-	<select id="selectUnreadNotifications" parameterType="int" resultMap="notificationMap">
+	<select id="selectAllNotifications" parameterType="int"
+		resultMap="notificationMap">
 		SELECT *
 		FROM notification
 		WHERE user_seq = #{userSeq}
-		AND is_read = 0
 		ORDER BY created_at DESC
 	</select>
-	
-	<!-- 읽은 알림 가져오기 -->
-	<select id="selectReadNotifications" parameterType="int" resultMap="notificationMap">
-	    SELECT *
-	    FROM notification
-	    WHERE user_seq = #{userSeq} AND is_read = 1
-	    ORDER BY created_at DESC
+
+	<!-- 읽지 않은 알림 가져오기 -->
+	<select id="selectUnreadNotifications" parameterType="int"
+		resultMap="notificationMap">
+		SELECT *
+		FROM notification
+		WHERE user_seq = #{userSeq}
+		AND
+		is_read = 0
+		ORDER BY created_at DESC
 	</select>
-	
+
+	<!-- 읽은 알림 가져오기 -->
+	<select id="selectReadNotifications" parameterType="int"
+		resultMap="notificationMap">
+		SELECT *
+		FROM notification
+		WHERE user_seq = #{userSeq} AND is_read = 1
+		ORDER BY created_at DESC
+	</select>
+
 	<!-- 읽음 처리 -->
 	<update id="markAsRead">
 		UPDATE notification
-		SET is_read = 1
+		SET is_read = #{isRead}
 		WHERE notification_seq = #{notificationSeq}
+	</update>
+
+	<!-- 모든 알림 읽음 처리 -->
+	<update id="markAllAsRead">
+		UPDATE notification
+		SET is_read = 1
+		WHERE user_seq = #{userSeq} AND is_read = 0
 	</update>
 </mapper>
