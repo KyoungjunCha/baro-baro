@@ -87,7 +87,7 @@
 		}
 		
 		.search-button {
-		    background: #007bff;
+		    background: #12C1C0;
 		    border: none;
 		    color: white;
 		    padding: 10px 15px;
@@ -97,9 +97,6 @@
 		    position: absolute; /* 절대 위치 설정 */
 		    right: 10px; /* 오른쪽 끝에 고정 */
 		}
-        .search-button:hover {
-            background: #0056b3;
-        }
     </style>
 </head>
 
