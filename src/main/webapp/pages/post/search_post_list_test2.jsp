@@ -48,6 +48,47 @@
   color: #ffffff;            /* 글자 색상 흰색 */
   border-color: #0277bd;     /* 테두리 짙은 하늘색 */
 }
+
+.price-filter {
+            width: 300px;
+            padding: 20px;
+        }
+        
+        .price-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 20px;
+            background-color: #f5f5f5;
+            text-align: left;
+            cursor: pointer;
+        }
+        
+        .price-button.active {
+            background-color: #333;
+            color: white;
+        }
+        
+        .price-range {
+            margin-top: 20px;
+        }
+        
+        .price-range input {
+            width: 100px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        
+        .apply-button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 </style>
 </head>
 
@@ -134,112 +175,40 @@
                             <div class="section-title">
                                 <h4>카테고리</h4>
                             </div>
-                            
                             <div class="categories__accordion">
                                 <div class="accordion" id="accordionExample">
 									<div class="card">
 									    <div class="card-heading active">
-									        <a data-toggle="collapse" data-target="#collapseOne">수입명품</a>
-									    </div>
-									    <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">여성신발</a></li>
-									                <li><a href="#">남성신발</a></li>
-									                <li><a href="#">가방/핸드백</a></li>
-									                <li><a href="#">지갑/벨트</a></li>
-									                <li><a href="#">여성의류</a></li>
-									                <li><a href="#">남성의류</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseTwo">패션의류</a>
-									    </div>
-									    <div id="collapseTwo" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">여성의류</a></li>
-									                <li><a href="#">남성의류</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseThree">패션잡화</a>
-									    </div>
-									    <div id="collapseThree" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">운동화</a></li>
-									                <li><a href="#">여성신발</a></li>
-									                <li><a href="#">남성신발</a></li>
-									                <li><a href="#">가방</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseFour">뷰티</a>
-									    </div>
-									    <div id="collapseFour" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">스킨케어</a></li>
-									                <li><a href="#">메이크업</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									<div class="card">
-									    <div class="card-heading">
-									        <a data-toggle="collapse" data-target="#collapseFive" class="category" data-category-seq="5">출산/유아동</a>
-									    </div>
-									    <div id="collapseFive" class="collapse" data-parent="#accordionExample">
-									        <div class="card-body">
-									            <ul>
-									                <li><a href="#">출산용품</a></li>
-									                <li><a href="#">유아동 의류</a></li>
-									            </ul>
-									        </div>
-									    </div>
-									</div>
-									
-									
 
-                                    
-                                    
+										<c:set var="selectedCategory" value="${param.categorySeq}" />
+										<c:forEach var="category" items="${categories}">
+										    <input type="radio" name="category" class="category" 
+										    	data-category-seq="${category.categorySeq}"
+										    	<c:if test="${category.categorySeq == selectedCategory}">checked</c:if>
+										    	/>
+										    	${category.categoryName} 
+    											<br/>  
+										</c:forEach>
+											
+									    </div>
+									</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="sidebar__filter">
-                            <div class="section-title">
-                                <h4>가격</h4>
-                            </div>
-                            <div class="filter-range-wrap">
-                                <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                                data-min="0" data-max="999999999"></div>
-                                <div class="range-slider">
-                                    <div class="price-input">
-                                        <p>가격:</p>
-                                        <input type="text" id="minamount">
-                                        <input type="text" id="maxamount">
-                                    </div>
-                                </div>
-                            </div>
-                            <br/>
-                            <a href="#">Filter</a>
-                        </div>
-
-                        
+						<div class="price-filter">
+					        <h3>가격</h3>
+					        <button class="price-button" data-price="5000" onclick="selectPrice(this)">5,000원 이하</button>
+					        <button class="price-button" data-price="10000" onclick="selectPrice(this)">10,000원 이하</button>
+					        <button class="price-button" data-price="20000" onclick="selectPrice(this)">20,000원 이하</button>
+					        
+					        <div class="price-range">
+					            <input type="number" id="minPrice" placeholder="0" value="0">
+					            -
+					            <input type="number" id="maxPrice" placeholder="999999" value="999999">
+					        </div>
+					        
+					        <button class="apply-button" onclick="applyFilter()">적용하기</button>
+					    </div>
                     </div>
                 </div>
                 
@@ -256,21 +225,17 @@
                             <div class="product__item">
                             
                             	<!-- 게시글 사진 부분 start -->
-                                <div class="product__item__pic set-bg" data-setbg="${post.postImage}">
+                                <div class="product__item__pic set-bg" data-setbg="${post.postImage.storagePath.replace('c:\\uploads', '/uploads')}">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
-                                    	<!-- 사진 확대 -->
-                                        <li><a href="${post.postImage}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                                        <!-- 하트(즐겨찾기) -->
+                                    	<!-- 하트(즐겨찾기) -->
                                         <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                                        <!-- 장바구니 -->
-                                        <li><a href="#"><span class="icon_bag_alt"></span></a></li>
                                     </ul>
                                 </div>
                                 <!-- 게시글 사진 부분 end -->
                                 
                                 <div class="product__item__text">
-                                    <h6><a href="#"> ${post.title} </a></h6>
+                                    <h6><a href="/post/post/${post.postSeq}"> ${post.title} </a></h6>
                                     <!-- 별점 개수 -->
                                     <div class="rating">
                                         <i class="fa fa-star"></i>
@@ -280,6 +245,8 @@
                                         <i class="fa fa-star"></i>
                                     </div>
                                     <div class="product__price">${post.categoryName}</div>
+                                    <div class="product__price">10분당 대여가격 : ${post.pricePerTenMinute}원</div>
+                                    <div>조회수: ${post.count} 회</div>
                                 </div>
                             </div>
                         </div>
@@ -399,15 +366,67 @@
     <script src="/js/owl.carousel.min.js"></script>
     <script src="/js/jquery.nicescroll.min.js"></script>
     <script src="/js/main.js"></script>
+    
+    <script>
+        function selectPrice(button) {
+            // 모든 버튼의 active 클래스 제거
+            document.querySelectorAll('.price-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 선택된 버튼에 active 클래스 추가
+            button.classList.add('active');
+            
+            // 가격 범위 입력란 초기화
+            document.getElementById('minPrice').value = '0';
+            
+            // 선택된 가격에 따라 최대 가격 설정
+            let maxPrice = button.getAttribute('data-price');
+            document.getElementById('maxPrice').value = maxPrice;
+        }
+        
+        function applyFilter() {
+        	var searchInfo = document.getElementById("searchInfo");
+            var searchType = searchInfo.dataset.searchType;
+            var searchKeyword = searchInfo.dataset.searchKeyword;
+            
+        	// 페이지 로드 시 URL 파라미터에서 availableOnly 값을 확인하여 체크박스 상태 설정
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            let minPrice = document.getElementById('minPrice').value;
+            let maxPrice = document.getElementById('maxPrice').value;
+            
+            const categorySeq = urlParams.get('categorySeq') || '';
+            const availableOnly = availableOnlyCheckbox.checked ? 'true' : '';
+            const url = "/post/posts?searchType=" + searchType +
+                        "&searchKeyword=" + searchKeyword +
+                        (categorySeq ? "&categorySeq=" + categorySeq : "") +
+                        (availableOnly ? "&availableOnly=true" : "") +
+                        "&minPrice=" + minPrice + 
+                        "&maxPrice=" + maxPrice;
+            window.location.href = url;
+        }
+    </script>
 	
 	<script>
     document.addEventListener("DOMContentLoaded", function() {
+    	
         var searchInfo = document.getElementById("searchInfo");
         var searchType = searchInfo.dataset.searchType;
         var searchKeyword = searchInfo.dataset.searchKeyword;
         console.log(searchType);
         console.log(searchKeyword);
+     	
+        // 페이지 로드 시 URL 파라미터에서 availableOnly 값을 확인하여 체크박스 상태 설정
+        const urlParams = new URLSearchParams(window.location.search);
         
+     	//min,maxprice initial
+     	var minPriceEL = document.getElementById("minPrice");
+     	var maxPriceEL = document.getElementById("maxPrice");
+     	minPriceEL.value = urlParams.get('minPrice') ? urlParams.get('minPrice') : 0;
+     	maxPriceEL.value = urlParams.get('maxPrice') ? urlParams.get('maxPrice') : 0;
+     
+     
         // 체크박스 요소 가져오기
         var availableOnlyCheckbox = document.getElementById("availableOnlyCheckbox");
 
@@ -445,8 +464,7 @@
         });
         
         
-        // 페이지 로드 시 URL 파라미터에서 availableOnly 값을 확인하여 체크박스 상태 설정
-        const urlParams = new URLSearchParams(window.location.search);
+        
         if (urlParams.get('availableOnly') === 'true') {
             availableOnlyCheckbox.checked = true;  // 체크박스 체크 상태 유지
         }
@@ -467,13 +485,19 @@
                     const categorySeq = urlParams.get('categorySeq') || '';
                     const availableOnly = availableOnlyCheckbox.checked ? 'true' : '';
 
+                    let minPrice = document.getElementById('minPrice').value;
+                    let maxPrice = document.getElementById('maxPrice').value;
+                    
                     // 위치 정보와 함께 URL 작성 후 리디렉션
                     const url = "/post/posts?searchType=" + searchType +
                                 "&searchKeyword=" + searchKeyword +
                                 (categorySeq ? "&categorySeq=" + categorySeq : "") +
                                 (availableOnly ? "&availableOnly=true" : "") +
                                 "&latitude=" + latitude + 
-                                "&longitude=" + longitude;
+                                "&longitude=" + longitude
+                                + (minPrice ? "&minPrice=" + minPrice : "")
+                                + (maxPrice ? "&maxPrice=" + maxPrice : "")
+                                ;
 
                     console.log("위치 기반 정렬 URL:", url);
                     window.location.href = url;
