@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -11,88 +12,91 @@
 <title>바로바로 | baro-borrow</title>
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
 <style>
-body {
-	font-family: Arial, sans-serif;
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 20px;
-	margin-top: 40px;
-}
-
-#calendar {
-	max-width: 800px;
-	width: 60%;
-}
-
-#schedule {
-	width: 30%;
-	padding: 20px;
-	border: 1px solid #ccc;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-#schedule h3 {
-	margin-top: 0;
-}
-
-.fc-daygrid-day.disabled {
-	background-color: #f0f0f0 !important; /* 회색 배경 */
-	pointer-events: none; /* 마우스 클릭 방지 */
-	opacity: 0.6; /* 투명도 조정 */
-}
-
-.fc-daygrid-day.disabled * {
-	color: #a0a0a0 !important; /* 텍스트 색상 변경 */
-}
-
-/* FullCalendar 날짜 숫자 색상을 검정색으로 변경 */
-.fc-daygrid-day-number {
-    color: black !important;  /* 글자색을 완전 검정색으로 변경 */
-    font-weight: bold;  /* 글자를 더 진하게 */
-}
-
-#timeSlotTable {
-    width: 100%;
-    border-collapse: collapse; /* 테두리 겹침 */
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 표 그림자 효과 */
-}
-
-#timeSlotTable th, #timeSlotTable td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-    font-size: 16px;
-}
-
-#timeSlotTable th {
-    background-color: #007bff; /* 헤더 배경색 (파란색) */
-    color: white; /* 헤더 글씨 흰색 */
-    font-weight: bold;
-}
-
-#timeSlotTable tbody tr:nth-child(even) {
-    background-color: #f9f9f9; /* 짝수 행 배경색 */
-}
-
-#timeSlotTable tbody tr:hover {
-    background-color: #f1f1f1; /* 마우스 호버 시 색상 변경 */
-    transition: background-color 0.2s ease-in-out;
-}
-	#detail-post-container{
-		width: 1000px;
+	/* 갤린더 */
+	#calendar-container{
+		display: flex; /* 자식 요소들을 수평으로 배치 */
+    	justify-content: flex-start;
 	}
-	.post-images {
-	    position: relative;
-	    max-width: 500px;
-	    margin: auto;
+	#calendar {
+		max-width: 800px;
+		width: 60%;
+		display: flex; /* 자식 요소들을 수평으로 배치 */
+    	justify-content: flex-start; /* 자식 요소들을 왼쪽으로 정렬 (기본값) */
+	}
+	
+	#schedule {
+		width: 30%;
+		padding: 20px;
+		border: 1px solid #ccc;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	}
+	
+	#schedule h3 {
+		margin-top: 0;
+	}
+	
+	.fc-daygrid-day.disabled {
+		background-color: #f0f0f0 !important; /* 회색 배경 */
+		pointer-events: none; /* 마우스 클릭 방지 */
+		opacity: 0.6; /* 투명도 조정 */
+	}
+	
+	.fc-daygrid-day.disabled * {
+		color: #a0a0a0 !important; /* 텍스트 색상 변경 */
+	}
+	
+	/* FullCalendar 날짜 숫자 색상을 검정색으로 변경 */
+	.fc-daygrid-day-number {
+	    color: black !important;  /* 글자색을 완전 검정색으로 변경 */
+	    font-weight: bold;  /* 글자를 더 진하게 */
+	}
+	
+	#timeSlotTable {
+	    width: 100%;
+	    border-collapse: collapse; /* 테두리 겹침 */
+	    border-radius: 8px;
 	    overflow: hidden;
+	    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 표 그림자 효과 */
+	}
+	
+	#timeSlotTable th, #timeSlotTable td {
+	    border: 1px solid #ddd;
+	    padding: 12px;
+	    text-align: center;
+	    font-size: 16px;
+	}
+	
+	#timeSlotTable th {
+	    background-color: #007bff; /* 헤더 배경색 (파란색) */
+	    color: white; /* 헤더 글씨 흰색 */
+	    font-weight: bold;
+	}
+	
+	#timeSlotTable tbody tr:nth-child(even) {
+	    background-color: #f9f9f9; /* 짝수 행 배경색 */
+	}
+	
+	#timeSlotTable tbody tr:hover {
+	    background-color: #f1f1f1; /* 마우스 호버 시 색상 변경 */
+	    transition: background-color 0.2s ease-in-out;
+	}
+
+</style>
+<style>
+	/* 이미지 조회 */
+	.post-images {
+		position: relative;
+		width: 50%;
+		height: 500px;
+	    max-width: 500px;
+	    overflow: hidden;
+	    display:flex;
 	}
 	.post-images img {
-	    width: 100%;
+		width: 100%;
+		border-radius: 8px;
 	    display: none;
+	    
 	}
 	.post-images img.active {
 	    display: block;
@@ -112,20 +116,129 @@ body {
 	    padding: 10px;
 	    cursor: pointer;
 	}
-	.post-container {
-	    margin: 20px;
+</style>
+<style>
+	/* 게시글 */
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
 	}
-	.post-title {
-	    font-size: 24px;
-	    font-weight: bold;
+
+	body {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+		color: #212529;
+		line-height: 1.5;
 	}
-	.post-content {
-	    margin-top: 10px;
+
+	.header-button {
+		background-color: #ff6f0f;
+		color: white;
+		border: none;
+		padding: 8px 16px;
+		border-radius: 4px;
+		cursor: pointer;
 	}
-	.post-footer {
-	    margin-top: 20px;
-	    font-size: 14px;
-	} 
+
+	/* 메인 컨테이너 */
+	.container {
+		max-width: 1024px;
+		margin: 0 auto;
+		padding: 24px;
+	}
+
+	.breadcrumb {
+		color: #868e96;
+		font-size: 14px;
+		margin-bottom: 20px;
+		
+		display: flex;
+	    justify-content: space-between;
+	    align-items: center; 
+	}
+
+	/* 상품 상세 */
+	.product-detail {
+		display: flex; 
+		gap: 40px;
+	}
+
+	.product-images {
+		position: relative;
+		width: 50%;
+	}
+
+	.product-images img {
+		width: 100%;
+		border-radius: 8px;
+	}
+
+	.image-next {
+		position: absolute;
+		right: 16px;
+		top: 50%;
+		transform: translateY(-50%);
+		background: rgba(255,255,255,0.8);
+		border: none;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+
+	.product-info {
+		flex: 1;
+	}
+
+	.product-title {
+		font-size: 24px;
+		margin-bottom: 8px;
+	}
+
+	.product-meta {
+		color: #868e96;
+		font-size: 14px;
+		margin-bottom: 16px;
+	}
+
+	.product-price {
+		font-size: 28px;
+		font-weight: bold;
+		margin-bottom: 24px;
+	}
+
+	.product-description {
+		margin-bottom: 24px;
+		line-height: 1.6;
+	}
+
+	.product-meta-info {
+		color: #868e96;
+		font-size: 14px;
+		margin-bottom: 24px;
+	}
+
+	.chat-button {
+		width: 100%;
+		background-color: #12C1C0;
+		color: white;
+		border: none;
+		padding: 16px;
+		border-radius: 4px;
+		font-size: 16px;
+		font-weight: bold;
+		cursor: pointer;
+	}
+	
+	.heart {
+		cursor: pointer;
+		color: red;
+		font-size: 24px; 
+	}
+	
+	.heart:hover {
+		transform: scale(1.2);
+	}
 </style>
 </head>
 
@@ -133,12 +246,15 @@ body {
 
 
 	<jsp:include page="/pages/common/header_test_sh.jsp" />
+	<main class="container">
+        <div class="breadcrumb">
+            <a>${KEY_POST.categoryName}</a>
+            <i class="heart bi bi-heart-fill"
+							data-post-seq="${KEY_POST.postSeq}"></i>
+        </div>
 
-	<div id="detail-post-container">
-		<div class="post-info-container">
-			<h1 class="post-title">${KEY_POST.title}</h1>
-
-	        <div class="post-images">
+        <div class="product-detail">
+            <div class="post-images">
 	            <c:forEach var="image" items="${KEY_POST.postImages}" varStatus="status">
 	                <img src="${image.storagePath.replace('c:\\uploads', '/uploads')}" alt="Post image" class="${status.index == 0 ? 'active' : ''}" />
 	            </c:forEach>
@@ -147,48 +263,46 @@ body {
 	                <button onclick="changeImage(1)">▷</button>
 	            </div>
 	        </div>
-	
-	        <div class="post-content">
-	            <h3>Item Content</h3>
-	            <p>${KEY_POST.itemContent}</p>
-	
-	            <h3>Rent Content</h3>
-	            <p>${KEY_POST.rentContent}</p>
-	        </div>
-	
-	        <div class="post-footer">
-	            <p>Product Name: ${KEY_POST.productName}</p>
-	            <p>Category: ${KEY_POST.categoryName}</p>
-	            <p>Posted At: ${KEY_POST.postAt}</p>
-	            <p>View Count: ${KEY_POST.count}</p>
-	        </div>
+
+            <div class="product-info">
+                <h1 class="product-title">${KEY_POST.title}</h1>
+                <p class="product-meta">${KEY_POST.productName} · <fmt:formatDate value="${KEY_POST.postAt}" pattern="yyyy-MM-dd · HH시 mm분"/></p>
+                <p class="product-price">10분당 대여가격: ${KEY_POST.pricePerTenMinute}원</p>
+                
+                <div class="product-description">
+                   	<p><h5>제품 관련 설명</h5>${KEY_POST.itemContent}</p>
+                    <hr/>
+                    <p><h5>대여 관련 설명</h5>${KEY_POST.rentContent}</p>
+                </div>
+
+                <div class="product-meta-info">
+                    <span>채팅 3</span> · <span>즐겨찾기 6</span> · <span>조회 ${KEY_POST.count}</span>
+                </div>
+
+                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.userSeq}'">판매자에게 채팅하기</button>
+            </div>
+        </div>
+        <div id="calendar-container">
+	        <div id="calendar" class="product-detail"></div>
+			<table id="timeSlotTable">
+				<thead>
+					<tr>
+						<th>대여 시간</th>
+						<th>반납 시간</th>
+						<th>가격</th>
+						<th>대여 장소</th>
+						<th>반납 장소</th>
+						<th>상태</th>
+					</tr>
+				</thead>
+				<tbody id="timeSlotBody">
+					<tr>
+						<td colspan="4">날짜를 선택하세요.</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
-		
-		<div class="reservation-container">
-			<h1>대여 타임 조회</h1>
-			<div id="calendar"></div>
-			<div id="schedule">
-				<h3>대여 타임 슬롯</h3>
-				<table id="timeSlotTable">
-					<thead>
-						<tr>
-							<th>대여 시간</th>
-							<th>반납 시간</th>
-							<th>가격</th>
-							<th>대여 장소</th>
-							<th>반납 장소</th>
-							<th>상태</th>
-						</tr>
-					</thead>
-					<tbody id="timeSlotBody">
-						<tr>
-							<td colspan="4">날짜를 선택하세요.</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+    </main>
 
 	<!-- 숨겨진 input 요소 -->
 	<input type="hidden" id="selected_date" name="selected_date">
@@ -386,26 +500,6 @@ body {
 	          });
 	        });
 		});
-	    /* $(document).on("click", ".request-btn", function () {
-	        var timeSlotSeq = $(this).data("time-slot-seq");
-			
-	        // 확인 알림창 띄우기
-	        if (confirm("예약을 요청보낼까요?")) {
-	            $.ajax({
-	                url: "/reservation/request-reservation",
-	                type: "POST",
-	                data: { timeSlotSeq: timeSlotSeq },
-	                success: function (response) {
-						console.log(response);	                	
-	                    alert(response);
-	                    //location.reload(); // 페이지 새로고침 (필요 시)
-	                },
-	                error: function (xhr, status, error) {
-	                    alert("예약 요청에 실패했습니다." + xhr.responseText);
-	                }
-	            });
-	        }
-	    }); */
 	}
 </script>
 

@@ -58,6 +58,15 @@
             (SELECT c.category_name FROM category c
             WHERE c.category_seq = p.category_seq 
             ) AS category_name,
+            (SELECT
+				TRUNC((SUM(rts.PRICE) / SUM((rts.RETURN_AT - rts.RENT_AT) * 1440)) * 10)
+				FROM
+					RENT_TIME_SLOT rts
+				WHERE
+					rts.post_seq = p.post_seq
+				GROUP BY
+					rts.post_seq
+	   		) AS price_per_ten_minute,
             
             pf.file_seq,
             pf.name,
@@ -100,6 +109,7 @@
 	    <result property="productName" column="product_name"/>
 	    <result property="userSeq" column="user_seq"/>
 	    <result property="categoryName" column="category_name"/>
+	    <result property="pricePerTenMinute" column="price_per_ten_minute"/>
 	    
 	    <!-- postImages (PostFileVO) 리스트 매핑 -->
 	    <collection property="postImages" ofType="com.barobaro.app.vo.PostFileVO">
@@ -175,7 +185,7 @@
         </if>
         
         <if test=" searchVO.latitude != null and searchVO.latitude != '' and searchVO.longitude != null and searchVO.longitude != '' ">
-        RIGHT JOIN 
+        LEFT OUTER JOIN 
         		(SELECT post_seq, max(
 		                    6371 * ACOS(
 		                    COS(${searchVO.latitude} * 3.14159 / 180) *
@@ -202,11 +212,11 @@
 			</if>
 			
 			<if test="searchVO.minPrice != null and searchVO.minPrice != ''">
-				AND st2.price_per_ten_minute <![CDATA[ >=]]> #{searchVO.minPrice}
+				AND COALESCE(st2.price_per_ten_minute, 0) <![CDATA[ >=]]> #{searchVO.minPrice}
 			</if>
 			
 			<if test="searchVO.maxPrice != null and searchVO.maxPrice != ''">
-				AND st2.price_per_ten_minute  <![CDATA[ <=]]> #{searchVO.maxPrice}
+				AND COALESCE(st2.price_per_ten_minute, 0)  <![CDATA[ <=]]> #{searchVO.maxPrice}
 			</if>
 		</where>
 		

@@ -48,7 +48,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         // DB 저장
         ChatMessageVO chatMessage = new ChatMessageVO();
-        chatMessage.setRoomId(roomId);
+        chatMessage.setChatRoomSeq(roomId);
         chatMessage.setSender(Long.parseLong(sender));
         chatMessage.setContent(content);
         chatMapper.insertChatMessage(chatMessage);
