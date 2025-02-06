@@ -232,8 +232,9 @@
 	
 	.heart {
 		cursor: pointer;
-		color: red;
-		font-size: 24px; 
+			color: #e74c3c;
+			font-size: 1.5rem;
+			transition: transform 0.2s ease-in-out;
 	}
 	
 	.heart:hover {
@@ -249,7 +250,7 @@
 	<main class="container">
         <div class="breadcrumb">
             <a>${KEY_POST.categoryName}</a>
-            <i class="heart bi bi-heart-fill"
+            <i class="heart bi bi-heart"
 							data-post-seq="${KEY_POST.postSeq}"></i>
         </div>
 
@@ -501,6 +502,59 @@
 	        });
 		});
 	}
+</script>
+
+
+<!-- 즐겨찾기 -->
+<script>
+$(document).ready(function() {
+	const userSeq = '${sessionScope.user_info.userSeq}';
+	
+	$.ajax({
+		url: '/favorite/list',
+		type: 'GET',
+		data: {userSeq: userSeq},
+		success: function(res) {
+			$('.heart').each(function() {
+				const postSeq = $(this).data('post-seq');
+		        if (res.includes(Number(postSeq))) {
+					$(this).removeClass('bi-heart').addClass('bi-heart-fill');
+				}
+			});
+		}, 
+		error: function () {
+            console.error('즐겨찾기 목록을 불러오는 데 실패했습니다.');
+        }
+	});
+	
+    $('.heart').click(function() {
+        const heart = $(this);
+        const postSeq = heart.data('post-seq');
+        
+        console.log('userSeq', userSeq);
+        console.log('postSeq', postSeq);
+        
+        $.ajax({
+            url: '/favorite/toggle',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                userSeq: userSeq,
+                postSeq: postSeq
+            }),
+            success: function(response) {
+                if (response === 'deleted') {
+                	heart.removeClass('bi-heart-fill').addClass('bi-heart');
+                } else if(response === 'added') {
+                	heart.removeClass('bi-heart').addClass('bi-heart-fill');
+                }
+            },
+            error: function () {
+                alert('즐겨찾기 해제에 실패했습니다.');
+            }
+        });
+    });
+});
 </script>
 
 </body>

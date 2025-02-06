@@ -1,21 +1,31 @@
 package com.barobaro.app.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.barobaro.app.common.CommonCode.UserStatus;
+import com.barobaro.app.service.FavoriteService;
 import com.barobaro.app.service.MypageService;
+import com.barobaro.app.service.NotificationService;
 import com.barobaro.app.vo.CommentVO;
 import com.barobaro.app.vo.FavoriteVO;
 import com.barobaro.app.vo.NotificationVO;
+import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.UserReviewAnswerVO;
 
@@ -25,6 +35,12 @@ public class UserController {
 	@Autowired
 	private MypageService mypageService;
 	
+	@Autowired
+	@Qualifier("favoriteServiceImpl")
+	private FavoriteService service;
+	
+	@Autowired
+	private NotificationService notificationService;
 	
 	
     //내 post 글 목록 보기
@@ -34,19 +50,45 @@ public class UserController {
 		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	
-    	System.out.println("내 유저 상태 : " + status);
-		System.out.println("내 유저 Seq : " + userSeq);
-		
-		System.out.println("상태좀1 : " + mypageService.svcGetAllMyPosts(userSeq));
+    
 		
 		//유저 상태가 active 일 경우
 		if(status != null && "ACTIVE".equals(status.name())) {
 			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
+			System.out.println("상품리스트 : " + posts);
 			return posts;
 		}else {
 			return Collections.emptyList();
 		}
 	}
+    
+    //게시글의 이미지 불러오기 
+    @RequestMapping(value = "/mypostimage", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+    public List<PostFileVO> ctlGetMyPostImage(HttpServletRequest request) {
+		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+    	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+    	
+		//유저 상태가 active 일 경우
+		if(status != null && "ACTIVE".equals(status.name())) {
+			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
+	        List<PostFileVO> postImages = new ArrayList<>();
+	        
+	        // 각 상품에서 postImages 배열만 추출하여 postImages 리스트에 추가
+	        for (PostVO post : posts) {
+	            if (post.getPostImages() != null) {
+	                postImages.addAll(post.getPostImages());
+	            }
+	        }
+	        
+	        System.out.println("상품 이미지 리스트 : " + postImages);
+	        return postImages;  // postImages 배열만 반환
+		}else {
+			return Collections.emptyList();
+		}
+	}
+    
+    
     
     
 
@@ -69,9 +111,9 @@ public class UserController {
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	String usernickname = (String) request.getSession().getAttribute("SESS_PROFILE_NICKNAME");
     	
-    	System.out.println("내 유저 상태 : " + status);
-		System.out.println("내 유저 Seq : " + userSeq);
-		System.out.println("내 유저 닉네임 : " + usernickname);
+//    	System.out.println("내 유저 상태 : " + status);
+//		System.out.println("내 유저 Seq : " + userSeq);
+//		System.out.println("내 유저 닉네임 : " + usernickname);
 		
 		//유저 상태가 active 일 경우
 		if(status != null && "ACTIVE".equals(status.name())) {
@@ -84,6 +126,10 @@ public class UserController {
 	}
 
     
+    
+    
+    
+    
     /*     ● 나의 등록 물품의 요청 현황  (RENT_TIME_SLOT) 등록자가 예약 시간 관리를 위한 테이블
      * 		post table - 원래는 regid -> sess_nickname 여러시간테이블상에 예약을 전부 가져와야하기에
      * 		
@@ -95,8 +141,7 @@ public class UserController {
    		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
        	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
        	
-       	System.out.println("내 유저 상태 : " + status);
-   		System.out.println("내 유저 Seq : " + userSeq);
+
    		
 
    		//유저 상태가 active 일 경우
@@ -109,26 +154,51 @@ public class UserController {
    	}
 	
     
-    // 내 알림 목록 보기
-    @RequestMapping(value = "/mynotification", method = RequestMethod.GET, produces="application/json")
+//    // 내 알림 목록 보기
+//    @RequestMapping(value = "/mynotification", method = RequestMethod.GET, produces="application/json")
+//	@ResponseBody
+//    public List<NotificationVO> ctlMyNotificationList(HttpServletRequest request) {
+//		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+//    	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+//    	
+//    	System.out.println("내 유저 상태 : " + status);
+//		System.out.println("내 유저 Seq : " + userSeq);
+//		
+//		System.out.println("상태좀2 : " + mypageService.svcGetAllMyNotifications(userSeq));
+//		
+//		//유저 상태가 active 일 경우
+//		if(status != null && "ACTIVE".equals(status.name())) {
+//			List<NotificationVO> notifications = mypageService.svcGetAllMyNotifications(userSeq);
+//			return notifications;
+//		}else {
+//			return Collections.emptyList();
+//		}
+//	}  
+    
+    
+    //알림 ver02 진아님 버전 json 으로 바꿔서 userSeq 는 session 에서 따옴 25.02.05
+    @RequestMapping(value = "/notification-list", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
-    public List<NotificationVO> ctlMyNotificationList(HttpServletRequest request) {
-		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
-    	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+	public List<NotificationVO> getAllNotifications(HttpServletRequest request) {
+		int userSeq = (Integer) request.getSession().getAttribute("SESS_USER_SEQ");
+		UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	
-    	System.out.println("내 유저 상태 : " + status);
-		System.out.println("내 유저 Seq : " + userSeq);
-		
-		System.out.println("상태좀2 : " + mypageService.svcGetAllMyNotifications(userSeq));
-		
 		//유저 상태가 active 일 경우
-		if(status != null && "ACTIVE".equals(status.name())) {
-			List<NotificationVO> notifications = mypageService.svcGetAllMyNotifications(userSeq);
-			return notifications;
-		}else {
-			return Collections.emptyList();
-		}
-	}  
+				if(status != null && "ACTIVE".equals(status.name())) {
+					List<NotificationVO> notificationList = notificationService.getAllNotifications(userSeq);
+					System.out.println("즐겨찾기" + notificationList);
+					return notificationList;
+				}else {
+					return Collections.emptyList();
+				}
+    }
+		
+		
+    
+    
+    
+    
+    
     
     
   // 내 즐겨찾기 목록 보기
@@ -138,19 +208,39 @@ public class UserController {
 		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	
-    	System.out.println("내 유저 상태 : " + status);
-		System.out.println("내 유저 Seq : " + userSeq);
-		
-		System.out.println("상태좀3 : " + mypageService.svcGetAllMyFavorites(userSeq));
 		
 		//유저 상태가 active 일 경우
 		if(status != null && "ACTIVE".equals(status.name())) {
 			List<FavoriteVO> favorites = mypageService.svcGetAllMyFavorites(userSeq);
+			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
 			System.out.println("즐겨찾기" + favorites);
 			return favorites;
 		}else {
 			return Collections.emptyList();
 		}
+	}
+    
+
+	@RequestMapping(value = "/myfavorite/toggle", method = RequestMethod.POST )
+	@ResponseBody
+	public ResponseEntity<String> toggleFavorite(@RequestBody FavoriteVO fvo) {
+	    try {
+	        int userSeq = fvo.getUserSeq();
+	        int postSeq = fvo.getPostSeq();
+	        
+	        boolean isFavorite = service.isFavorite(userSeq, postSeq);
+	        if (isFavorite) {
+	            // 즐겨찾기 해지
+	            service.favoriteDelete(userSeq, postSeq);
+	            return ResponseEntity.ok("deleted");
+	        } else {
+	            // 즐겨찾기 추가
+	            service.favoriteInsert(fvo);
+	            return ResponseEntity.ok("added");
+	        }
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing the request");
+	    }
 	}
 	
     
