@@ -27,9 +27,9 @@ public interface MypageService {
 	public List<PostVO> svcGetAllUserPostRent(String usernickname);
 	
 	
-	//나에게 오는 모든 알림
-	public List<NotificationVO> svcGetAllMyNotifications(int userSeq);
-	
+//	//나에게 오는 모든 알림
+//	public List<NotificationVO> svcGetAllMyNotifications(int userSeq);
+//	
 	
 	//내가 추가한 즐겨찾기
 	public List<FavoriteVO> svcGetAllMyFavorites(int userSeq);

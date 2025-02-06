@@ -42,7 +42,7 @@ public class NotificationController {
 	    return userInfo.getUserSeq();
 	}
 	
-//	@CrossOrigin(origins = "http://localhost:8089")
+	@CrossOrigin(origins = "http://localhost:8089")
 	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
 	public SseEmitter subscribe(HttpSession session) {
 		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
