@@ -1,8 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -53,7 +51,7 @@
 }
 
 .search-type-button {
-	background: #ddd;
+	background: #EEEFF1;
 	border: none;
 	padding: 10px;
 	border-radius: 10px;
@@ -120,7 +118,7 @@
 			<div class="row">
 				<div class="col-xl-3 col-lg-2">
 					<div class="header__logo">
-						<a href="/index.html"><img src="/img/logo.png" alt=""></a>
+						<a href="/index.html"><img src="/resources/images/logo.png" alt=""></a>
 					</div>
 				</div>
 				<div class="col-xl-6 col-lg-7">
@@ -142,22 +140,12 @@
 				<div class="col-lg-3">
 					<div class="header__right">
 						<div class="header__right__auth">
-							<c:choose>
-								<c:when test="${not empty sessionScope.SESS_PROFILE_NICKNAME }">
-									<form method="post" action="/form_logout_process">
-										<input type="submit" value="로그아웃">
-									</form>
-									<a href="/mypage">마이페이지</a>
-								</c:when>
-								<c:otherwise>
-                                    <!-- userProfileNickname이 없으면 로그인 & 회원가입 버튼을 표시 -->
-                                    <a href="/lec_oauth/login_page.jsp">Login & Register</a>
-                                </c:otherwise>
-							</c:choose>
+							<a href="#">로그인</a> 
+							<a href="#">회원가입</a>
 						</div>
 						<ul class="header__right__widget">
 							<li><span class="icon_search search-switch"></span></li>
-							<li><a href="#"><span class="icon_heart_alt"></span>
+							<li><a href="/favorite/flist"><span class="icon_heart_alt"></span>
 									<div class="tip">2</div> </a></li>
 							<!-- 알림 -->
 							<li class="notification-container">
@@ -203,7 +191,7 @@
 		const maxReconnectAttempts = 5;
 		
 	    $(document).ready(function () {
-			let userSeq = 1001;
+			//let userSeq = 1001;
 	    	$.ajax({
 	    		url: '/notification/getUserSeq',
 	    		method: 'GET',
@@ -227,11 +215,9 @@
 			$("#notification-bell").click(function (e) {
 			    e.preventDefault();
 			    $("#notification-dropdown").toggle();
-			
 			    // ✅ 기존 연결이 존재하면 다시 연결하지 않음
 			    if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
 			        console.log("SSE 재연결 시도...");
-			        connectSSE(userSeq);
 			    }
 			});
 	        
@@ -411,80 +397,38 @@
 	    
 	    // SSE 연결
 	    function connectSSE(userSeq) {
-    		 if (eventSource !== null) {
+    		 if (eventSource != null && eventSource.readyState !== EventSource.CLOSED) {
+    			 console.log("이미 SSE 연결이 열려 있습니다.");
+    	       	 return;
+    	    }
+    		 
+    		console.log("새로운 SSE 연결 시도");
+    		
+    		// 기존 연결이 있다면 종료 후 새로 연결
+    	    if (eventSource !== null) {
     	        console.log("기존 SSE 연결 종료 후 재연결");
     	        eventSource.close();
     	        eventSource = null;
     	    }
-/* 	        // SSE 연결
-	        eventSource = new EventSource("/notification/subscribe");
-	        
-	        eventSource.onopen = function() {
-	            console.log("SSE 연결 성공!");
-	            reconnectAttempts = 0;
-	        };
-	
- 	        eventSource.onmessage = function(event) {
-	            console.log("새로운 알림: ", event.data);
-	        };  */
-	        
-	       /*  eventSource.onmessage = function(event) {
-	            if (event.data === "ping") return;
-	            console.log("알림 수신: ", event.data);
-	        }; 
-	        
-	     	// 알림 이벤트 수신
-	        eventSource.addEventListener('notification', function(event) {
-	            const notification = JSON.parse(event.data);
-	            addNotification(notification);
-	        });
-	        
-	     	// SSE 연결에 오류가 있을 때
-	    	eventSource.onerror = function(event) {
-	    		console.error("SSE 연결 오류 발생", event);
-	    		
-	    		 // 연결이 종료된 경우 재연결 시도 (최대 5회)
-	            if (eventSource.readyState === EventSource.CLOSED) {
-	                if (reconnectAttempts < maxReconnectAttempts) {
-	                    reconnectAttempts++;
-	                    setTimeout(() => connectSSE(userSeq), 5000);
-	                } else {
-	                    console.warn("SSE 최대 재연결 횟수 초과");
-	                    alert("서버와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
-	                }
-	            }
-	    		
-	    	}; */
+    		
+    	    eventSource = new EventSource("/notification/subscribe");
+
+    	    eventSource.onopen = function() {
+    	        console.log("SSE 연결 성공!");
+    	        reconnectAttempts = 0;
+    	    };
+    		
+    	    eventSource.onerror = function(event) {
+    	    	console.log(event);
+    	    };
+
+    	 	// 알림 이벤트 수신
+    	    eventSource.addEventListener('notification', function(event) {
+    	        const notification = JSON.parse(event.data);
+    	        addNotification(notification);
+    	    });
+    	    
 	    	
-	    	 setTimeout(() => {  // ✅ SSE가 완전히 닫힌 후 다시 연결
-	    	        eventSource = new EventSource("/notification/subscribe");
-
-	    	        eventSource.onopen = function() {
-	    	            console.log("SSE 연결 성공!");
-	    	            reconnectAttempts = 0;
-	    	        };
-	    	        
-	    	        eventSource.onerror = function(event) {
-	    	            console.error("SSE 연결 오류 발생", event);
-
-	    	            if (eventSource.readyState === EventSource.CLOSED) {
-	    	                if (reconnectAttempts < maxReconnectAttempts) {
-	    	                    reconnectAttempts++;
-	    	                    console.log("SSE 재연결 시도 (" + reconnectAttempts + "/" + maxReconnectAttempts + ")");
-	    	                    connectSSE(userSeq);
-	    	                } else {
-	    	                    console.warn("SSE 최대 재연결 횟수 초과");
-	    	                    alert("서버와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.");
-	    	                }
-	    	            }
-	    	        };
-	    	        
-	    	        eventSource.addEventListener('notification', function(event) {
-	    	            const notification = JSON.parse(event.data);
-	    	            addNotification(notification);
-	    	        });
-
-	    	    }, 1000); 
     	}
     </script>
 </body>
