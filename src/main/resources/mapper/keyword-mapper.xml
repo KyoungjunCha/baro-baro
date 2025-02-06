@@ -28,6 +28,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM keyword 
         WHERE keyword_seq = #{keywordSeq}
     </select>
+    
+    <!-- 모든 사용자의 키워드 조회 -->
+    <select id="selectAllKeywords" resultMap="keywordMap">
+    	SELECT user_seq, contents
+    	FROM keyword
+    </select>
 	
 	<!-- 키워드 수정 -->
     <update id="updateKeyword">

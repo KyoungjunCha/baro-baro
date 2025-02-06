@@ -15,6 +15,7 @@ public interface KeywordMapper {
 	public void insertKeyword(KeywordVO kvo);
 	public List<KeywordVO> selectKeywordByUserSeq(int userSeq);
 	public KeywordVO selectKeywordBySeq(int keywordSeq);
+	public List<KeywordVO> selectAllKeywords();
 	public void updateKeyword(@Param("contents") String contents, @Param("keywordSeq") int keywordSeq);
 	public void deleteKeyword(int keywordSeq);
 }

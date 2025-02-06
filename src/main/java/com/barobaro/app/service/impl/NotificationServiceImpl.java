@@ -59,13 +59,12 @@ public class NotificationServiceImpl implements NotificationService {
 
 		emitter.onCompletion(() -> {
 			System.out.println("SSE 연결 종료: " + userSeq);
-			emitters.remove(userSeq);
-			//subscribe(userSeq);
+			//emitters.remove(userSeq);
 		});
+		
 		emitter.onTimeout(() -> {
 			System.out.println("SSE 연결 타임아웃: " + userSeq);
-			emitters.remove(userSeq);
-			//subscribe(userSeq);
+			//emitters.remove(userSeq);
 		});
 
 		System.out.println("SSE 연결이 열렸습니다. 사용자 ID: " + userSeq);
@@ -122,11 +121,12 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 	}
 
-	@PreDestroy
-	public void shutdownExecutor() {
-		System.out.println("ExecutorService 종료");
-		executor.shutdown();
-	}
+//	@PreDestroy
+	
+//	public void shutdownExecutor() {
+//		System.out.println("ExecutorService 종료");
+//		executor.shutdown();
+//	}
 
 	@Override
 	public List<NotificationVO> getAllNotifications(int userSeq) {

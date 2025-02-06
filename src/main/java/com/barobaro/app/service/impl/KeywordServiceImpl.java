@@ -28,6 +28,11 @@ public class KeywordServiceImpl implements KeywordService {
 	public KeywordVO getKeywordBySeq(int keywordSeq) {
 		return mapper.selectKeywordBySeq(keywordSeq);
 	}
+	
+	@Override
+	public List<KeywordVO> getAllKeywords() {
+		return mapper.selectAllKeywords();
+	}
 
 	@Override
 	public void updateKeyword(String contents, int keywordSeq) {

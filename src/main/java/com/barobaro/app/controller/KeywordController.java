@@ -2,6 +2,8 @@ package com.barobaro.app.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.barobaro.app.common.CommonCode.Role;
+import com.barobaro.app.common.CommonCode.UserInfo;
+import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.service.KeywordService;
 import com.barobaro.app.vo.KeywordVO;
 
@@ -23,15 +28,25 @@ public class KeywordController {
 	private KeywordService service;
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addKeyword(@ModelAttribute KeywordVO kvo) {
+	public String addKeyword(@ModelAttribute KeywordVO kvo, HttpSession session) {
+		session.setAttribute("user_info", new UserInfo(1002, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
+		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		long userSeq = userInfo.getUserSeq();
+		
+		kvo.setUserSeq((int)userSeq);
+		
 		service.addKeyword(kvo);
 
-		return "redirect:/keyword/list/" + kvo.getUserSeq();
+		return "redirect:/keyword/list";
 	}
 
-	@RequestMapping(value = "/list/{userSeq}", method = RequestMethod.GET)
-	public String getKeywordByUserSeq(@PathVariable int userSeq, Model model) {
-		List<KeywordVO> list = service.getKeywordsByUserSeq(userSeq);
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public String getKeywordByUserSeq(HttpSession session, Model model) {
+		session.setAttribute("user_info", new UserInfo(1002, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
+		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		long userSeq = userInfo.getUserSeq();
+		
+		List<KeywordVO> list = service.getKeywordsByUserSeq((int)userSeq);
 		model.addAttribute("KEYWORD_LIST", list);
 
 //		return "pages/notification/keyword";
