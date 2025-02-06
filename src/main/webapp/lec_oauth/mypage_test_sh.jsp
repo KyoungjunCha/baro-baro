@@ -149,7 +149,30 @@ document.addEventListener("DOMContentLoaded", () => {
 //         return;
 //     }
 
-
+	// 거래 완료 상태로 업데이트할 것 있는지 먼저 확인
+	fetch("/reservation/done", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+      //body: JSON.stringify({ userSeq: userSeq }) 	
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("서버 응답 오류");
+        }
+        return response.text();
+    })
+    .then(message => {
+        console.log(message);
+        
+        loadReservationData();
+        loadRentalData();
+    })
+    .catch(error => console.error("업데이트 실패:", error));
+	
+	
     // rentalTable 가져오기 ======================================================================
     fetch("/reservation/getAllTimeSlots", {
         method: "POST",
@@ -517,9 +540,7 @@ function populateReservationTable(reservationData) {
 	    
 	    // 대여 시작시간
 	    const rentAtCell = document.createElement('td');
-	    rentAtCell.textContent            = new Date(reservation.rent_at).toLocaleString();
-// 	    // 3일 전 계산
-// 	    rentAtCell.dataset.cancelDeadline = new Date(new Date(reservation.rent_at).setDate(new Date(reservation.rent_at).getDate() - 3)).toLocaleString();
+	    rentAtCell.textContent = new Date(reservation.rent_at).toLocaleString();
 	    row.appendChild(rentAtCell);
 		
 	    // 대여 장소
@@ -557,9 +578,9 @@ function populateReservationTable(reservationData) {
 
 	            // 마감 시간 비교
 	            if (now > cancelDeadline) {
-	                statusText = "대여확정 상태에요! 📢 취소 요청은 대여시작 3일전까지로, 현재는 취소가 불가능해요. 😬";
+	                statusText = "대여확정 상태에요! 📢 취소 요청은 대여시작 3일전까지 [" + cancelDeadline.toLocaleString() + "] 로 현재는 취소가 불가능합니다. 😬";
 	            } else {
-	                statusText = "대여확정 상태에요! 📢 대여시작 3일전까지인 [" + cancelDeadline.toLocaleString() + "] 전까지만 취소 요청이 가능합니다.";
+	                statusText = "대여확정 상태에요! 📢 대여시작 3일전까지 [" + cancelDeadline.toLocaleString() + "] 취소 요청이 가능합니다.";
 	            }
 	            break;
 	        case 3:
