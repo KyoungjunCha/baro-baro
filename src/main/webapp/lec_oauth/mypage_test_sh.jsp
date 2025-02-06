@@ -98,7 +98,7 @@
                 <th>반납 장소</th>
                 <th>가격</th>
                 <th>안내</th>
-                <th>현재 상태</th>
+                <th></th>
             </tr>
         </thead>
         
@@ -123,7 +123,7 @@
                 <th>반납 장소</th>
                 <th>가격</th>
                 <th>안내</th>
-                <th>현재 상태</th>
+                <th></th>
             </tr>
         </thead>
         
@@ -301,7 +301,7 @@ function populateRentalTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 
 		            // 확인창 표시
-		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 요청을 수락하시겠습니까?');
+		            const confirmResult = confirm('['+requestorNickname+'] 의 대여 요청을 수락할까요?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -339,7 +339,7 @@ function populateRentalTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 요청을 거절하시겠습니까?');
+		            const confirmResult = confirm('['+requestorNickname+'] 의 대여 요청을 거절할까요?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -378,7 +378,7 @@ function populateRentalTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 취소요청을 수락하시겠습니까?');
+		            const confirmResult = confirm('['+requestorNickname+'] 의 대여 취소요청을 수락할까요?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -415,7 +415,7 @@ function populateRentalTable(rentalData) {
 		            const requestorNickname = event.target.closest('tr').querySelector('td').dataset.requestorNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm('['+requestorNickname+']사용자의 대여 취소요청을 거절하시겠습니까?');
+		            const confirmResult = confirm('['+requestorNickname+'] 의 대여 취소요청을 거절할까요?');
 		            if (!confirmResult) return;
 
 		            try {
@@ -517,7 +517,9 @@ function populateReservationTable(reservationData) {
 	    
 	    // 대여 시작시간
 	    const rentAtCell = document.createElement('td');
-	    rentAtCell.textContent = new Date(reservation.rent_at).toLocaleString();
+	    rentAtCell.textContent            = new Date(reservation.rent_at).toLocaleString();
+// 	    // 3일 전 계산
+// 	    rentAtCell.dataset.cancelDeadline = new Date(new Date(reservation.rent_at).setDate(new Date(reservation.rent_at).getDate() - 3)).toLocaleString();
 	    row.appendChild(rentAtCell);
 		
 	    // 대여 장소
@@ -549,7 +551,16 @@ function populateReservationTable(reservationData) {
 	            statusText = "대여 요청을 보냈어요! 😍 물품주인이 대여 요청을 수락 시, 예약이 확정됩니다! 📢";
 	            break;
 	        case 2:
-	            statusText = "대여확정 상태에요! 📢 (rent_at 3일전)까지만 취소요청이 가능합니다! 😬";
+	            // 3일 전 계산
+	            const cancelDeadline = new Date(new Date(reservation.rent_at).setDate(new Date(reservation.rent_at).getDate() - 3));
+	            const now = new Date();  // 현재 시간
+
+	            // 마감 시간 비교
+	            if (now > cancelDeadline) {
+	                statusText = "대여확정 상태에요! 📢 취소 요청은 대여시작 3일전까지로, 현재는 취소가 불가능해요. 😬";
+	            } else {
+	                statusText = "대여확정 상태에요! 📢 대여시작 3일전까지인 [" + cancelDeadline.toLocaleString() + "] 전까지만 취소 요청이 가능합니다.";
+	            }
 	            break;
 	        case 3:
 	            statusText = "물품주인이 대여 요청을 거절하였어요 😂";
@@ -575,24 +586,38 @@ function populateReservationTable(reservationData) {
 	    
 	 	// 현재상태 버튼칸
 	    const buttonCell = document.createElement('td');
-	    
 	    switch (reservation.status) {
 	        case 2:
 	            // 예약 취소 요청 버튼
 	            const cancelRequestButton = document.createElement('button');
-	            cancelRequestButton.textContent = "예약 취소 요청";
+	            cancelRequestButton.textContent = "취소 요청 보내기";
 	            cancelRequestButton.classList.add("red-button");
 	            
 	         	// 버튼에 예약번호 숨기기
 	            cancelRequestButton.dataset.reservationSeq = reservation.reservation_seq;
 	            
+	     	    // 3일 전 계산
+        		const cancelDeadline = new Date(new Date(reservation.rent_at).setDate(new Date(reservation.rent_at).getDate() - 3));
+	            const now = new Date();
+	            console.log("마감시간 : ", cancelDeadline);
+	            console.log("현재시간 : ", now);
+	            
+	            // 현재시간이 마감시간을 지났다면 버튼 비활성화
+	            if (now > cancelDeadline) {
+	                cancelRequestButton.disabled = true;
+	                cancelRequestButton.textContent = "대여 확정 상태"; // 버튼 텍스트 변경
+	                // 민트 버튼
+	                cancelRequestButton.classList.add("mint-button");
+	            }
+	            
+
 	            cancelRequestButton.addEventListener('click', async (event) => {
 					// 버튼 자체에서 숨겨진 데이터 가져오기
 		            const reservationSeq = event.target.dataset.reservationSeq;
 		            const ownerNickname  = event.target.closest('tr').querySelector('td').dataset.ownerNickname;
 		            
 		            // 확인창 표시
-		            const confirmResult = confirm('['+ownerNickname+']사용자에게 대여 취소를 요청 보낼까요?');
+		            const confirmResult = confirm('['+ownerNickname+'] 에게 대여 취소요청을 보낼까요?');
 		            if (!confirmResult) return;
 
 		            try {
