@@ -51,7 +51,7 @@
 }
 
 .search-type-button {
-	background: #ddd;
+	background: #EEEFF1;
 	border: none;
 	padding: 10px;
 	border-radius: 10px;
