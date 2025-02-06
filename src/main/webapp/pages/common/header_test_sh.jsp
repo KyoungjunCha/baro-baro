@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -140,7 +142,18 @@
 				<div class="col-lg-3">
 					<div class="header__right">
 						<div class="header__right__auth">
-							<a href="#">Login</a> <a href="#">Register</a>
+							<c:choose>
+								<c:when test="${not empty sessionScope.SESS_PROFILE_NICKNAME }">
+									<form method="post" action="/form_logout_process">
+										<input type="submit" value="로그아웃">
+									</form>
+									<a href="/mypage">마이페이지</a>
+								</c:when>
+								<c:otherwise>
+                                    <!-- userProfileNickname이 없으면 로그인 & 회원가입 버튼을 표시 -->
+                                    <a href="/lec_oauth/login_page.jsp">Login & Register</a>
+                                </c:otherwise>
+							</c:choose>
 						</div>
 						<ul class="header__right__widget">
 							<li><span class="icon_search search-switch"></span></li>
