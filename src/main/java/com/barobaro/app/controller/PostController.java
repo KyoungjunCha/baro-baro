@@ -100,7 +100,7 @@ public class PostController {
 			@RequestParam("ufile") List<MultipartFile> files,
 			@RequestParam(value = "isUpdate", required = false, defaultValue = "0")long isUpdate) {
 		session.setAttribute("user_info",
-				new UserInfo(1001, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		PostVO postVO = PostVO.builder().title(title).itemContent(itemContent).rentContent(rentContent)
 				.productName(productName).userSeq(userInfo.getUserSeq()).categoryName(category)

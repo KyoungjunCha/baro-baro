@@ -12,14 +12,15 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.barobaro.app.mapper.ChatMapper;
+import com.barobaro.app.service.ChatService;
 import com.barobaro.app.vo.ChatMessageVO;
 
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 	 // roomId별로 접속 사용자의 세션을 보관
     private final Map<Long, List<WebSocketSession>> roomSessions = new HashMap<>();
-
+    
     @Autowired
-    private ChatMapper chatMapper; // DAO 대신 Mapper 인터페이스
+    ChatService chatService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -36,7 +37,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
         Map<String,String> parsed = parsePayload(payload);
         Long roomId = Long.valueOf(parsed.get("roomId"));
-        String sender = parsed.get("sender");
+        Long senderSeq = Long.parseLong(parsed.get("sender"));
         String content = parsed.get("content");
 
         // (1) roomSessions에 세션이 없다면 추가
@@ -45,16 +46,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         if (!sessions.contains(session)) {
             sessions.add(session);
         }
-
-        // DB 저장
-        ChatMessageVO chatMessage = new ChatMessageVO();
-        chatMessage.setChatRoomSeq(roomId);
-        chatMessage.setSender(Long.parseLong(sender));
-        chatMessage.setContent(content);
-        chatMapper.insertChatMessage(chatMessage);
+        ChatMessageVO chatMessageVO = ChatMessageVO.builder()
+        		.chatRoomSeq(roomId)
+        		.senderSeq(senderSeq)
+        		.content(content)
+        		.build();
+        chatService.insertChatMessageVO(chatMessageVO);
 
         // 브로드캐스팅
-        TextMessage echo = new TextMessage(sender + ": " + content);
+        TextMessage echo = new TextMessage(senderSeq + ": " + content);
         for (WebSocketSession s : sessions) {
             s.sendMessage(echo);
         }

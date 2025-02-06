@@ -280,7 +280,7 @@
                     <span>채팅 3</span> · <span>즐겨찾기 6</span> · <span>조회 ${KEY_POST.count}</span>
                 </div>
 
-                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.userSeq}'">판매자에게 채팅하기</button>
+                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.postSeq}'">판매자에게 채팅하기</button>
             </div>
         </div>
         <div id="calendar-container">
@@ -298,7 +298,7 @@
 				</thead>
 				<tbody id="timeSlotBody">
 					<tr>
-						<td colspan="4">날짜를 선택하세요.</td>
+						<td colspan="6">날짜를 선택하세요.</td>
 					</tr>
 				</tbody>
 			</table>
@@ -396,7 +396,7 @@
                 }
             },
             datesSet: function() {
-          	    $("#timeSlotBody").empty().append('<tr><td colspan="4">날짜를 선택하세요.</td></tr>');
+          	    $("#timeSlotBody").empty().append('<tr><td colspan="6">날짜를 선택하세요.</td></tr>');
             }
       });
 		calendar.render();
