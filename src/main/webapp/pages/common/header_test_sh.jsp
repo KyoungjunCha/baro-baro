@@ -190,7 +190,7 @@
 		const maxReconnectAttempts = 5;
 		
 	    $(document).ready(function () {
-			let userSeq = 1001;
+			//let userSeq = 1001;
 	    	$.ajax({
 	    		url: '/notification/getUserSeq',
 	    		method: 'GET',
@@ -214,8 +214,6 @@
 			$("#notification-bell").click(function (e) {
 			    e.preventDefault();
 			    $("#notification-dropdown").toggle();
-				console.log("!@#");
-			    console.log(eventSource, eventSource.readyState, EventSource.CLOSED);
 			    // ✅ 기존 연결이 존재하면 다시 연결하지 않음
 			    if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
 			        console.log("SSE 재연결 시도...");
