@@ -149,74 +149,75 @@ document.addEventListener("DOMContentLoaded", () => {
 //         return;
 //     }
 
-	// 거래 완료 상태로 업데이트할 것 있는지 먼저 확인
-	fetch("/reservation/done", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-      //body: JSON.stringify({ userSeq: userSeq }) 	
-    })
-    .then(response => {
+    // 거래 완료 상태로 업데이트할 것 있는지 먼저 확인 후 테이블 그리기
+    try {
+        const response = await fetch("/reservation/done", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+               //body: JSON.stringify({ userSeq: userSeq }) 
+            },
+            credentials: "include" // JSESSIONID 쿠키 포함
+        });
+
         if (!response.ok) {
             throw new Error("서버 응답 오류");
         }
-        return response.text();
-    })
-    .then(message => {
-        console.log(message);
+
+        const message = await response.text();
+        console.log(message); // 거래 완료 상태 처리 결과
+
+        // 거래 완료 상태 업데이트 후, 예약 및 대여 테이블 로드
+        await loadRentalData();  			// 대여 데이터 로드
+        await loadReservationData();  		// 예약 데이터 로드
         
-        loadReservationData();
-        loadRentalData();
-    })
-    .catch(error => console.error("업데이트 실패:", error));
+    } catch (error) {
+        console.error("업데이트 실패:", error);
+    }
 	
 	
     // rentalTable 가져오기 ======================================================================
-    fetch("/reservation/getAllTimeSlots", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
-    })
-    .then(response => {
+    async function loadRentalData() {
+        const response = await fetch("/reservation/getAllTimeSlots", {
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/json"
+	        },
+	        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+	        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
+    	});
+        
         if (!response.ok) {
             throw new Error("서버 응답 오류");
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log("서버 응답 데이터:", data); 
-        populateRentalTable(data); // 서버에서 받은 데이터를 테이블에 적용
-    })
-    .catch(error => console.error("데이터 불러오기 실패:", error));
+
+        const data = await response.json();
+        console.log("서버 응답 데이터:", data);
+        populateRentalTable(data); // 테이블 그리기
+    }
+
 
     
 
 	// reservationTable 가져오기 ======================================================================
-    fetch("/reservation/getAllReservation", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("서버 응답 오류");
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("서버 응답 데이터:", data); 
-        populateReservationTable(data); // 서버에서 받은 데이터를 테이블에 적용
-    })
-    .catch(error => console.error("데이터 불러오기 실패:", error));
-
+    async function loadReservationData() {
+        const response = await fetch("/reservation/getAllReservation", {
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/json"
+	        },
+	        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+	      //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
+    	});
+    
+	    if (!response.ok) {
+	        throw new Error("서버 응답 오류");
+	    }
+	
+	    const data = await response.json();
+	    console.log("서버 응답 데이터:", data);
+	    populateReservationTable(data); // 테이블 그리기
+	}
 
 });
 
