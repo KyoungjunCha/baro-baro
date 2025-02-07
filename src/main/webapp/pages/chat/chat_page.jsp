@@ -143,6 +143,14 @@
 		#chat-list-rooms-ul {
 			padding: 0;
 		}
+		.post-summary-continer {
+			width: 400px;
+			height: 100%;
+		}
+		.chat-list-rooms-ul li {
+		  border-bottom: 1px solid #ccc; 
+		  padding: 10px; 
+		}
     </style>
     <style>
    		/* 알림창 배경 */
@@ -178,6 +186,15 @@
 			font-size: 16px;
         }
     </style>
+    <style>
+    	#post-summary-continer-image img {
+			width: 100%;
+	      	height: 100%;
+	      	object-fit: cover; /* 컨테이너 전체를 채우되, 비율 유지 (필요에 따라 contain 사용) */
+	      	display: block;
+	    }
+    	
+    </style>
     <script>
         // 알림창을 보여주는 함수
         function showAlert(message) {
@@ -199,7 +216,7 @@
             <button onclick="closeAlert()">닫기</button>
         </div>
     </div>
-   	<%-- <jsp:include page="/pages/common/header_test_sh.jsp" />   --%>  
+   	<jsp:include page="/pages/common/header_test_sh.jsp" />  
     <div class="chat-container">
 	    <!-- 채팅방 목록 -->
 	    <div class="chat-list">
@@ -221,12 +238,22 @@
 		        </c:forEach> --%>
 		    </ul>
 	    </div>
+	    
+	    <div class="post-summary-continer">
+	    	<!-- <h3 id="chatting-room-h3Container">관련 게시글</h3> -->
+    		<div id="post-summary-continer-image">
+    		</div>
+    		<div id="post-summary-continer-summary">
+    		</div>
+		</div>
+	    
 	    <!-- 채팅창 -->
 	    <div class="chat-room">
-	    	<h3>채팅방 <span id="currentRoom"></span></h3>
+	    	<!-- <h3 id="chatting-room-h3Container">채팅방 <span id="currentRoom"></span></h3> -->
 		    <div id="chatArea" class="chatArea">
 		    	<ul id="chatAreaUlEL"></ul>
 		    </div>
+
 		    <div class="chat-input-container">
 			    <textarea id="content" placeholder="메시지를 입력하세요"></textarea>
 			    <div class="chat-input-footer">
@@ -238,6 +265,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+		    
+    
         var sock = null;
         var currentRoomId = null;
         // SockJS 연결
@@ -289,8 +318,6 @@
         };
         connectSocket();
 
-       
-
         // 메시지 전송
         function sendMessage() {
             if (!currentRoomId) {
@@ -298,7 +325,7 @@
                 return;
             }
             var content = document.getElementById('content').value;
-            if(content == "") {
+            if(content == "" || content.trim() == "" || content == null) {
             	showAlert("채팅을 입력 후 전송해야합니다.");
             	return;
             }
@@ -311,61 +338,7 @@
         }
         
      	// 채팅방 선택
-	    function selectRoom(roomId) {
-		    currentRoomId = roomId;
-		    document.getElementById('currentRoom').innerText = roomId;
-		
-		    // 과거 메시지 불러오기
-		    /* fetch(`${pageContext.request.contextPath}/chat/messages/` + roomId)
-		        .then(response => response.json())
-		        .then(data => {
-		            var chatAreaUlEL = document.getElementById('chatAreaUlEL');
-		            chatAreaUlEL.innerHTML = ""; // 기존 메시지 초기화
-		
-		            data.forEach(msg => {
-		                const matches = msg.content.split(" *date: ");
-		                const [message, time] = [matches[0], matches[1]];
-		
-		                const chatEL = document.createElement("li");
-		                
-		
-		                // 방향에 따라 다른 클래스 추가
-		                if (msg.sender == ${sessionScope.user_info.userSeq}) {
-		                	chatEL.setAttribute("class","right");
-		                    const chatMessageDivEL = document.createElement("div");
-		                    chatMessageDivEL.classList.add('receiver');
-		                    chatMessageDivEL.textContent = message;
-		                    
-		                    const chatMessageTimeEL = document.createElement("div");
-		                    chatMessageTimeEL.classList.add('message-time');
-		                    chatMessageTimeEL.textContent = time;
-		                    
-		                    chatEL.appendChild(chatMessageDivEL);
-		                    chatEL.appendChild(chatMessageTimeEL);
-		                    chatAreaUlEL.appendChild(chatEL);
-		                   
-		                } else {
-		                	chatEL.setAttribute("class","left");
-		                    const chatMessageDivEL = document.createElement("div");
-		                    chatMessageDivEL.classList.add('sender');
-		                    chatMessageDivEL.textContent = message;
-		                    
-		                    const chatMessageTimeEL = document.createElement("div");
-		                    chatMessageTimeEL.classList.add('message-time');
-		                    chatMessageTimeEL.textContent = time;
-		                    
-		                    chatEL.appendChild(chatMessageDivEL);
-		                    chatEL.appendChild(chatMessageTimeEL);
-		                    chatAreaUlEL.appendChild(chatEL);
-		                    
-		                }
-		
-		            });
-		        }); */
-		
-		    document.getElementById('content').focus();
-		}
-
+	    
         // enter 입력 시 채팅 입력
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
@@ -384,106 +357,170 @@
             childList: true,  
             subtree: true     
         });
-    </script>
-    <script>
-    var jsonChatData;
-    var messageBodyELMap = new Map();
-    var JSChatVOMap = new Map();
-
-    document.addEventListener("DOMContentLoaded", function () {
-    	const sseURL = `${pageContext.request.contextPath}/chat/sse/${sessionScope.user_info.userSeq}`;
-        const eventSource = new EventSource(sseURL);
         
-        // Handle the "connect" event sent by the server
-        eventSource.addEventListener("connect", function (event) {
-            jsonChatData = JSON.parse(event.data);
-            initChatListRoomsUlEL();
-        });
-        
-        // Handle the "newChat" event sent by the server
-        eventSource.addEventListener("newChat", function (event) {
-            var newChatJsonValue = JSON.parse(event.data);
-            const chatRoomSeq = newChatJsonValue.chatRoomSeq;
-            const matches = newChatJsonValue.content.split(" *date: ");
-            const [message, time] = [matches[0], matches[1]];
-            console.log("값: " + newChatJsonValue + chatRoomSeq);
-            
-			 messageBodyELMap.get(chatRoomSeq).textContent = message;            
-            
-            JSChatVOMap.get(chatRoomSeq).chatMessages.push(newChatJsonValue);
-        });
+        //여기에다 스크립트 다시 넣어
+    
+    
+    
+	    var jsonChatData;
+	    var messageBodyELMap = new Map();
+	    var JSChatVOMap = new Map();
+	    var productImgSrcMap = new Map();
+	    var productSummaryMap = new Map();
+	
+	    document.addEventListener("DOMContentLoaded", function () {
+	    	const sseURL = `${pageContext.request.contextPath}/chat/sse/${sessionScope.user_info.userSeq}`;
+	        const eventSource = new EventSource(sseURL);
+	        
+	        // Handle the "connect" event sent by the server
+	        eventSource.addEventListener("connect", function (event) {
+	        	console.log("이게 원본: " + event.data); 
+	            jsonChatData = JSON.parse(event.data);
+            	initChatListRoomsUlEL();
+	        });
+	        
+	        // Handle the "newChat" event sent by the server
+	        eventSource.addEventListener("newChat", function (event) {
+	            var newChatJsonValue = JSON.parse(event.data);
+	            const chatRoomSeq = newChatJsonValue.chatRoomSeq;
+	            const matches = newChatJsonValue.content.split(" *date: ");
+	            const [message, time] = [matches[0], matches[1]];
+	            
+				messageBodyELMap.get(chatRoomSeq).textContent = message;            
+	            JSChatVOMap.get(chatRoomSeq).chatMessages.push(newChatJsonValue);
+	        });
+	
+	        // Handle errors
+	        eventSource.onerror = function () {
+	            console.error("An error occurred with the SSE connection.");
+	            eventSource.close();
+	        };
+	    });
+	    
+	    function selectRoom(chatRoomSeq) {
+		    currentRoomId = chatRoomSeq;
+		    //document.getElementById('currentRoom').innerText = chatRoomSeq;
+		    console.log(JSChatVOMap.get(chatRoomSeq).chatMessages);
+		    sock.send("CONNECT");
+		    JSChatVOMap.get(chatRoomSeq).chatMessages.forEach(msg =>{
+		    	const matches = msg.content.split(" *date: ");
+		    	const [message, time] = [matches[0], matches[1]];
+		    	const chatEL = document.createElement("li");
+		    	
+		    	if (msg.senderSeq == ${sessionScope.user_info.userSeq}) {
+	            	chatEL.setAttribute("class","right");
+	                const chatMessageDivEL = document.createElement("div");
+	                chatMessageDivEL.classList.add('receiver');
+	                chatMessageDivEL.textContent = message;
+	                
+	                const chatMessageTimeEL = document.createElement("div");
+	                chatMessageTimeEL.classList.add('message-time');
+	                chatMessageTimeEL.textContent = time;
+	                
+	                chatEL.appendChild(chatMessageDivEL);
+	                chatEL.appendChild(chatMessageTimeEL);
+	                chatAreaUlEL.appendChild(chatEL);
+	               
+	            } else {
+	            	chatEL.setAttribute("class","left");
+	                const chatMessageDivEL = document.createElement("div");
+	                chatMessageDivEL.classList.add('sender');
+	                chatMessageDivEL.textContent = message;
+	                
+	                const chatMessageTimeEL = document.createElement("div");
+	                chatMessageTimeEL.classList.add('message-time');
+	                chatMessageTimeEL.textContent = time;
+	                
+	                chatEL.appendChild(chatMessageDivEL);
+	                chatEL.appendChild(chatMessageTimeEL);
+	                chatAreaUlEL.appendChild(chatEL);
+	                
+	            }
+		    });
+		    
+		    const postSummaryContinerImageEL = document.getElementById('post-summary-continer-image');
+			postSummaryContinerImageEL.innerHTML = "";
+		    const productImgEL = document.createElement("img");
+	        productImgEL.setAttribute("alt", "x");
+	        productImgEL.setAttribute("src", productImgSrcMap.get(chatRoomSeq));
+	        postSummaryContinerImageEL.appendChild(productImgEL);
+		    
+	        const postSummaryContinerSummaryEL = document.getElementById('post-summary-continer-summary');
+	        
+	        postSummaryContinerSummaryEL.innerHTML = productSummaryMap.get(chatRoomSeq);
+		    
+		    
+		    document.getElementById('content').focus();
+		};
+	
+	    function initChatListRoomsUlEL() {
+	        const chatListRoomsUlEL = document.getElementById('chat-list-rooms-ul');
+	        for (const JSChatVO of jsonChatData) {
+	            JSChatVOMap.set(JSChatVO.chatRoomSeq, JSChatVO);
+	            ///asdf
+	            const productSummary = "게시글 제목 <br/>" + JSChatVO.postTitle + "<hr/>" + "제품 설명 <br/>" + JSChatVO.productName;
+	            productSummaryMap.set(JSChatVO.chatRoomSeq, productSummary);
+	            const chatListRoomsUlLiEL = document.createElement("li");
+	            chatListRoomsUlLiEL.id = `chat-room-${JSChatVO.chatRoomSeq}`; // Set unique ID for each chat room
+	            
+	            const chatRoomAEL = document.createElement("a");
+	            chatRoomAEL.classList.add("chat-room-a-EL");
+	            
+	            chatRoomAEL.addEventListener("click", () => selectRoom(JSChatVO.chatRoomSeq));
+	            
+	            const profileImgEL = document.createElement("img");
+	            profileImgEL.classList.add("profile-img");
+	            profileImgEL.setAttribute("alt", "x");
+	            
+	            const productImgEL = document.createElement("img");
+	            productImgEL.classList.add("profile-img");
+	            productImgEL.setAttribute("alt", "x");
+	            productImgEL.setAttribute("src", JSChatVO.postStoragePath.replace('c:\\uploads', '/uploads'));
+	            productImgSrcMap.set(JSChatVO.chatRoomSeq, JSChatVO.postStoragePath.replace('c:\\uploads', '/uploads'));
+	            
+	            if (JSChatVO.postOwnerSeq == ${sessionScope.user_info.userSeq}) {
+	                profileImgEL.setAttribute("src", JSChatVO.requestUserProfileImage);
+	                chatRoomAEL.appendChild(profileImgEL);
+	                chatRoomAEL.appendChild(productImgEL);
+	                const textNode = document.createTextNode(JSChatVO.requestUserNickname);
+	                chatRoomAEL.appendChild(textNode);
+	            } else {
+	                profileImgEL.setAttribute("src", JSChatVO.postOwnerProfileImage);
+	                chatRoomAEL.appendChild(profileImgEL);
+	                chatRoomAEL.appendChild(productImgEL);
+	                const textNode = document.createTextNode(JSChatVO.postOwnerNickname);
+	                chatRoomAEL.appendChild(textNode);
+	            }
+	            
+	            const messageBodyEL = document.createElement("div");
+	            messageBodyEL.classList.add("message-body");
+	            
+	            /* const initChatMessageSTR = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content.split(" *date: ")[0];
+	            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR); */
+	
+				let initChatMessageSTR = "";
+	            
+	            console.log(JSChatVO.chatMessages);
+	            
+	            // 채팅 메시지가 있을 경우, 마지막 메시지를 처리
+	            if (JSChatVO.chatMessages != null) {
+	                const lastMessage = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content;
+	                initChatMessageSTR = lastMessage.split(" *date: ")[0];
+	            } else {
+	                initChatMessageSTR = "새로운 채팅을 시작해보세요."; // 기본 메시지
+	            }
+	            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR);
+	            messageBodyEL.appendChild(messageBodyELTextNode);
+	            messageBodyELMap.set(JSChatVO.chatRoomSeq, messageBodyEL); // Initialize map for chat room
+	
+	            chatListRoomsUlLiEL.appendChild(chatRoomAEL);
+	            chatListRoomsUlLiEL.appendChild(messageBodyEL);
+	            chatListRoomsUlEL.appendChild(chatListRoomsUlLiEL);
+	        }
+	    }
 
-        // Handle errors
-        eventSource.onerror = function () {
-            console.error("An error occurred with the SSE connection.");
-            eventSource.close();
-        };
-    });
-
-    function initChatListRoomsUlEL() {
-        const chatListRoomsUlEL = document.getElementById('chat-list-rooms-ul');
-        for (const JSChatVO of jsonChatData) {
-            JSChatVOMap.set(JSChatVO.chatRoomSeq, JSChatVO);
-            
-            const chatListRoomsUlLiEL = document.createElement("li");
-            chatListRoomsUlLiEL.id = `chat-room-${JSChatVO.chatRoomSeq}`; // Set unique ID for each chat room
-            
-            const chatRoomAEL = document.createElement("a");
-            chatRoomAEL.classList.add("chat-room-a-EL");
-            chatRoomAEL.addEventListener("click", () => selectRoom(JSChatVO.chatRoomSeq));
-            
-            const profileImgEL = document.createElement("img");
-            profileImgEL.classList.add("profile-img");
-            profileImgEL.setAttribute("alt", "x");
-            
-            const productImgEL = document.createElement("img");
-            productImgEL.classList.add("profile-img");
-            productImgEL.setAttribute("alt", "x");
-            productImgEL.setAttribute("src", JSChatVO.postStoragePath.replace('c:\\uploads', '/uploads'));
-            
-            if (JSChatVO.postOwnerSeq == ${sessionScope.user_info.userSeq}) {
-                profileImgEL.setAttribute("src", JSChatVO.requestUserProfileImage);
-                chatRoomAEL.appendChild(profileImgEL);
-                chatRoomAEL.appendChild(productImgEL);
-                const textNode = document.createTextNode(JSChatVO.postOwnerNickname);
-                chatRoomAEL.appendChild(textNode);
-            } else {
-                profileImgEL.setAttribute("src", JSChatVO.postOwnerProfileImage);
-                chatRoomAEL.appendChild(profileImgEL);
-                chatRoomAEL.appendChild(productImgEL);
-                const textNode = document.createTextNode(JSChatVO.postOwnerNickname);
-                chatRoomAEL.appendChild(textNode);
-            }
-            
-            const messageBodyEL = document.createElement("div");
-            messageBodyEL.classList.add("message-body");
-            
-            /* const initChatMessageSTR = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content.split(" *date: ")[0];
-            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR); */
-
-			let initChatMessageSTR = "";
-            
-            // 채팅 메시지가 있을 경우, 마지막 메시지를 처리
-            if (JSChatVO.chatMessages.content !== null) {
-                const lastMessage = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content;
-                console.log(lastMessage + ")*()*()");
-                // 메시지 내용에서 "*date:" 기준으로 잘라서 첫 번째 부분만 사용
-                initChatMessageSTR = lastMessage.split(" *date: ")[0];
-            } else {
-                // 채팅 메시지가 없으면 기본 값 설정
-                initChatMessageSTR = "새로운 채팅을 시작해보세요."; // 기본 메시지
-            }
-            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR);
-            messageBodyEL.appendChild(messageBodyELTextNode);
-            console.log("chat init: " + JSChatVO.chatRoomSeq + messageBodyELTextNode);
-            messageBodyELMap.set(JSChatVO.chatRoomSeq, messageBodyEL); // Initialize map for chat room
-
-            chatListRoomsUlLiEL.appendChild(chatRoomAEL);
-            chatListRoomsUlLiEL.appendChild(messageBodyEL);
-            chatListRoomsUlEL.appendChild(chatListRoomsUlLiEL);
-        }
-    }
-
+	    
+	    
     </script>
 </body>
 </html>

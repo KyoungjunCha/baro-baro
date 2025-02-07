@@ -1,9 +1,12 @@
 package com.barobaro.app.handler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
@@ -17,7 +20,7 @@ import com.barobaro.app.vo.ChatMessageVO;
 
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 	 // roomId별로 접속 사용자의 세션을 보관
-    private final Map<Long, List<WebSocketSession>> roomSessions = new HashMap<>();
+    private final Map<Long, List<WebSocketSession>> roomSessions = new ConcurrentHashMap<>();
     
     @Autowired
     ChatService chatService;
@@ -56,7 +59,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 브로드캐스팅
         TextMessage echo = new TextMessage(senderSeq + ": " + content);
         for (WebSocketSession s : sessions) {
-            s.sendMessage(echo);
+            CompletableFuture.runAsync(() -> {
+                try {
+                    s.sendMessage(echo);
+                } catch (IOException e) {
+                    // 에러 처리
+                }
+            });
         }
     }
 
