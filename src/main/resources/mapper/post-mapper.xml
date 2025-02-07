@@ -351,6 +351,18 @@
     	WHERE
     		post_seq = #{postSeq}
     </delete>
+    
+    <insert id="insertReview" parameterType="com.barobaro.app.vo.ReviewVO">
+	    <selectKey keyProperty="reviewVO.reviewSeq" resultType="Long" order="BEFORE">
+	        SELECT REVIEW_SEQ.NEXTVAL AS reviewSeq FROM dual
+	    </selectKey>
+	    INSERT INTO review(REVIEW_SEQ, REGDATE, POST_SEQ, REVIEWER, RATING_VALUE, ITEM_REVIEW) 
+	    VALUES (#{reviewVO.reviewSeq}, SYSDATE, #{reviewVO.postSeq}, #{userSeq}, #{reviewVO.ratingValue}, #{reviewVO.itemReview})
+	</insert>
+    <insert id="insertReviewDetail">
+    	INSERT INTO review_detail(REVIEW_DETAIL_SEQ, REVIEW_SEQ, USERREVIEW) 
+    	VALUES (REVIEW_DETAIL_SEQ.NEXTVAL, #{reviewSeq}, #{userReview})
+    </insert>
 </mapper>
 
 

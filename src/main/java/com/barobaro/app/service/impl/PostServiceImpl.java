@@ -13,6 +13,7 @@ import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.ReviewVO;
 import com.barobaro.app.vo.SearchVO;
 
 @Service
@@ -135,6 +136,17 @@ public class PostServiceImpl implements PostService{
 			postMapper.insertPostFileByPostFileVO(e)
 		);
 		postMapper.deletePostFileByPostSeq(postVO.getPostSeq());
+	}
+
+	@Override
+	public void createReview(ReviewVO reviewVO, long userSeq) {
+		System.out.println(reviewVO);
+		postMapper.insertReview(reviewVO, userSeq);
+		System.out.println(reviewVO);
+		reviewVO.getUserReview().forEach(e -> {
+			postMapper.insertReviewDetail(e, reviewVO.getReviewSeq());
+		});
+		
 	}
 	
 	
