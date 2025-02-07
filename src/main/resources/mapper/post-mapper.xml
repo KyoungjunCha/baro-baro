@@ -89,6 +89,9 @@
             rt.return_rotate_y
             
             ,st10.*
+            ,st13.*
+            ,st14.favorites
+            ,st15.existChats
         FROM
             post p
         LEFT JOIN
@@ -102,6 +105,20 @@
                     (SELECT POST_SEQ AS post_seq11, ROUND(AVG(RATING_VALUE), 2) AS averageProductReviewScore, COUNT(1) AS productReviewCount FROM review WHERE post_seq = #{postSeq} GROUP BY post_seq) st1
                     LEFT OUTER JOIN (SELECT post_seq, RATING_VALUE AS sampleProductReviewScore, ITEM_REVIEW AS sampleProductReviewContent FROM review WHERE review_seq = (SELECT MAX(review_seq) FROM review WHERE post_seq = #{postSeq})) st2 ON st1.post_seq11 = st2.post_seq
             ) st10 ON st10.post_seq11 = p.post_seq
+        LEFT OUTER JOIN
+        	(
+        		SELECT USER_SEQ, NICKNAME, PROFILE_IMAGE, (SELECT COUNT(1) FROM REVIEW_DETAIL WHERE REVIEW_SEQ IN(SELECT REVIEW_SEQ FROM REVIEW WHERE POST_SEQ = #{postSeq})) AS userScore
+        		FROM USER_TABLE 
+        		WHERE USER_SEQ = (SELECT USER_SEQ FROM post WHERE post_seq = #{postSeq})
+        	) st13 ON p.user_seq = st13.user_seq
+        LEFT OUTER JOIN
+        	(
+        		SELECT COUNT(1) AS favorites, post_seq FROM FAVORITE WHERE post_seq = #{postSeq} GROUP BY post_seq 
+        	) st14 ON p.post_seq = st14.post_seq
+        LEFT OUTER JOIN
+        	(
+				SELECT COUNT(1) AS existChats, post_seq FROM CHAT_ROOM WHERE post_seq = #{postSeq} GROUP BY post_seq       	
+        	) st15 ON p.post_seq = st15.post_seq
         WHERE
             p.post_seq = #{postSeq}
     </select>
@@ -211,6 +228,13 @@
 	    <result property="productReviewCount" column="productReviewCount"/>
 	    <result property="sampleProductReviewScore" column="sampleProductReviewScore"/>
 	    <result property="sampleProductReviewContent" column="sampleProductReviewContent"/>
+	    
+	    <result property="userNickname" column="nickname"/>
+	    <result property="userProfile" column="profile_image"/>
+	    <result property="userScore" column="userScore"/>
+	    
+	    <result property="favorites" column="favorites"/>
+	    <result property="existChats" column="existChats"/>
 	    
 	    <!-- postImages (PostFileVO) 리스트 매핑 -->
 	    <collection property="postImages" ofType="com.barobaro.app.vo.PostFileVO">

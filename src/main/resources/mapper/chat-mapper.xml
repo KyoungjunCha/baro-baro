@@ -105,6 +105,21 @@
 			(CHAT_MESSAGE_SEQ, CHAT_ROOM_SEQ, SENDER_SEQ, CONTENT)
 		VALUES (CHAT_MESSAGE_SEQ.NEXTVAL, #{chatRoomSeq}, #{senderSeq}, #{content})
 	</insert>
+	
+	<select id="getNotReadChatCount" resultType="int">
+		WITH requestCount AS
+		(
+		    SELECT COALESCE(SUM(NOT_READ_COUNT_REQUESTER), 0) AS requestCount
+		    FROM CHAT_ROOM
+		    WHERE REQUEST_USER_SEQ = 1001
+		),
+		posterCount AS (
+		    SELECT COALESCE(SUM(cr.NOT_READ_COUNT_POSTER), 0) AS posterCount 
+		    FROM CHAT_ROOM cr 
+		    WHERE cr.POST_SEQ IN (SELECT p.post_seq FROM post p WHERE p.user_seq = 1005)
+		)
+		SELECT requestCount.requestCount + posterCount.posterCount AS totalCount FROM requestCount, posterCount;
+	</select>
 
 </mapper>
 

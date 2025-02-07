@@ -240,6 +240,20 @@
 	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 	    /* white-space:pre; */
 	}
+	.review-summary-box3 {
+		height: 200px; 						/* 원하는 높이(px 단위) */
+	    background: #ffffff; 				/* 배경색 */
+	    border: 1px solid #ddd; 			/* 테두리 */
+	    border-radius: 10px; 				/* 둥근 모서리 */
+	    padding: 15px; 						/* 내부 여백 */
+	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	    display:flex; 
+	    gap:20px;
+	    width: 1140px;
+	}
+	.for-review-border {
+		border: 1px solid gray;
+	}
 	
 	h5 {
 	    margin-top: 0;
@@ -284,21 +298,79 @@
 		transform: scale(1.2);
 	}
 	.modify-post-button {
-		width: 600px;
+		width: 120px;
 		background-color: #12C1C0;
 		color: white;
 		border: none;
-		padding: 16px;
+		padding: 8px;
 		border-radius: 4px;
 		font-size: 16px;
 		font-weight: bold;
 		cursor: pointer;
 		right: 20px;
 	}
+	.user-profile-img {
+		widht: 200px;
+		height: 120px;
+	}
 </style>
+
+<style>
+   		/* 알림창 배경 */
+        #customAlert {
+            display: none; /* 기본적으로 숨겨짐 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* 다른 콘텐츠 위에 표시 */
+        }
+
+        /* 알림창 내용 */
+        .alert-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .alert .alert-content button {
+        	background: #12c1c0;
+			border: none;
+			color: white;
+			padding: 10px 15px;
+			border-radius: 20px;
+			cursor: pointer;
+			font-size: 16px;
+        }
+    </style>
+    <script>
+        // 알림창을 보여주는 함수
+        function showAlert(message) {
+            document.getElementById('alertMessage').innerText = message;  // 메시지 설정
+            document.getElementById('customAlert').style.display = 'flex'; // 알림창 표시
+        }
+
+        // 알림창을 닫는 함수
+        function closeAlert() {
+            document.getElementById('customAlert').style.display = 'none'; // 알림창 숨기기
+        }
+    </script>
 </head>
 
 <body>
+	<!-- 알림창 -->
+    <div id="customAlert" class="alert">
+        <div class="alert-content">
+            <p id="alertMessage">알림 메시지가 여기에 표시됩니다.</p>
+            <button onclick="closeAlert()">닫기</button>
+        </div>
+    </div>
 
 	<!-- 공통헤더 -->
 	<jsp:include page="/pages/common/header_test_sh.jsp" />
@@ -307,8 +379,9 @@
 	<main class="container">
 		<!-- 브래드 크럼 -->
         <div class="breadcrumb" style="width:1140px">
-            <a>카테고리 [ ${KEY_POST.categoryName} ]</a>
+            <a>카테고리 [ ${KEY_POST.categoryName} ]
             <c:if test="${KEY_POST.userSeq == sessionScope.user_info.userSeq}"><button class="modify-post-button">게시글 수정</button></c:if>
+            </a>
             <i class="heart bi bi-heart"
 							data-post-seq="${KEY_POST.postSeq}"></i>
 			
@@ -335,17 +408,17 @@
                 <div class="product-description">
 				    <div class="info-box1">
 				        <h5>상세정보</h5>
-				        <p>${KEY_POST.itemContent}</p>
+				        <pre><p>${KEY_POST.itemContent}</p><pre>
 				    </div>
 				    <div class="info-box2">
 				        <h5>예약방법</h5>
-				        <p>${KEY_POST.rentContent}</p>
+				        <pre><p>${KEY_POST.rentContent}</p></pre>
 				    </div>
 				</div>
 
                 <div class="product-meta-info" style="height:20px">
                     <br>
-                    <span>채팅 3</span> · <span>즐겨찾기 6</span> · <span>조회 ${KEY_POST.count}</span>
+                    <span>채팅 ${KEY_POST.existChats}</span> · <span>즐겨찾기 ${KEY_POST.favorites}</span> · <span>조회 ${KEY_POST.count}</span>
                 	<br>
                 </div>
 
@@ -353,17 +426,52 @@
             </div>
         </div>
         <br>
-        <div class="review-summary-box1" style="width:1140px; display:flex; gap:20px;">
-			<div>
-				${KEY_POST.averageProductReviewScore} 
-				${KEY_POST.productReviewCount}
+        <c:if test="${KEY_POST.averageProductReviewScore != null || KEY_POST.productReviewCount != null}">
+        	<div class="review-summary-box3">
+        		<div style="width: 220px">
+        			<img class="user-profile-img" alt="유저 프로필" src="${KEY_POST.userProfile}">
+        			<p>${KEY_POST.userNickname}<br/>
+        			유저 점수: ${KEY_POST.userScore} 점</p>
+        			
+        		</div>
+        		<div class="for-review-border"></div>
+				<div>
+					<c:forEach var="i" begin="1" end="${KEY_POST.averageProductReviewScore.intValue()}">
+				    	<img src="/icons/star_icon.png" width="20" height="20" />
+					</c:forEach>&nbsp;
+					<span style="font-weight: bold; font-size:18px">${KEY_POST.averageProductReviewScore}점</span>
+					<br/>
+					<p style="font-family: Montserrat, sans-serif;font-size: 14px;">
+						${KEY_POST.productReviewCount} 건의 리뷰가 있습니다.
+					</p>
+				</div>
+				<div class="for-review-border"></div>
+				<div>
+					<c:forEach var="i" begin="1" end="${KEY_POST.sampleProductReviewScore.intValue()}">
+				    	<img src="/icons/star_icon.png" width="20" height="20" />
+					</c:forEach>&nbsp;
+					<span style="font-weight: bold; font-size:18px">${KEY_POST.sampleProductReviewScore}점</span>
+					<br/>
+					${KEY_POST.sampleProductReviewContent}
+				</div>
 			</div>
-			<div>
-				${KEY_POST.sampleProductReviewScore}
-				${KEY_POST.sampleProductReviewContent}
+        </c:if>
+        <c:if test="${KEY_POST.averageProductReviewScore == null || KEY_POST.productReviewCount == null}">
+        	<div class="review-summary-box3">
+				<div>
+					<div style="width: 220px">
+	        			<img class="user-profile-img" alt="유저 프로필" src="${KEY_POST.userProfile}">
+	        			<p>${KEY_POST.userNickname}<br/>
+	        			유저 점수: ${KEY_POST.userScore} 점</p>
+	        		</div>
+	        		<div class="for-review-border"></div>
+					<p style="font-family: Montserrat, sans-serif;font-size: 14px;">
+						아직 작성된 리뷰가 없습니다. 첫 고객이 되어보세요
+					</p>
+				</div>
 			</div>
-		</div>
-        <div class="info-box1" style="width:1140px">
+        </c:if>
+        <%-- <div class="info-box1" style="width:1140px">
 	        <c:set var="score" value="6" />
 	        <c:forEach var="i" begin="1" end="${score}">
 			    <img src="/icons/star_icon.png" width="20" height="20" />
@@ -373,7 +481,7 @@
 			<br>
 	        	여기 좋아요..
 	        	방콕의 라따나코신 지구에 위치한 람부뜨리 빌리지 호텔에 머무르세요. 루프탑 수영장, 테라스, 레스토랑이 있어 두 명의 여행자에게 완벽합니다. 문화 활동, 밤문화, 카오산 로드를 탐험하세요. 여기서 방콕의 최고를 경험해보세요. 람부뜨리 빌리지 호텔은 방콕의 활기찬 배낭여행자 지구인 카오산에 위치하며, 멋진 도시 전망을 감상할 수 있는 루프탑 수영장, 루프탑 테라스, 가이드 투어, 무료 Wi-Fi가 제공되는 에어컨 객실, 금
-        </div>
+        </div> --%>
         <br>
         <div class="product-detail" style="display:flex;gap:20px;">
         	
@@ -480,7 +588,7 @@
                 // availableDates 배열에 해당 날짜가 없으면 클릭 방지
                 if (!availableDates.includes(clickedDayStr)) {
                     info.jsEvent.preventDefault();  		// 클릭 이벤트 취소
-                    alert("해당날짜에 예약 가능한 시간이 없습니다.");
+                    showAlert("해당날짜에 예약 가능한 시간이 없습니다.");
                 } else {
                     selectedDateEl.value = info.dateStr; 	// 선택한 날짜 저장
                  	// 선택한 날짜에 해당하는 시간대 조회

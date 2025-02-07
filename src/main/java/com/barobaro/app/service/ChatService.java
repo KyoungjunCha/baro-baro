@@ -14,5 +14,7 @@ public interface ChatService {
 	//List<ChatRoomVO> getRoomsByUserSeq(long userSeq);
 	//List<ChatMessageVO> selectMessagesByRoomSeq(long roomSeq);
 	SseEmitter add(long userSeq, SseEmitter emitter);
+	SseEmitter chatIconAddSseEmitter(long userSeq, SseEmitter emitter);
 	void chatNotificateAboutNewChat(Long userSeq, ChatMessageVO chatMessageVO);
+	int getNotReadChatMessage(Long userSeq);
 }
