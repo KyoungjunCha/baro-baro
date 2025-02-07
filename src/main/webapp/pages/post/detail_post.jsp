@@ -12,51 +12,48 @@
 <title>바로바로 | baro-borrow</title>
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
 <style>
-	/* 갤린더 */
+	/* 캘린더 전체요소 */
 	#calendar-container{
-		display: flex; /* 자식 요소들을 수평으로 배치 */
+	    position: absolute;
+		display: flex; 					/* 자식 요소들을 수평으로 한줄배치 */
+		left: 30;
     	justify-content: flex-start;
 	}
+	
+	/* 캘린더 달력 부분 */
 	#calendar {
 		max-width: 800px;
-		width: 60%;
-		display: flex; /* 자식 요소들을 수평으로 배치 */
-    	justify-content: flex-start; /* 자식 요소들을 왼쪽으로 정렬 (기본값) */
+		top: 500px; 					/* 원하는 위치 조정 */
+    	width: 500px; 					/* 캘린더 크기 조절 */
+		display: flex; 					/* 자식 요소들을 수평으로 배치 */
+    	justify-content: flex-start; 	/* 자식 요소들을 왼쪽으로 정렬 (기본값) */
 	}
 	
-	#schedule {
-		width: 30%;
-		padding: 20px;
-		border: 1px solid #ccc;
-		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	/* 캘린더 날짜칸 안의 날짜 요소 */
+	.fc-daygrid-day-number {
+	    color: black;  					/* 검정색 글자 */
+	    font-weight: bold;  			/* 굵게 */
+	    text-align: left !important;  	/* 왼쪽 정렬 */
+    	padding-left: 5px;  
 	}
 	
-	#schedule h3 {
-		margin-top: 0;
-	}
-	
+	/* 캘린더 비활성화된 날짜칸 */
 	.fc-daygrid-day.disabled {
 		background-color: #f0f0f0 !important; /* 회색 배경 */
-		pointer-events: none; /* 마우스 클릭 방지 */
-		opacity: 0.6; /* 투명도 조정 */
+		pointer-events: none; 				  /* 마우스 클릭 방지 */
+		opacity: 0.6; 						  /* 투명도 조정 */
+		color: #a0a0a0 !important; 			  /* 텍스트 색상 변경 */
 	}
 	
-	.fc-daygrid-day.disabled * {
-		color: #a0a0a0 !important; /* 텍스트 색상 변경 */
-	}
-	
-	/* FullCalendar 날짜 숫자 색상을 검정색으로 변경 */
-	.fc-daygrid-day-number {
-	    color: black !important;  /* 글자색을 완전 검정색으로 변경 */
-	    font-weight: bold;  /* 글자를 더 진하게 */
-	}
-	
+	/* 타임슬롯 테이블 */
 	#timeSlotTable {
-	    width: 100%;
-	    border-collapse: collapse; /* 테두리 겹침 */
-	    border-radius: 8px;
-	    overflow: hidden;
-	    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 표 그림자 효과 */
+	    position: relative; /* 부모 요소 기준 배치 */
+	    top: 0;
+	    left: 200px; /* 달력 오른쪽으로 배치 */
+	    width: 600px; /* 필요에 따라 조정 */
+	    background: white;
+	    z-index: 10; /* 달력보다 낮게 설정 */
+	    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 	}
 	
 	#timeSlotTable th, #timeSlotTable td {
@@ -67,8 +64,8 @@
 	}
 	
 	#timeSlotTable th {
-	    background-color: #007bff; /* 헤더 배경색 (파란색) */
-	    color: white; /* 헤더 글씨 흰색 */
+	    background-color: #12C1C0;  /* 헤더 배경색 민트 */
+	    color: white; 				/* 헤더 글씨 흰색 */
 	    font-weight: bold;
 	}
 	
@@ -86,9 +83,9 @@
 	/* 이미지 조회 */
 	.post-images {
 		position: relative;
-		width: 80%;
-		height: 800px;
-	    /* max-width: 500px; */
+		width: 65%;
+		height: 560px;
+	    max-width: 500px;
 	    overflow: hidden;
 	    display:flex;
 	}
@@ -191,8 +188,9 @@
 	}
 
 	.product-title {
-		font-size: 24px;
+		font-size: 36px;
 		margin-bottom: 8px;
+		border
 	}
 
 	.product-meta {
@@ -208,8 +206,40 @@
 	}
 
 	.product-description {
-		margin-bottom: 24px;
-		line-height: 1.6;
+	    display: flex;
+	    flex-direction: column;
+	    gap: 15px; 							/* 박스 간 간격 */
+	    max-width: 600px; 					/* 최대 너비 제한 */
+	/*     margin: 20px auto; 					/* 가운데 정렬 */ */
+	}
+	
+	.info-box1 {
+		height: 200px; 						/* 원하는 높이(px 단위) */
+	    background: #ffffff; 				/* 배경색 */
+	    border: 1px solid #ddd; 			/* 테두리 */
+	    border-radius: 10px; 				/* 둥근 모서리 */
+	    padding: 15px; 						/* 내부 여백 */
+	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	}
+	
+	.info-box2 {
+	    background: #ffffff; 				/* 배경색 */
+	    border: 1px solid #ddd; 			/* 테두리 */
+	    border-radius: 10px; 				/* 둥근 모서리 */
+	    padding: 15px; 						/* 내부 여백 */
+	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	}
+	
+	h5 {
+	    margin-top: 0;
+	    color: #333;
+	    font-weight: bold;
+	}
+	
+	p {
+	    margin: 5px 0 0;
+	    color: #666;
+	    line-height: 1.5;
 	}
 
 	.product-meta-info {
@@ -219,7 +249,7 @@
 	}
 
 	.chat-button {
-		width: 100%;
+		width: 600px;
 		background-color: #12C1C0;
 		color: white;
 		border: none;
@@ -232,9 +262,11 @@
 	
 	.heart {
 		cursor: pointer;
-			color: #e74c3c;
-			font-size: 1.5rem;
-			transition: transform 0.2s ease-in-out;
+		color: #e74c3c;
+		font-size: 1.5rem;
+		transition: transform 0.2s ease-in-out;
+		    bottom: 20px; /* 화면 하단에서 20px */
+    right: 20px; /* 화면 우측에서 20px */
 	}
 	
 	.heart:hover {
@@ -245,16 +277,21 @@
 
 <body>
 
-
+	<!-- 공통헤더 -->
 	<jsp:include page="/pages/common/header_test_sh.jsp" />
+	
+	<!-- 메인 -->
 	<main class="container">
-        <div class="breadcrumb">
-            <a>${KEY_POST.categoryName}</a>
+		<!-- 브래드 크럼 -->
+        <div class="breadcrumb" style="width:1140px">
+            <a>카테고리 [ ${KEY_POST.categoryName} ]</a>
             <i class="heart bi bi-heart"
 							data-post-seq="${KEY_POST.postSeq}"></i>
         </div>
-
+		
+		<!-- 상품 디테일 [이미지 + 설명] -->
         <div class="product-detail">
+        	<!-- 이미지 -->
             <div class="post-images">
 	            <c:forEach var="image" items="${KEY_POST.postImages}" varStatus="status">
 	                <img src="${image.storagePath.replace('c:\\uploads', '/uploads')}" alt="Post image" class="${status.index == 0 ? 'active' : ''}" />
@@ -264,56 +301,87 @@
 	                <button onclick="changeImage(1)">▷</button>
 	            </div>
 	        </div>
-
+			<!-- 설명 -->
             <div class="product-info">
                 <h1 class="product-title">${KEY_POST.title}</h1>
-                <p class="product-meta">${KEY_POST.productName} · <fmt:formatDate value="${KEY_POST.postAt}" pattern="yyyy-MM-dd · HH시 mm분"/></p>
-                <p class="product-price">10분당 대여가격: ${KEY_POST.pricePerTenMinute}원</p>
+                <p class="product-meta">상품 : ${KEY_POST.productName} · 게시글 등록일시 : <fmt:formatDate value="${KEY_POST.postAt}" pattern="yyyy-MM-dd · HH시 mm분"/></p>
+                <p class="product-price">10분당 평균 대여가격: ${KEY_POST.pricePerTenMinute}원</p>
                 
                 <div class="product-description">
-                   	<p><h5>제품 관련 설명</h5>${KEY_POST.itemContent}</p>
-                    <hr/>
-                    <p><h5>대여 관련 설명</h5>${KEY_POST.rentContent}</p>
-                </div>
+				    <div class="info-box1">
+				        <h5>상세정보</h5>
+				        <p>${KEY_POST.itemContent}</p>
+				    </div>
+				    <div class="info-box2">
+				        <h5>예약방법</h5>
+				        <p>${KEY_POST.rentContent}</p>
+				    </div>
+				</div>
 
-                <div class="product-meta-info">
+                <div class="product-meta-info" style="height:20px">
+                    <br>
                     <span>채팅 3</span> · <span>즐겨찾기 6</span> · <span>조회 ${KEY_POST.count}</span>
+                	<br>
                 </div>
 
-                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.postSeq}'">판매자에게 채팅하기</button>
+                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.userSeq}'">판매자에게 채팅하기</button>
             </div>
         </div>
-        <div id="calendar-container">
-			<div id="calendar" class="product-detail"></div>
-		</div>
-		<table id="timeSlotTable">
-				<thead>
-					<tr>
-						<th>대여 시간</th>
-						<th>반납 시간</th>
-						<th>가격</th>
-						<th>대여 장소</th>
-						<th>반납 장소</th>
-						<th>상태</th>
-					</tr>
-				</thead>
-			<tbody id="timeSlotBody">
-				<tr>
-					<td colspan="6">날짜를 선택하세요.</td>
-				</tr>
-			</tbody>
-		</table>
+        <br>
+        <div class="info-box1" style="width:1140px">
+	        <c:set var="score" value="6" />
+	        <c:forEach var="i" begin="1" end="${score}" step="2">
+			    <img src="/icons/star_icon.png" width="20" height="20" />
+			</c:forEach>&nbsp;
+			<span style="font-weight: bold; font-size:18px">${score}점</span>
+			
+			<br>
+	        	여기 좋아요..
+	        	방콕의 라따나코신 지구에 위치한 람부뜨리 빌리지 호텔에 머무르세요. 루프탑 수영장, 테라스, 레스토랑이 있어 두 명의 여행자에게 완벽합니다. 문화 활동, 밤문화, 카오산 로드를 탐험하세요. 여기서 방콕의 최고를 경험해보세요. 람부뜨리 빌리지 호텔은 방콕의 활기찬 배낭여행자 지구인 카오산에 위치하며, 멋진 도시 전망을 감상할 수 있는 루프탑 수영장, 루프탑 테라스, 가이드 투어, 무료 Wi-Fi가 제공되는 에어컨 객실, 금
+        </div>
+        <br>
+        <div class="product-detail" style="display:flex;gap:20px;">
+        	
+            <div style="flex-bias:600px; min-height: 500px; display: flex; flex-direction: column; overflow: hidden;">
+            	<!-- 달력 -->
+		        <font color='white'>_______________________________________________</font>
+				<div id="calendar-container" >
+			        <div id="calendar"></div>
+				</div>
+            </div>
+		
+			<div class="product-info">
+				<!-- 타임슬롯 테이블 -->
+				<table id="timeSlotTable" width="742px">
+					<thead>
+						<tr>
+							<th>대여정보</th>
+							<th>반납정보</th>
+							<th>가격</th>
+						</tr>
+					</thead>
+					<tbody id="timeSlotBody">
+						<tr>
+							<td colspan="6">원하시는 날짜를 선택한 후 사용할 시간대를 선택하여 주세요.</td>
+						</tr>
+					</tbody>
+				</table>
+            </div>
+            
+        </div>
     </main>
-	
-	
 
 	<!-- 숨겨진 input 요소 -->
 	<input type="hidden" id="selected_date" name="selected_date">
-	<input type="hidden" id="post_seq" name="post_seq" value="${KEY_POST.postSeq}">
-	<!-- jQuery 로드 (FullCalendar보다 먼저) -->
+	<input type="hidden" id="post_seq" 	 	name="post_seq" 	value="${KEY_POST.postSeq}">
+	
+	<!-- jQuery 로드 (FullCalendar보다 먼저 로드하기) -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<!-- FullCalendar 로드-->
+	
+	<!-- FullCalendar 로드 -->
 	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+	
+	<!-- 이미지 변경 슬라이더 -->
 	<script>
         let currentImageIndex = 0;
         const images = document.querySelectorAll('.post-images img');
@@ -324,8 +392,9 @@
             images[currentImageIndex].classList.add('active');
         }
     </script>
+    
+    <!-- 지도, 달력, 타임슬롯 -->
 	<script>
-	
 	document.addEventListener('DOMContentLoaded', function () {
 		kakao.maps.load(() => {});
 	    const calendarEl     = document.getElementById('calendar');
@@ -356,32 +425,31 @@
             initialView: 'dayGridMonth',
             selectable: true,
             editable: false,
-            contentHeight: 'auto',
             showNonCurrentDates: false,  			// 현재 달력에서 현재달에 해당하지않는 날짜는 숨기기
             fixedWeekCount: false,		 			// 불필요한 행 없애기
             validRange: { start: new Date() },   	// 유효범위 : 과거 날짜 선택 불가
             dateClick: function (info) {
                 const clickedDate = new Date(info.date);
-                clickedDate.setHours(0, 0, 0, 0);  // 시간을 00:00:00:000으로 설정하여 날짜만 비교
+                clickedDate.setHours(0, 0, 0, 0);   // 시간을 00:00:00:000으로 설정하여 날짜만 비교
 
                 const today = new Date();
-                today.setHours(0, 0, 0, 0);  // 오늘 날짜의 시간 부분을 00:00:00:000으로 설정
+                today.setHours(0, 0, 0, 0);  		// 오늘 날짜의 시간 부분을 00:00:00:000으로 설정
                 
-                const year = clickedDate.getFullYear();  // 연도
-                const month = clickedDate.getMonth() + 1;  // 월 (0부터 시작하므로 +1)
-                const day = clickedDate.getDate();  // 일
+                const year = clickedDate.getFullYear();  	// 연도
+                const month = clickedDate.getMonth() + 1;  	// 월 (0부터 시작하므로 +1)
+                const day = clickedDate.getDate();  		// 일
                 const clickedDayStr = year+'-'+month+'-'+day;
 
                 // 오늘 이전 날짜 클릭 방지
                 if (clickedDate < today) return;
                 // availableDates 배열에 해당 날짜가 없으면 클릭 방지
                 if (!availableDates.includes(clickedDayStr)) {
-                    info.jsEvent.preventDefault();  // 클릭 이벤트 취소
+                    info.jsEvent.preventDefault();  		// 클릭 이벤트 취소
                     alert("해당날짜에 예약 가능한 시간이 없습니다.");
                 } else {
                     selectedDateEl.value = info.dateStr; 	// 선택한 날짜 저장
-                    
-                    fetchTimeSlots(clickedDate); 	   // 선택한 날짜에 해당하는 시간대 조회
+                 	// 선택한 날짜에 해당하는 시간대 조회
+                    fetchTimeSlots(clickedDate);
                 }
             },
             dayCellDidMount: function (info) {
@@ -399,12 +467,13 @@
                 }
             },
             datesSet: function() {
-          	    $("#timeSlotBody").empty().append('<tr><td colspan="6">날짜를 선택하세요.</td></tr>');
+          	    $("#timeSlotBody").empty().append('<tr><td colspan="6">원하시는 날짜를 선택한 후 사용할 시간대를 선택하여 주세요.</td></tr>');
             }
       });
 		calendar.render();
 	});
-
+	
+	// 선택한 날짜에 해당하는 시간대 조회
 	function fetchTimeSlots(selectedDate) {
 	    var postJsonKey = ${KEY_POST_JSON};
 	    var rentTimes   = postJsonKey.rentTimes;
@@ -430,29 +499,62 @@
 	                button = "<button style=\"background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px;\" disabled>대여 불가능</button>";
 	            }
 	            
-	            
-	            
-				var rentLoc = document.createElement('div');   
-	           	rentLoc.style.width = "200px";   
-	           	rentLoc.style.height = "150px";  
-	            var returnLoc = document.createElement('div');   
-	            returnLoc.style.width = "200px";   
-	            returnLoc.style.height = "150px";  
-	            
-	            
-	            var $tr = $("<tr></tr>");
-	            $tr.append( $("<td></td>").text(rentAtTime.toLocaleString('ko-KR')) );
-	            $tr.append( $("<td></td>").text(returnAtTime.toLocaleString('ko-KR')) );
-	            $tr.append( $("<td></td>").text(element.price + "원") );
-	            var $rentTd = $("<td></td>").append(element.rent_location);
-	            $rentTd.append(rentLoc); // rentLoc는 이미 DOM 요소
-	            $tr.append($rentTd);
-	            var $returnTd = $("<td></td>").append(element.return_location);
-	            $returnTd.append(returnLoc);
-	            $tr.append($returnTd);
-	            $tr.append( $("<td></td>").html(button) );
+	            var rentLoc = document.createElement('div');
+	            rentLoc.style.width = "200px";
+	            rentLoc.style.height = "150px";
 
+	            var returnLoc = document.createElement('div');
+	            returnLoc.style.width = "200px";
+	            returnLoc.style.height = "150px";
+
+	            var $table = $("#timeSlotTable").css("width", "600px"); // 테이블 너비 600px 설정
+
+	            var $tr = $("<tr></tr>");
+
+	            // 1번째 <td>: 대여정보 + 대여장소
+	            var $rentalTd = $("<td></td>").css("font-size", "14px").append(
+	                $("<span></span>").css("color", "#12C1C0").text(rentAtTime.toLocaleString('ko-KR')), "<br>",
+	                element.rent_location, "<br>"
+	            );
+	            $rentalTd.append(rentLoc);
+
+	            // 2번째 <td>: 반납정보 + 반납장소
+	            var $returnTd = $("<td></td>").css("font-size", "14px").append(
+	                $("<span></span>").css("color", "#12C1C0").text(returnAtTime.toLocaleString('ko-KR')), "<br>",
+	                element.return_location, "<br>"
+	            );
+	            $returnTd.append(returnLoc);
+
+	            // 3번째 <td>: 가격 + 버튼
+	            var $priceTd = $("<td></td>").css("font-size", "14px").append(
+	                element.price + "원", "<br>",
+	                button
+	            );
+
+	            // <tr>에 <td> 추가
+	            $tr.append($rentalTd);
+	            $tr.append($returnTd);
+	            $tr.append($priceTd);
+
+	            // 테이블에 추가
 	            $("#timeSlotBody").append($tr);
+
+	            
+	            
+	            //원래코드
+// 	            var $tr = $("<tr></tr>");
+// 	            $tr.append( $("<td></td>").text(rentAtTime.toLocaleString('ko-KR')) );
+// 	            $tr.append( $("<td></td>").text(returnAtTime.toLocaleString('ko-KR')) );
+// 	            $tr.append( $("<td></td>").text(element.price + "원") );
+// 	            var $rentTd = $("<td></td>").append(element.rent_location);
+// 	            $rentTd.append(rentLoc); // rentLoc는 이미 DOM 요소
+// 	            $tr.append($rentTd);
+// 	            var $returnTd = $("<td></td>").append(element.return_location);
+// 	            $returnTd.append(returnLoc);
+// 	            $tr.append($returnTd);
+// 	            $tr.append( $("<td></td>").html(button) );
+
+// 	            $("#timeSlotBody").append($tr);
 	            
 	            
 	            var rentMarker = {
@@ -483,82 +585,82 @@
 
 	        // 각 버튼에 클릭 이벤트 리스너 추가
 	        buttons.forEach(button => {
-	          button.addEventListener("click", function() {
-	        	var timeSlotSeq = $(this).data("time-slot-seq");  
-	        	console.log('히히: ' + timeSlotSeq);
-	        	if (confirm("예약을 요청보낼까요?")) {
-		            $.ajax({
-		                url: "/reservation/request-reservation",
-		                type: "POST",
-		                data: { timeSlotSeq: timeSlotSeq },
-		                success: function (response) {
-							console.log(response);	                	
-		                    alert(response);
-		                    location.reload(); // 페이지 새로고침 (필요 시)
-		                },
-		                error: function (xhr, status, error) {
-		                    alert("예약 요청에 실패했습니다." + xhr.responseText);
-		                }
-		            });
-		        }
-	          });
+	        	button.addEventListener("click", function() {
+		        	var timeSlotSeq = $(this).data("time-slot-seq");
+		        	console.log('타임슬롯번호: ' + timeSlotSeq);
+		        	
+		        	if (confirm("예약을 요청보낼까요?")) {
+		        		$.ajax({
+			                url: "/reservation/request-reservation",
+			                type: "POST",
+			                data: { timeSlotSeq: timeSlotSeq },
+			                success: function (response) {
+								console.log(response);	                	
+			                    alert(response);
+			                    location.reload(); // 페이지 새로고침 (필요 시)
+			                },
+			                error: function (xhr, status, error) {
+			                    alert("예약 요청에 실패했습니다." + xhr.responseText);
+			                }
+			            });
+		        	}
+	            });
 	        });
 		});
 	}
-</script>
+	</script>
 
-
-<!-- 즐겨찾기 -->
-<script>
-$(document).ready(function() {
-	const userSeq = '${sessionScope.user_info.userSeq}';
+	<!-- 즐겨찾기 (하트 누르기, 해제하기) -->
+	<script>
+	$(document).ready(function() {
+		const userSeq = '${sessionScope.user_info.userSeq}';
 	
-	$.ajax({
-		url: '/favorite/list',
-		type: 'GET',
-		data: {userSeq: userSeq},
-		success: function(res) {
-			$('.heart').each(function() {
-				const postSeq = $(this).data('post-seq');
-		        if (res.includes(Number(postSeq))) {
-					$(this).removeClass('bi-heart').addClass('bi-heart-fill');
-				}
-			});
-		}, 
-		error: function () {
-            console.error('즐겨찾기 목록을 불러오는 데 실패했습니다.');
-        }
+		$.ajax({
+			url: '/favorite/list',
+			type: 'GET',
+			data: {userSeq: userSeq},
+			success: function(res) {
+				$('.heart').each(function() {
+					const postSeq = $(this).data('post-seq');
+			        if (res.includes(Number(postSeq))) {
+						$(this).removeClass('bi-heart').addClass('bi-heart-fill');
+					}
+				});
+			}, 
+			error: function () {
+	            console.error('즐겨찾기 목록을 불러오는 데 실패했습니다.');
+	        }
+		});
+		
+	    $('.heart').click(function() {
+	        const heart = $(this);
+	        const postSeq = heart.data('post-seq');
+	        
+	        console.log('userSeq', userSeq);
+	        console.log('postSeq', postSeq);
+	        
+	        $.ajax({
+	            url: '/favorite/toggle',
+	            type: 'POST',
+	            contentType: 'application/json',
+	            data: JSON.stringify({
+	                userSeq: userSeq,
+	                postSeq: postSeq
+	            }),
+	            success: function(response) {
+	                if (response === 'deleted') {
+	                	heart.removeClass('bi-heart-fill').addClass('bi-heart');
+	                } else if(response === 'added') {
+	                	heart.removeClass('bi-heart').addClass('bi-heart-fill');
+	                }
+	            },
+	            error: function () {
+	                alert('즐겨찾기 해제에 실패했습니다.');
+	            }
+	        });
+	    });
 	});
-	
-    $('.heart').click(function() {
-        const heart = $(this);
-        const postSeq = heart.data('post-seq');
-        
-        console.log('userSeq', userSeq);
-        console.log('postSeq', postSeq);
-        
-        $.ajax({
-            url: '/favorite/toggle',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                userSeq: userSeq,
-                postSeq: postSeq
-            }),
-            success: function(response) {
-                if (response === 'deleted') {
-                	heart.removeClass('bi-heart-fill').addClass('bi-heart');
-                } else if(response === 'added') {
-                	heart.removeClass('bi-heart').addClass('bi-heart-fill');
-                }
-            },
-            error: function () {
-                alert('즐겨찾기 해제에 실패했습니다.');
-            }
-        });
-    });
-});
-</script>
-<!-- 댓글 -->
+	</script>
+
 </body>
 </html>
