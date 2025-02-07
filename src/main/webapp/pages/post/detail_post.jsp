@@ -220,6 +220,16 @@
 	    border-radius: 10px; 				/* 둥근 모서리 */
 	    padding: 15px; 						/* 내부 여백 */
 	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	    /* white-space:pre; */
+	}
+	
+	.review-summary-box1 {
+		height: 200px; 						/* 원하는 높이(px 단위) */
+	    background: #ffffff; 				/* 배경색 */
+	    border: 1px solid #ddd; 			/* 테두리 */
+	    border-radius: 10px; 				/* 둥근 모서리 */
+	    padding: 15px; 						/* 내부 여백 */
+	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 	}
 	
 	.info-box2 {
@@ -228,6 +238,7 @@
 	    border-radius: 10px; 				/* 둥근 모서리 */
 	    padding: 15px; 						/* 내부 여백 */
 	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	    /* white-space:pre; */
 	}
 	
 	h5 {
@@ -265,12 +276,24 @@
 		color: #e74c3c;
 		font-size: 1.5rem;
 		transition: transform 0.2s ease-in-out;
-		    bottom: 20px; /* 화면 하단에서 20px */
-    right: 20px; /* 화면 우측에서 20px */
+		bottom: 20px; /* 화면 하단에서 20px */
+   		right: 20px; /* 화면 우측에서 20px */
 	}
 	
 	.heart:hover {
 		transform: scale(1.2);
+	}
+	.modify-post-button {
+		width: 600px;
+		background-color: #12C1C0;
+		color: white;
+		border: none;
+		padding: 16px;
+		border-radius: 4px;
+		font-size: 16px;
+		font-weight: bold;
+		cursor: pointer;
+		right: 20px;
 	}
 </style>
 </head>
@@ -285,8 +308,10 @@
 		<!-- 브래드 크럼 -->
         <div class="breadcrumb" style="width:1140px">
             <a>카테고리 [ ${KEY_POST.categoryName} ]</a>
+            <c:if test="${KEY_POST.userSeq == sessionScope.user_info.userSeq}"><button class="modify-post-button">게시글 수정</button></c:if>
             <i class="heart bi bi-heart"
 							data-post-seq="${KEY_POST.postSeq}"></i>
+			
         </div>
 		
 		<!-- 상품 디테일 [이미지 + 설명] -->
@@ -328,9 +353,19 @@
             </div>
         </div>
         <br>
+        <div class="review-summary-box1" style="width:1140px; display:flex; gap:20px;">
+			<div>
+				${KEY_POST.averageProductReviewScore} 
+				${KEY_POST.productReviewCount}
+			</div>
+			<div>
+				${KEY_POST.sampleProductReviewScore}
+				${KEY_POST.sampleProductReviewContent}
+			</div>
+		</div>
         <div class="info-box1" style="width:1140px">
 	        <c:set var="score" value="6" />
-	        <c:forEach var="i" begin="1" end="${score}" step="2">
+	        <c:forEach var="i" begin="1" end="${score}">
 			    <img src="/icons/star_icon.png" width="20" height="20" />
 			</c:forEach>&nbsp;
 			<span style="font-weight: bold; font-size:18px">${score}점</span>
@@ -660,6 +695,11 @@
 	        });
 	    });
 	});
+	
+	document.getElementById("modifyPostButton").addEventListener("click", function () {
+        window.location.href = "/post/update_page/" + ${KEY_POST_postSeq}; // 이동할 URL
+    });
+	
 	</script>
 
 </body>

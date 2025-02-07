@@ -6,66 +6,6 @@
     <meta charset="UTF-8">
     <title>바로바로 | baroborrow</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script> <!-- jQuery 라이브러리 로드 -->
-    <!-- <style>
-        /* 모달 창 스타일 */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        #additional-items {
-            margin-left: 10px;
-        }
-    </style>
-    <style>
-    	#title {
-    		width: 500px;
-    		height: 20px;
-    	}
-    	#product_name {
-    		width: 500px;
-    		height: 40px;
-    	}
-    	#item_content {
-    		width: 500px;
-    		height: 150px;
-    	}
-    	#rent_content {
-    		width: 500px;
-    		height: 150px;
-    	}
-    </style> -->
     <style>
     	/* 전체 레이아웃 */
 		body {

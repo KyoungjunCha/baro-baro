@@ -28,14 +28,13 @@
 
 <style>
 .sort-button {
-  background-color: #e3f2fd;  /* 연한 하늘색 배경 */
-  color: #0277bd;            /* 짙은 하늘색 글자 */
-  border: 1px solid #81d4fa; /* 테두리 하늘색 */
-  border-radius: 8px;        /* 모서리 둥글게 */
-  padding: 10px 20px;        /* 안쪽 여백 */
-  font-size: 16px;           /* 글자 크기 */
-  cursor: pointer;           /* 마우스 오버 시 포인터 */
-  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+  
+  background-color: #12C1C0; 
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
 }
 
 .sort-button:hover {
@@ -51,19 +50,21 @@
 
 .price-filter {
             width: 300px;
-            padding: 20px;
+            padding: 0;
         }
         
         .price-button {
+            background-color: #12C1C0; 
             display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: none;
-            border-radius: 20px;
-            background-color: #f5f5f5;
-            text-align: left;
+		  color: white;
+		  padding: 8px 15px;
+		  border-radius: 4px;
+		  border: none;
+		  cursor: pointer;
+            text-align: center;
             cursor: pointer;
+            width: 150px;
+            margin: 10px;
         }
         
         .price-button.active {
@@ -82,13 +83,35 @@
         }
         
         .apply-button {
-            margin-top: 10px;
-            padding: 8px 15px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            background-color: #12C1C0; 
+            display: block;
+		  color: white;
+		  padding: 8px 15px;
+		  border-radius: 4px;
+		  border: none;
+		  cursor: pointer;
+            text-align: center;
             cursor: pointer;
+            width: 150px;
+            margin: 10px;
         }
+		.main-post-image {
+			width: 300px; /* 가로 크기 */
+    		height: 200px; /* 세로 크기 */
+		}
+		.col-lg-12 text-center {
+			display: none;
+		}
+		.price-for-search-input {
+    		height: 25px; /* 세로 크기 */
+    		width: 100px; /* 입력 필드 너비를 부모 요소에 맞춤 */
+		    padding: 10px 15px; /* 안쪽 여백 */
+		    font-size: 16px; /* 글자 크기 */
+		    border: 2px solid #ccc; /* 기본 테두리 */
+		    border-radius: 5px; /* 둥근 모서리 */
+		    outline: none; /* 포커스 시 기본 외곽선 제거 */
+		    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+		}
 </style>
 </head>
 
@@ -172,7 +195,7 @@
     					<button class="sort-button" id="sortByDistance">가까운 거리순 정렬</button>
      
     					
-                            <div class="section-title">
+                            <div class="section-title" style="Margin=0px 0px 15px;">
                                 <h4>카테고리</h4>
                             </div>
                             <div class="categories__accordion">
@@ -201,11 +224,17 @@
 					        <button class="price-button" data-price="10000" onclick="selectPrice(this)">10,000원 이하</button>
 					        <button class="price-button" data-price="20000" onclick="selectPrice(this)">20,000원 이하</button>
 					        
-					        <div class="price-range">
+					        <div>
+					        	<input type="number" id="minPrice" placeholder="0" value="0" class="price-for-search-input">
+					            	-
+			            		<input type="number" id="maxPrice" placeholder="999999" value="999999" class="price-for-search-input">
+					        </div>
+					        
+					        <!-- <div class="price-range">
 					            <input type="number" id="minPrice" placeholder="0" value="0">
 					            -
 					            <input type="number" id="maxPrice" placeholder="999999" value="999999">
-					        </div>
+					        </div> -->
 					        
 					        <button class="apply-button" onclick="applyFilter()">적용하기</button>
 					    </div>
@@ -225,26 +254,27 @@
                             <div class="product__item">
                             
                             	<!-- 게시글 사진 부분 start -->
-                                <div class="product__item__pic set-bg" data-setbg="${post.postImage.storagePath.replace('c:\\uploads', '/uploads')}">
-                                    <div class="label new">New</div>
-                                    <ul class="product__hover">
-                                    	<!-- 하트(즐겨찾기) -->
-                                        <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                                    </ul>
-                                </div>
+                                    <img src="${post.postImage.storagePath.replace('c:\\uploads', '/uploads')}" alt="Post image" class="main-post-image">
                                 <!-- 게시글 사진 부분 end -->
                                 
                                 <div class="product__item__text">
                                     <h6><a href="/post/post/${post.postSeq}"> ${post.title} </a></h6>
+                                    <div class="product__price">${post.categoryName}</div>
                                     <!-- 별점 개수 -->
                                     <div class="rating">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
+                                    <c:if test="${post.averageProductReviewScore == null}">
+									    아직 리뷰되지 않은 상품입니다.
+									</c:if>
+									<c:if test="${post.averageProductReviewScore != null}">
+									    평균 별점: 
+                                    	<c:set var="score" value="6" />
+								        <c:forEach var="i" begin="1" end="${post.averageProductReviewScore.intValue()}">
+										    <i class="fa fa-star"></i>
+										</c:forEach>&nbsp;
+                                        
+                                        (${post.averageProductReviewScore})점
+									</c:if>
                                     </div>
-                                    <div class="product__price">${post.categoryName}</div>
                                     <div class="product__price">10분당 대여가격 : ${post.pricePerTenMinute}원</div>
                                     <div>조회수: ${post.count} 회</div>
                                 </div>
@@ -255,14 +285,14 @@
   					<!-- 게시글 목록 부분 -->
   				
   					<!-- 페이지네이션 -->
-                        <div class="col-lg-12 text-center">
+                       <!--  <div class="col-lg-12 text-center">
                             <div class="pagination__option">
                                 <a href="#">1</a>
                                 <a href="#">2</a>
                                 <a href="#">3</a>
                                 <a href="#"><i class="fa fa-angle-right"></i></a>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

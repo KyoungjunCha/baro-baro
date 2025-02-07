@@ -145,7 +145,7 @@
 						</div>
 						<ul class="header__right__widget">
 							<li><span class="icon_search search-switch"></span></li>
-							<li><a href="/favorite/flist"><span class="icon_heart_alt"></span>
+							<li><a href="/favorite/flist"><i class="bi bi-send"></i></span>
 									<div class="tip">2</div> </a></li>
 							<!-- 알림 -->
 							<li class="notification-container">
