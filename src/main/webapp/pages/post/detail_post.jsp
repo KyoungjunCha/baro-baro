@@ -240,6 +240,20 @@
 	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 	    /* white-space:pre; */
 	}
+	.review-summary-box3 {
+		height: 100px; 						/* 원하는 높이(px 단위) */
+	    background: #ffffff; 				/* 배경색 */
+	    border: 1px solid #ddd; 			/* 테두리 */
+	    border-radius: 10px; 				/* 둥근 모서리 */
+	    padding: 15px; 						/* 내부 여백 */
+	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	    display:flex; 
+	    gap:20px;
+	    width: 1140px;
+	}
+	.for-review-border {
+		border: 1px solid gray;
+	}
 	
 	h5 {
 	    margin-top: 0;
@@ -284,11 +298,11 @@
 		transform: scale(1.2);
 	}
 	.modify-post-button {
-		width: 600px;
+		width: 120px;
 		background-color: #12C1C0;
 		color: white;
 		border: none;
-		padding: 16px;
+		padding: 8px;
 		border-radius: 4px;
 		font-size: 16px;
 		font-weight: bold;
@@ -307,8 +321,9 @@
 	<main class="container">
 		<!-- 브래드 크럼 -->
         <div class="breadcrumb" style="width:1140px">
-            <a>카테고리 [ ${KEY_POST.categoryName} ]</a>
+            <a>카테고리 [ ${KEY_POST.categoryName} ]
             <c:if test="${KEY_POST.userSeq == sessionScope.user_info.userSeq}"><button class="modify-post-button">게시글 수정</button></c:if>
+            </a>
             <i class="heart bi bi-heart"
 							data-post-seq="${KEY_POST.postSeq}"></i>
 			
@@ -353,17 +368,39 @@
             </div>
         </div>
         <br>
-        <div class="review-summary-box1" style="width:1140px; display:flex; gap:20px;">
-			<div>
-				${KEY_POST.averageProductReviewScore} 
-				${KEY_POST.productReviewCount}
+        <c:if test="${KEY_POST.averageProductReviewScore != null || KEY_POST.productReviewCount != null}">
+        	<div class="review-summary-box3">
+				<div>
+					<c:forEach var="i" begin="1" end="${KEY_POST.averageProductReviewScore.intValue()}">
+				    	<img src="/icons/star_icon.png" width="20" height="20" />
+					</c:forEach>&nbsp;
+					<span style="font-weight: bold; font-size:18px">${KEY_POST.averageProductReviewScore}점</span>
+					<br/>
+					<p style="font-family: Montserrat, sans-serif;font-size: 14px;">
+						${KEY_POST.productReviewCount} 건의 리뷰가 있습니다.
+					</p>
+				</div>
+				<div class="for-review-border"></div>
+				<div>
+					<c:forEach var="i" begin="1" end="${KEY_POST.sampleProductReviewScore.intValue()}">
+				    	<img src="/icons/star_icon.png" width="20" height="20" />
+					</c:forEach>&nbsp;
+					<span style="font-weight: bold; font-size:18px">${KEY_POST.sampleProductReviewScore}점</span>
+					<br/>
+					${KEY_POST.sampleProductReviewContent}
+				</div>
 			</div>
-			<div>
-				${KEY_POST.sampleProductReviewScore}
-				${KEY_POST.sampleProductReviewContent}
+        </c:if>
+        <c:if test="${KEY_POST.averageProductReviewScore == null || KEY_POST.productReviewCount == null}">
+        	<div class="review-summary-box3">
+				<div>
+					<p style="font-family: Montserrat, sans-serif;font-size: 14px;">
+						아직 작성된 리뷰가 없습니다. 첫 고객이 되어보세요
+					</p>
+				</div>
 			</div>
-		</div>
-        <div class="info-box1" style="width:1140px">
+        </c:if>
+        <%-- <div class="info-box1" style="width:1140px">
 	        <c:set var="score" value="6" />
 	        <c:forEach var="i" begin="1" end="${score}">
 			    <img src="/icons/star_icon.png" width="20" height="20" />
@@ -373,7 +410,7 @@
 			<br>
 	        	여기 좋아요..
 	        	방콕의 라따나코신 지구에 위치한 람부뜨리 빌리지 호텔에 머무르세요. 루프탑 수영장, 테라스, 레스토랑이 있어 두 명의 여행자에게 완벽합니다. 문화 활동, 밤문화, 카오산 로드를 탐험하세요. 여기서 방콕의 최고를 경험해보세요. 람부뜨리 빌리지 호텔은 방콕의 활기찬 배낭여행자 지구인 카오산에 위치하며, 멋진 도시 전망을 감상할 수 있는 루프탑 수영장, 루프탑 테라스, 가이드 투어, 무료 Wi-Fi가 제공되는 에어컨 객실, 금
-        </div>
+        </div> --%>
         <br>
         <div class="product-detail" style="display:flex;gap:20px;">
         	
