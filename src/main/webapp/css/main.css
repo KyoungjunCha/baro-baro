@@ -13,7 +13,7 @@
 
 .img-fluid {
 	position: absolute;
-	margin-left:50px;
+	/* margin-left:50px; */
 	opacity: 0.9;
     top: 0; 
     left: 50%;
@@ -46,11 +46,7 @@
     height: 100%; /* 링크가 부모 크기 전체를 차지 */
     text-decoration: none; /* 링크의 기본 스타일 제거 */
 }
-/* 
 
-a{
-	all:unset;
-} */
 .category-icon img {
 	width: 100%; 
     height: 100%; 
