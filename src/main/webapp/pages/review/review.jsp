@@ -26,23 +26,23 @@
 			<div class="mb-3">
 				<div class="form-check">
 					<input class="form-check-input" type="checkbox" id="descAccurate"
-						name="userReview" value="물품 설명이 자세해요"> <label
-						class="form-check-label" for="descAccurate">물품 설명이 자세해요</label>
+						name="userReview" value="물품 설명이 자세해요"> 
+					<label class="form-check-label" for="descAccurate">물품 설명이 자세해요</label>
 				</div>
 				<div class="form-check">
 					<input class="form-check-input" type="checkbox" id="condMatch"
-						name="userReview" value="물품 상태가 설명한 것과 같아요"> <label
-						class="form-check-label" for="condMatch">물품 상태가 설명한 것과 같아요</label>
+						name="userReview" value="물품 상태가 설명한 것과 같아요"> 
+					<label class="form-check-label" for="condMatch">물품 상태가 설명한 것과 같아요</label>
 				</div>
 				<div class="form-check">
 					<input class="form-check-input" type="checkbox" id="shared"
-						name="userReview" value="나눔을 해주셨어요"> <label
-						class="form-check-label" for="shared">나눔을 해주셨어요</label>
+						name="userReview" value="나눔을 해주셨어요">
+					<label class="form-check-label" for="shared">나눔을 해주셨어요</label>
 				</div>
 				<div class="form-check">
 					<input class="form-check-input" type="checkbox" id="keptPromise"
-						name="userReview" value="약속을 잘 지켜요"> <label
-						class="form-check-label" for="keptPromise">약속을 잘 지켜요</label>
+						name="userReview" value="약속을 잘 지켜요"> 
+					<label class="form-check-label" for="keptPromise">약속을 잘 지켜요</label>
 				</div>
 			</div>
 		</div>
