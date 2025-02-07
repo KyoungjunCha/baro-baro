@@ -164,7 +164,7 @@ public class PostController {
 	@RequestMapping(value = "/post/{postSeq}", method = RequestMethod.GET)
 	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
 		session.setAttribute("user_info",
-				new UserInfo(1002, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/detail_post");
 		PostVO postVO = postService.getPostByPostSeq(postSeq);

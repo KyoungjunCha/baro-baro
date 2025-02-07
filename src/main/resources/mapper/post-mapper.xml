@@ -87,12 +87,21 @@
             rt.return_location,
             rt.return_rotate_x,
             rt.return_rotate_y
+            
+            ,st10.*
         FROM
             post p
         LEFT JOIN
             post_file pf ON p.post_seq = pf.post_seq
         LEFT JOIN
             (SELECT * FROM rent_time_slot ORDER BY rent_at ASC) rt ON p.post_seq = rt.post_seq
+        LEFT OUTER JOIN
+            (
+                SELECT st1.*, st2.*
+                FROM
+                    (SELECT POST_SEQ AS post_seq11, ROUND(AVG(RATING_VALUE), 2) AS averageProductReviewScore, COUNT(1) AS productReviewCount FROM review WHERE post_seq = #{postSeq} GROUP BY post_seq) st1
+                    LEFT OUTER JOIN (SELECT post_seq, RATING_VALUE AS sampleProductReviewScore, ITEM_REVIEW AS sampleProductReviewContent FROM review WHERE review_seq = (SELECT MAX(review_seq) FROM review WHERE post_seq = #{postSeq})) st2 ON st1.post_seq11 = st2.post_seq
+            ) st10 ON st10.post_seq11 = p.post_seq
         WHERE
             p.post_seq = #{postSeq}
     </select>
@@ -198,6 +207,10 @@
 	    <result property="userSeq" column="user_seq"/>
 	    <result property="categoryName" column="category_name"/>
 	    <result property="pricePerTenMinute" column="price_per_ten_minute"/>
+	    <result property="averageProductReviewScore" column="averageProductReviewScore"/>
+	    <result property="productReviewCount" column="productReviewCount"/>
+	    <result property="sampleProductReviewScore" column="sampleProductReviewScore"/>
+	    <result property="sampleProductReviewContent" column="sampleProductReviewContent"/>
 	    
 	    <!-- postImages (PostFileVO) 리스트 매핑 -->
 	    <collection property="postImages" ofType="com.barobaro.app.vo.PostFileVO">
@@ -236,6 +249,9 @@
 	     		c.CATEGORY_NAME,
          		pf.STORAGE_PATH
          		, st2.price_per_ten_minute
+         		, (
+         			SELECT ROUND(AVG(r11.RATING_VALUE), 2) FROM review r11 WHERE r11.post_seq = p.POST_SEQ
+         		) AS averageProductReviewScore
          		<!-- , ( SELECT
 					(SUM(rts.PRICE) / SUM((rts.RETURN_AT - rts.RENT_AT) * 1440)) * 10
 					FROM
@@ -328,6 +344,7 @@
 	    <result property="productName"  column="product_name"/>
 	    <result property="categoryName" column="category_name"/>
 	    <result property="pricePerTenMinute" column="price_per_ten_minute" />
+	    <result property="averageProductReviewScore" column="averageProductReviewScore"/>
 	    <!-- 하나의 사진만 매핑 (PostFileVO) -->
 	    <association property="postImage" javaType="com.barobaro.app.vo.PostFileVO">
 	        <result property="storagePath" column="storage_path"/>
@@ -347,7 +364,7 @@
     
     <delete id="deletePostFileByPostSeq">
     	DELETE FROM
-    		post
+    		POST_FILE
     	WHERE
     		post_seq = #{postSeq}
     </delete>

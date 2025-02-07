@@ -95,7 +95,8 @@ public class PostServiceImpl implements PostService{
 			postMapper.insertRentTimeSlotByRentTimeSlotVO(e);
 		});
 		
-		
+		if(postVO.getPostImages() == null || postVO.getPostImages().size() == 0) return;
+		postMapper.deletePostFileByPostSeq(postVO.getPostSeq());
 		try {
 			String baseDirectoryPath = "c:/uploads/post/";  // 기본 디렉토리 경로
 			
@@ -135,14 +136,12 @@ public class PostServiceImpl implements PostService{
 		postVO.getPostImages().forEach(e->
 			postMapper.insertPostFileByPostFileVO(e)
 		);
-		postMapper.deletePostFileByPostSeq(postVO.getPostSeq());
 	}
 
 	@Override
 	public void createReview(ReviewVO reviewVO, long userSeq) {
-		System.out.println(reviewVO);
 		postMapper.insertReview(reviewVO, userSeq);
-		System.out.println(reviewVO);
+		if(reviewVO.getUserReview() == null || reviewVO.getUserReview().size() == 0) return ;
 		reviewVO.getUserReview().forEach(e -> {
 			postMapper.insertReviewDetail(e, reviewVO.getReviewSeq());
 		});
