@@ -1,89 +1,111 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!--  interface UserMapper.java를 사용할 경우 -->
 <mapper namespace="com.barobaro.app.mapper.ChatMapper">
+	<resultMap id="ChatMessageResultMap" type="com.barobaro.app.vo.ChatMessageVO">
+		<id property="chatMessageSeq" column="chat_message_seq" />
+		<result property="chatRoomSeq" column="chat_room_seq" />
+		<result property="senderSeq" column="sender_seq" />
+		<result property="content" column="content" jdbcType="CLOB"/>
+		
+		<result property="postOwnerSeq" column="postOwnerSeq" />
+		<result property="requestUserSeq" column="requestUserSeq" />
+	</resultMap>
+	
+	<resultMap id="ChatRoomResultMap" type="com.barobaro.app.vo.ChatRoomVO">
+		<id property="chatRoomSeq" column="chat_room_seq" />
+		<result property="regdate" column="regdate" jdbcType="DATE"/>
+		<result property="postSeq" column="post_seq" />
+		<result property="requestUserSeq" column="request_user_seq"/>
+		<result property="chatRoomStatus" column="chat_room_status" />
+		<result property="firstMessageSeq" column="first_message_seq" />
+		<result property="notReadCountPoster" column="not_read_count_poster" />
+		<result property="notReadCountPoster" column="not_read_count_requester" />
+		<result property="postTitle" column="title" />
+		<result property="productName" column="product_name" />
+		<result property="postStatus" column="post_status" />
+		<result property="postStoragePath" column="storage_path" />
+		<result property="postOwnerSeq" column="post_owner_seq" />
+		<result property="requestUserNickname" column="request_user_nickname" />
+		<result property="requestUserProfileImage" column="request_user_profile_image" />
+		<result property="postOwnerNickname" column="post_owner_nickname" />
+		<result property="postOwnerProfileImage" column="post_owner_profile_image" />
+		<collection property="chatMessages"
+					ofType="com.barobaro.app.vo.ChatMessageVO"
+		            resultMap="ChatMessageResultMap"/>
+	</resultMap>
 
-	 <!-- ChatRoomVO 매핑 -->
-  <resultMap id="ChatRoomResultMap" type="com.barobaro.app.vo.ChatRoomVO">
-    <id property="chatRoomSeq" column="CHAT_ROOM_SEQ"/>
-    <result property="regdate" column="REGDATE"/>
-    <result property="userSeq" column="user_seq"/>
-    <result property="userNickName" column="user_nickName"/>
-    <result property="profileImage" column="profile_image"/>
-  </resultMap>
-
-  <!-- ChatMessageVO 매핑 -->
-  <resultMap id="ChatMessageResultMap" type="com.barobaro.app.vo.ChatMessageVO">
-    <id property="chatMessageSeq" column="CHAT_MESSAGE_SEQ"/>
-    <result property="chatRoomSeq" column="CHAT_ROOM_SEQ"/>
-    <result property="sender" column="SENDER"/>
-    <result property="content" column="CONTENT"/>
-    <result property="regdate" column="REGDATE"/>
-  </resultMap>
-
-  <!-- 채팅 메시지 INSERT -->
-  <insert id="insertChatMessage">
-    INSERT INTO CHAT_MESSAGE (CHAT_MESSAGE_SEQ, CHAT_ROOM_SEQ, SENDER, CONTENT, REGDATE)
-    VALUES (CHAT_MESSAGE_SEQ.NEXTVAL, #{chatRoomSeq}, #{sender}, #{content}, SYSDATE)
-  </insert>
-
-	<!-- 특정 채팅방의 메시지 목록 SELECT -->
-	<select id="selectMessagesByRoomSeq" resultMap="ChatMessageResultMap">
-	    SELECT CHAT_MESSAGE_SEQ, CHAT_ROOM_SEQ, SENDER, CONTENT, REGDATE
-	    	FROM CHAT_MESSAGE
-	    WHERE CHAT_ROOM_SEQ = #{roomSeq}
-		ORDER BY CHAT_MESSAGE_SEQ
-	</select>
-	<select id="findChatRoomByUsers" resultMap="ChatRoomResultMap">
-		SELECT CHAT_ROOM_SEQ, REGDATE
+	<select id="getChatRoomByUserSeqAndPostSeq" resultMap="ChatRoomResultMap">
+		SELECT CHAT_ROOM_SEQ, REGDATE, POST_SEQ, REQUEST_USER_SEQ, CHAT_ROOM_STATUS, FIRST_MESSAGE_SEQ, NOT_READ_COUNT_POSTER, NOT_READ_COUNT_REQUESTER
 		FROM CHAT_ROOM
-		WHERE CHAT_ROOM_SEQ IN (
-			SELECT CHAT_ROOM_SEQ 
-			FROM chat_room_member
-			WHERE JOIN_USER_SEQ IN (#{senderSeq}, #{targetUserSeq})
-			GROUP BY CHAT_ROOM_SEQ
-			HAVING COUNT(1) >= 2
-		)
+		WHERE 
+			POST_SEQ = #{targetPostSeq} 
+			AND REQUEST_USER_SEQ = #{requestUserSeq}
 	</select>
 	
-  	<!-- 채팅방 생성 -->
-  	<insert id="createRoom" parameterType="com.barobaro.app.vo.ChatRoomVO">
-	    <selectKey keyProperty="chatRoomSeq" resultType="long" order="AFTER"> 
-			select chat_room_seq.currval as chatRoomSeq from dual
+	<select id="getRelativeUsersByChatMessage" resultMap="ChatMessageResultMap">
+		SELECT 
+			c.REQUEST_USER_SEQ AS requestUserSeq
+			, (SELECT p.USER_SEQ FROM post p WHERE p.POST_SEQ = c.POST_SEQ) AS postOwnerSeq
+		FROM 
+			CHAT_ROOM c
+		WHERE
+			c.CHAT_ROOM_SEQ = #{roomSeq}
+	</select>
+	
+	<insert id="createChatRoomByChatRoomVO" parameterType="com.barobaro.app.vo.ChatRoomVO">
+		<selectKey keyProperty="chatRoomSeq" resultType="Long" order="AFTER"> 
+			select CHAT_ROOM_SEQ.currval as chatRoomSeq from dual
 		</selectKey>
-	    INSERT INTO CHAT_ROOM (CHAT_ROOM_SEQ, REGDATE)
-	    VALUES (CHAT_ROOM_SEQ.NEXTVAL, SYSDATE)
-  	</insert>
-  	<insert id="createRoomMember">
-  		INSERT INTO chat_room_member
-  		VALUES (chat_room_member_seq.NEXTVAL, #{userSeq}, SYSDATE, #{chatRoomSeq})
-  	</insert>
-  
- 	<!-- 채팅방 목록 -->
-  	<select id="getRoomsByUserSeq" resultMap="ChatRoomResultMap">
-		SELECT st1.*, st2.*
+		INSERT INTO CHAT_ROOM
+			(CHAT_ROOM_SEQ, REGDATE, POST_SEQ, REQUEST_USER_SEQ, CHAT_ROOM_STATUS, FIRST_MESSAGE_SEQ, NOT_READ_COUNT_POSTER, NOT_READ_COUNT_REQUESTER)
+		VALUES (CHAT_ROOM_SEQ.NEXTVAL, SYSDATE, #{postSeq}, #{requestUserSeq}, 1, 0, 0, 0)
+	</insert>
+	
+	<select id="getAllRoomsWithMessagesByUserSeq" resultMap="ChatRoomResultMap">
+        SELECT st1.*, st2.*, st3.*, st4.*, st5.*
 		FROM
-	        (SELECT 
-		    	CHAT_ROOM_SEQ, REGDATE
-		    FROM 
-		    	CHAT_ROOM
-		    WHERE 
-		    	CHAT_ROOM_SEQ IN (
-			    	SELECT CHAT_ROOM_SEQ
-					FROM CHAT_ROOM_MEMBER
-					WHERE JOIN_USER_SEQ = #{userSeq}
-			)) st1 LEFT OUTER JOIN 
-	   		(
-	   			SELECT CHAT_ROOM_SEQ, SENDER, CONTENT, REGDATE
-                FROM (
-                    SELECT CHAT_ROOM_SEQ, SENDER, CONTENT, REGDATE,
-                           ROW_NUMBER() OVER (PARTITION BY CHAT_ROOM_SEQ ORDER BY REGDATE DESC) AS row_num
-                    FROM CHAT_MESSAGE
-                )
-                WHERE row_num = 1
-           ) st2 ON st1.CHAT_ROOM_SEQ = st2.CHAT_ROOM_SEQ
-  	</select>
+		    (
+		    SELECT
+		        chat_room_seq
+		        , regdate
+		        , post_seq
+		        , request_user_seq
+		        , chat_room_status
+		        , first_message_seq
+		        , not_read_count_poster
+		        , not_read_count_requester
+		    FROM
+		        CHAT_ROOM cr
+		    WHERE #{userSeq} IN (cr.request_user_seq, (SELECT p.user_seq FROM post p WHERE p.post_seq = cr.post_seq))
+		    ) st1 LEFT OUTER JOIN (
+		        SELECT
+		            p.post_seq
+		            , TITLE
+		            , PRODUCT_NAME
+		            , POST_STATUS
+		            , (SELECT pf.storage_path FROM post_file pf WHERE pf.file_seq IN (SELECT MIN(file_seq) FROM post_file WHERE pf.post_seq = p.post_seq GROUP BY post_seq)) AS STORAGE_PATH
+		            , user_seq AS post_owner_seq
+		        FROM 
+		            post p 
+		    ) st2 ON st1.post_seq = st2.post_seq
+		    LEFT OUTER JOIN (SELECT * FROM chat_message
+		    ) st3 ON st1.chat_room_seq = st3.CHAT_ROOM_SEQ
+		    LEFT OUTER JOIN (SELECT user_seq, nickname AS request_user_nickname, profile_image AS request_user_profile_image FROM user_table
+		    ) st4 ON st4.user_seq = st1.REQUEST_USER_SEQ
+		    LEFT OUTER JOIN (SELECT user_seq, nickname AS post_owner_nickname, profile_image AS post_owner_profile_image FROM user_table
+		    ) st5 ON st5.user_seq = st2.post_owner_seq
+    </select>
+    
+    <insert id="insertChatMessage" parameterType="com.barobaro.app.vo.ChatMessageVO">
+		<selectKey keyProperty="chatMessageSeq" resultType="Long" order="AFTER"> 
+			select CHAT_MESSAGE_SEQ.currval as chatMessageSeq from dual
+		</selectKey>
+		INSERT INTO CHAT_MESSAGE
+			(CHAT_MESSAGE_SEQ, CHAT_ROOM_SEQ, SENDER_SEQ, CONTENT)
+		VALUES (CHAT_MESSAGE_SEQ.NEXTVAL, #{chatRoomSeq}, #{senderSeq}, #{content})
+	</insert>
+
 </mapper>
 
 

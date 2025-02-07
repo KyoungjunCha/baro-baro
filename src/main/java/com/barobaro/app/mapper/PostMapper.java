@@ -25,5 +25,5 @@ public interface PostMapper {
 	public List<PostVO> selectUserPostRent(@Param("usernickname") String usernickname);
 
 	int updatePostByPostVO(PostVO postVO);
-	
+	int deletePostFileByPostSeq(@Param("postSeq")long postSeq);
 }
