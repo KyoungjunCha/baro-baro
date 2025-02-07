@@ -100,7 +100,7 @@ public class PostController {
 			@RequestParam("ufile") List<MultipartFile> files,
 			@RequestParam(value = "isUpdate", required = false, defaultValue = "0")long isUpdate) {
 		session.setAttribute("user_info",
-				new UserInfo(1001, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		PostVO postVO = PostVO.builder().title(title).itemContent(itemContent).rentContent(rentContent)
 				.productName(productName).userSeq(userInfo.getUserSeq()).categoryName(category)
@@ -136,8 +136,9 @@ public class PostController {
 		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
 
 		// 관심 키워드 알림
-		List<KeywordVO> keywordList = keywordService.getKeywordsByUserSeq(1001);
-
+		// List<KeywordVO> keywordList = keywordService.getKeywordsByUserSeq(1001); // 해당 카테고리를 가진 모든 userSeq에게 알림 보내기(수정사항)
+		List<KeywordVO> keywordList = keywordService.getAllKeywords();
+		
 		for (KeywordVO kvo : keywordList) {
 			// 게시글에 키워드가 포함되어 있으면
 			if (postVO.getTitle().contains(kvo.getContents())) {
@@ -150,7 +151,7 @@ public class PostController {
 				notification.setNotificationType("KEYWORD_MATCH");
 				notification.setIsRead(0);
 				notification.setCreatedAt(new Date(System.currentTimeMillis()));
-				System.out.print("----------" + notification);
+				
 				notificationService.sendNotification(notification);
 			}
 		}

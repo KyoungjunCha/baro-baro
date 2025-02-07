@@ -1,14 +1,20 @@
 package com.barobaro.app.vo;
 
-import java.util.Date;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessageVO {
-    private long chatMessageSeq;
-    private long chatRoomSeq;
-    private long sender;
+	private Long chatMessageSeq; 
+    private Long chatRoomSeq;    
+    private Long senderSeq;      
     private String content;
-    private Date regdate;
+    
+    private Long postOwnerSeq;
+    private Long requestUserSeq;
 }

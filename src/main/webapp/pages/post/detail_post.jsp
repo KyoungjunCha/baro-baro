@@ -86,9 +86,9 @@
 	/* 이미지 조회 */
 	.post-images {
 		position: relative;
-		width: 50%;
-		height: 500px;
-	    max-width: 500px;
+		width: 80%;
+		height: 800px;
+	    /* max-width: 500px; */
 	    overflow: hidden;
 	    display:flex;
 	}
@@ -280,12 +280,13 @@
                     <span>채팅 3</span> · <span>즐겨찾기 6</span> · <span>조회 ${KEY_POST.count}</span>
                 </div>
 
-                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.userSeq}'">판매자에게 채팅하기</button>
+                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.postSeq}'">판매자에게 채팅하기</button>
             </div>
         </div>
         <div id="calendar-container">
-	        <div id="calendar" class="product-detail"></div>
-			<table id="timeSlotTable">
+			<div id="calendar" class="product-detail"></div>
+		</div>
+		<table id="timeSlotTable">
 				<thead>
 					<tr>
 						<th>대여 시간</th>
@@ -296,14 +297,15 @@
 						<th>상태</th>
 					</tr>
 				</thead>
-				<tbody id="timeSlotBody">
-					<tr>
-						<td colspan="4">날짜를 선택하세요.</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+			<tbody id="timeSlotBody">
+				<tr>
+					<td colspan="6">날짜를 선택하세요.</td>
+				</tr>
+			</tbody>
+		</table>
     </main>
+	
+	
 
 	<!-- 숨겨진 input 요소 -->
 	<input type="hidden" id="selected_date" name="selected_date">
@@ -354,6 +356,7 @@
             initialView: 'dayGridMonth',
             selectable: true,
             editable: false,
+            contentHeight: 'auto',
             showNonCurrentDates: false,  			// 현재 달력에서 현재달에 해당하지않는 날짜는 숨기기
             fixedWeekCount: false,		 			// 불필요한 행 없애기
             validRange: { start: new Date() },   	// 유효범위 : 과거 날짜 선택 불가
@@ -396,7 +399,7 @@
                 }
             },
             datesSet: function() {
-          	    $("#timeSlotBody").empty().append('<tr><td colspan="4">날짜를 선택하세요.</td></tr>');
+          	    $("#timeSlotBody").empty().append('<tr><td colspan="6">날짜를 선택하세요.</td></tr>');
             }
       });
 		calendar.render();

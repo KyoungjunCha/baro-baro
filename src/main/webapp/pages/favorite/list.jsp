@@ -36,10 +36,14 @@ body {
 		}
 
 		th {
-			background-color: #f1f1f1;
-			color: #333;
+			background-color: #2ac1bc;
+        	color: white;
 			font-weight: bold;
 		}
+		
+		tbody tr {
+        	border-bottom: 1px solid #dee2e6;
+    	}
 
 		/* 테이블 hover */
 		table tr:hover {
@@ -97,34 +101,34 @@ body {
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 <body>
-	<h2 style="text-align: center;">즐겨찾기 목록</h2>
+	<jsp:include page="/pages/common/header_test_sh.jsp" />
+	<h2 style="text-align: center; margin-top: 30px;">즐겨찾기 목록</h2>
 	<c:choose>
 		<c:when test="${empty favoriteList }">
 			<p class="no-favorites">즐겨찾기한 게시물이 없습니다.</p>
 		</c:when>
 		<c:otherwise>
-
 			<table>
 				<thead>
 					<tr>
+						<th>이미지</th>
 						<th>제목</th>
 						<th>상품명</th>
 						<th>평균 가격</th>
 						<th>상품 설명</th>
-						<th>이미지</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="post" items="${favoriteList}">
 						<tr>
+							<td>
+								<img src="${post.postImage.storagePath}" alt="상품 이미지" class="image">
+							</td>
 							<td><a href="/post/post/${post.postSeq}">${post.title}</a></td>
 							<td>${post.productName}</td>
 							<td class="price">${post.pricePerTenMinute}원</td>
 							<td>${post.itemContent}</td>
-							<td>
-								<img src="${post.postImage.storagePath}" alt="상품 이미지" class="image">
-							</td>
 							<td><i class="heart bi bi-heart-fill"
 								data-user-seq="${post.userSeq}" data-post-seq="${post.postSeq}"></i></td>
 						</tr>

@@ -56,7 +56,7 @@
             border-radius: 5px;
         }
         .add-form button {
-            background: #ff6f61;
+            background: #12C1C0;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -83,7 +83,6 @@
             <c:forEach var="keyword" items="${KEYWORD_LIST}">
                 <div class="keyword-item">
                     <span>${keyword.contents}</span>
-                        <input type="hidden" name="userSeq" value="1"> 
                         <button class="delete-btn" data-seq="${keyword.keywordSeq }">X</button>
                 </div>
             </c:forEach>
