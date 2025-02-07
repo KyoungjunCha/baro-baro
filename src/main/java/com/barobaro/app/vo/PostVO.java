@@ -33,6 +33,13 @@ public class PostVO {
 	private Double sampleProductReviewScore;
 	private String sampleProductReviewContent;
 	
+	private String userNickname;
+	private String userProfile;
+	private Long userScore;
+	
+	private int favorites;
+	private int existChats; 
+	
 	public static class CommentTest{
 		
 	}
