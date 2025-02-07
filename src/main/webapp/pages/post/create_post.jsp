@@ -123,7 +123,7 @@
 		    font-size: 14px;
 		}
 		button {
-		    background-color: #007bff; /* Primary color */
+		    background-color: #12C1C0; /* Primary color */
 		    color: white;
 		    padding: 8px 15px;
 		    border-radius: 4px;
@@ -131,7 +131,7 @@
 		    cursor: pointer;
 		}
 		#post-table button {
-		    background-color: #007bff; /* Primary color */
+		    background-color: #12C1C0; /* Primary color */
 		    color: white;
 		    padding: 8px 15px;
 		    border-radius: 4px;
@@ -140,7 +140,7 @@
 		}
 		
 		#post-table button:hover {
-		    background-color: #0056b3; /* Darker shade for hover */
+		    background-color: #12C1C0; /* Darker shade for hover */
 		}
 		
 		/* 추가 항목 스타일 */
@@ -184,14 +184,14 @@
 </head>
 
 <body>    
-	<%--  <jsp:include page="/pages/common/header_test_sh.jsp" /> --%>
+	<jsp:include page="/pages/common/header_test_sh.jsp" />
     <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
         <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/create">
             <table id="post-table">
-                <caption>게시글 작성</caption>
+                <%-- <caption>게시글 작성</caption> --%>
                 <tr>
                     <td><label for="title">제목</label></td>
-                    <td colspan="5"><textarea id="title" name="title"></textarea></td>
+                    <td colspan="5"><textarea id="title" name="title" required></textarea></td>
                 </tr>
                 <tr>
                 	<td><label for="category">카테고리</label></td>
@@ -212,19 +212,19 @@
                 </tr>
                 <tr>
                     <td><label for="ufile">관련 이미지</label></td>
-                    <td colspan="4"><input type="file" id="ufile" name="ufile" multiple></td>
+                    <td colspan="4"><input type="file" id="ufile" name="ufile" multiple required></td>
                 </tr>
                 <tr>
                     <td><label for="product_name">제품명 상세 이름</label></td>
-                    <td colspan="4"><textarea id="product_name" name="product_name"></textarea></td>
+                    <td colspan="4"><textarea id="product_name" name="product_name" required></textarea></td>
                 </tr>
                 <tr>
                     <td><label for="item_content">상품에 관한 설명</label></td>
-                    <td colspan="4"><textarea id="item_content" name="item_content"></textarea></td>
+                    <td colspan="4"><textarea id="item_content" name="item_content" required></textarea></td>
                 </tr>
                 <tr>
                     <td><label for="rent_content">대여에 관한 설명</label></td>
-                    <td colspan="4"><textarea id="rent_content" name="rent_content"></textarea></td>
+                    <td colspan="4"><textarea id="rent_content" name="rent_content" required></textarea></td>
                 </tr>
                 <tr>
                 	<td>대여일 ~ 반납일</td>
