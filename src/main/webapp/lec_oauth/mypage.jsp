@@ -15,73 +15,186 @@
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
 
 <style>
-        /* 링크들을 가로로 나열하기 위한 스타일 */
-        .nav-links {
-            display: flex;
-            gap: 20px; /* 각 항목 간의 간격 */
-        }
+ /* 전체 레이아웃 */
+.mypage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
 
-        .nav-links a {
-            cursor: pointer;
-            text-decoration: none;
-            color: #007bff;
-            font-size: 18px;
-        }
+/* 유저 정보 카드 */
+#mypage-userInfo {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
 
-        .nav-links a:hover {
-            color: #0056b3;
-        }
+#mypage-userInfo img {
+    border-radius: 50%;
+    border: 3px solid #12c1c0;
+    padding: 3px;
+}
 
-        /* 각 섹션을 숨기기 위한 스타일 */
-        .section {
-            display: none;
-        }
+#mypage-userInfo h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
 
-        /* 활성화된 섹션만 표시 */
-        .active {
-            display: block;
-        }
+.provider-userInfo {
+    display: flex;
+    flex-direction: row;  /* 가로로 배치 */
+    align-items: center;   /* 세로 중앙 정렬 */
+    justify-content: flex-start; /* 가로 좌측 정렬 */
+    width: 100%;  /* 부모 요소가 화면 너비를 차지하도록 설정 */
+}
 
-        /* 테이블 스타일 */
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-            text-align: left;
-        }
+.provider-userInfo img {
+    margin-right: 10px; /* 이미지와 텍스트 간의 간격을 설정 */
+}
 
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: 10px;
-        }
 
-        th {
-            background-color: #f4f4f4;
-        }
+/* 회원정보 수정 폼 */
+#mypage-change-userInfo {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
 
-        table tr:hover {
-            cursor: pointer;
-            background-color: #f1f1f1;
-            transition: background-color 0.3s ease;
-        }
+.form-group {
+    margin-bottom: 1rem;
+}
 
-        .price {
-            color: red;
-            font-weight: bold;
-        }
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
 
-        .heart {
-            cursor: pointer;
-            color: red;
-        }
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
 
-        .heart:hover {
-            transform: scale(1.2);
-        }
+/* 네비게이션 링크 */
+.nav-links {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
 
-        .image {
-            width: 100px;
-        }
+.nav-links a {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    background: #12c1c0;
+    color: white;
+}
+
+/* 테이블 디자인 */
+table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+th {
+    background: #12c1c0;
+    color: white;
+    font-weight: 500;
+    padding: 1rem;
+}
+
+td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+table img.image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 섹션 스타일 - 수정된 부분 */
+.section {
+    display: none; /* 기본적으로 숨김 */
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section.active {
+    display: block; /* active 클래스가 있을 때만 보임 */
+}
+
+.section h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #12c1c0;
+}
+
+/* 버튼 스타일 */
+button, input[type="submit"] {
+    background: #12c1c0;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover, input[type="submit"]:hover {
+    background: #0fa3a2;
+}
+
+/* 하트 아이콘 */
+.heart {
+    color: #ff4757;
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.heart:hover {
+    transform: scale(1.2);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .mypage-container {
+        padding: 1rem;
+    }
+}
 
 </style>
 
@@ -95,6 +208,8 @@
 </head>
 <body>
 <jsp:include page="/pages/common/header_test_sh.jsp" />
+<div class="mypage-container">
+    
 
 <!-- 이부분 헤더에서 -->
 <%-- <form method="post" action="/form_logout_process">
@@ -107,7 +222,18 @@
 
 <div class="card" id="mypage-userInfo">
 	<h3>유저 정보</h3>
-	<p>로그인 소셜 타입 : ${sessionScope['SESS_PROVIDER']}</p>
+	<div id="provider-userInfo">
+		<p>로그인 소셜 타입 : ${sessionScope['SESS_PROVIDER']}</p>
+    	<c:choose>
+    	 <c:when test="${sessionScope['SESS_PROVIDER'] == 'KAKAO'}">
+             <img src="/resources/images/kakao_logo.svg" alt="Kakao Login" class="login-logo"/>
+         </c:when>
+         <c:otherwise>
+             <img src="/resources/images/naver_logo.svg" alt="Naver Login" class="login-logo"/>
+        </c:otherwise>
+       </c:choose>
+	</div>
+	
 	<img src="${sessionScope.SESS_PROFILE_IMAGE}" width=100 height=100/>
 	닉네임 :  ${sessionScope.SESS_PROFILE_NICKNAME}  <br>
 	이메일 : ${sessionScope.SESS_EMAIL}
@@ -116,11 +242,11 @@
 		<form method="post" action="/updateUserInfo">
 		    <input type="hidden" name="email" value="${sessionScope['SESS_EMAIL']}">
 		    <div class="form-group">
-		    	<label for="phone">전화번호:</label>
+		    	<label for="phone">전화번호</label>
 		    	<input type="text" name="phone" value="${user.phone}" required><br>
 			</div>
 			<div class="form-group">
-			    <label for="address">주소:</label> <button type="button" onclick="searchAddress()">주소찾기</button>
+			    <label for="address">주소</label> <button type="button" onclick="searchAddress()">주소찾기</button>
 			    <input type="text" name="address" id = "streetAdr" value="${user.address}" required><br>
 				<div id="addressWrap" style="width: 30%; height: 30%;"></div>
 		    </div>
@@ -133,7 +259,7 @@
 
 
 
-----------------------------------------나누기---------------------------------------------
+
 
 <%-- <div class="nav-links">
 	<div><a href = "/keyword/list/${sessionScope['SESS_USER_SEQ']}">알림&키워드🔔</a></div>
@@ -176,33 +302,79 @@
 
 
 
+<div class="table-responsive">  
+	<div class="section" id="favorites">
+	<h3>즐겨찾기 목록</h3>
+	
+		<table id="favoriteTable">
+			<thead>
+				<tr>
+					<th>게시글이미지</th>
+					<th>게시글번호</th>
+					<th>10분당 가격</th>
+					<th>게시글 제목</th>
+					<th>대여 장소</th>
+					<th>조회수</th>
+					<th>즐겨찾기토글</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- 즐겨찾기 목록 javascript 로딩 -->
+			</tbody>
+		</table>
+	</div>
+</div>
 
-<div class="section" id="favorites">
-<h3>즐겨찾기 목록</h3>
-	<table id="favoriteTable">
-		<thead>
-			<tr>
-				<th>게시글이미지</th>
-				<th>게시글번호</th>
-				<th>10분당 가격</th>
-				<th>게시글 제목</th>
-				<th>대여 장소</th>
-				<th>조회수</th>
-				<th>즐겨찾기토글</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- 즐겨찾기 목록 javascript 로딩 -->
-		</tbody>
+
+
+<!-- 섹션들!!! -->
+
+<div class="section" id="keyword">
+     <h3>🔍키워드&알림🔔️</h3>
+         <p>알림과 키워드 관련 설정을 할 수 있습니다.</p>
+
+	     <div class="container">
+	        <h2>관심 키워드 관리</h2>
+	
+	        <!-- 키워드 추가 폼 -->
+	        <form action="/keyword/add" method="post" class="add-form">
+	            
+	            <input type="hidden" name="userSeq" value=${sessionScope['SESS_USER_SEQ']}>
+	            <input type="text" name="contents" placeholder="키워드를 입력하세요" required>
+	            <button type="submit">추가</button>
+	        </form>
+			<input type="hidden" name="userSeq" value=${sessionScope['SESS_USER_SEQ']}>
+	        <!-- 관심 키워드 목록 -->
+	        <div class="keyword-list">
+	            <c:forEach var="keyword" items="${KEYWORD_LIST}">
+	                <div class="keyword-item">
+	                    <span>${keyword.contents}</span>
+							<input type="hidden" name="userSeq" value=${sessionScope['SESS_USER_SEQ']}> 
+	                        <button class="delete-btn" data-seq="${keyword.keywordSeq}">X</button>
+	                </div>
+	            </c:forEach>
+	        </div>
+	    </div>
+	<table id="notificationTable">
+	<thead>
+		<tr>
+			<th>알림번호</th>
+			<th>알림타입</th>
+			<th>알림제목</th>
+			<th>알림내용</th>
+			<th>읽음여부</th>
+			<th>알림생성시간</th>
+			<th>링크</th>
+			<th>유저넘버</th>
+		</tr>
+	</thead>
+	<tbody>
+		<!-- javaScript 로 그림 -->
+	</tbody>
 	</table>
 </div>
 
-<!-- 나머지 섹션들 -->
-<div class="section" id="keyword">
-    <h3>알림&키워드🔔</h3>
-    <p>알림과 키워드 관련 설정을 할 수 있습니다.</p>
-    <jsp:include page="/pages/notification/keyword2.jsp" />
-</div>
+
 
 <div class="section" id="rental">
     <h3>대여관리✅</h3>
@@ -266,6 +438,11 @@
 
 
 
+
+
+</div>
+
+
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -309,6 +486,7 @@
 	        getPostImage();  // 대여 관리 관련 데이터 로드
 	    } else if (sectionId === 'keyword') {
 	        // 알림&키워드 처리
+	        loadKeyword();
 	    } else if (sectionId === 'comments') {
 	        loadComment();  // 댓글 섹션 로드
 	    } else if (sectionId === 'reviews') {
@@ -318,20 +496,14 @@
 	
 	 // 기본적으로 'favorites' 섹션을 보이도록 설정
 	document.addEventListener('DOMContentLoaded', function() {
-	    showSection('favorites');
+	    showSection('keyword');
 	});
 </script>	
 	
 	
 
     
-<script>    
- /* $(document).ready(function(){
-	loadPosts();
-	getPostImage();
-//	loadFavorites(postImages);
-})  */
- 
+<script>     
 function getPostImage() {
 			$.ajax({
 				url: '/mypostimage', // 서버에서 즐겨찾기 토글 처리
@@ -575,6 +747,97 @@ function loadReview() {
         }
     });
 }
+
+
+function loadKeyword(){
+	$(document).ready(function() {
+		$.ajax({
+			url:"/keyword/list",
+			type:"GET",
+			success:function(list){
+				console.log("키워드 리스트 : " + list);
+				const keywordListContainer = $(".keyword-list");
+		        keywordListContainer.empty(); // 기존 목록 비우기
+
+		        list.forEach(function (keyword) {
+		            keywordListContainer.append(`<div class="keyword-item">
+		                <span>${'${keyword.contents}'}</span>
+		                <button class="delete-btn" data-seq=${'${keyword.keywordSeq}'}>X</button>
+		            </div>`);
+		        });
+			},
+			error:function(xhr,status,error){
+				alert("리스트 요청 실패 : " + error);
+			}
+		});
+		
+		  $(document).on('click', '.delete-btn', function(e) {
+		
+			e.preventDefault();
+			
+			let keywordItem = $(this).closest('.keyword-item');
+			let keywordSeq = $(this).data('seq');
+			let userSeq = ${sessionScope['SESS_USER_SEQ']}
+			console.log(${sessionScope['SESS_USER_SEQ']});
+
+			
+			
+			$.ajax({
+				url: "/keyword/delete/" + keywordSeq,
+				type: "POST",
+				data: {
+					userSeq: userSeq
+				},
+				success: function(res) {
+					keywordItem.remove();
+				},
+				error: function(xhr, status, error) {
+                    alert("삭제 실패: " + error);
+                }
+			});
+		});
+
+		$.ajax({
+			url: '/notification-list', // 서버에서 즐겨찾기 토글 처리
+            type: 'GET',
+            contentType: 'application/json',
+            success: function(notificationList) {
+                console.log("알림테스트 : " ,notificationList); // 받아온 알림 로그 출력
+				
+                // 테이블의 tbody를 비우고 새롭게 데이터 추가
+                const notificationTable = $('#notificationTable tbody');
+                notificationTable.empty();
+
+                // 게시물 데이터를 테이블에 추가
+                notificationList.forEach(noti => {
+                    const notiDate = new Date(noti.createdAt);
+                    const formattednotiDate = notiDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
+					
+                    const row = $('<tr>');
+                    row.append(`
+                    	<td>${'${noti.notificationSeq}'}</td>
+                    	<td>${'${noti.notificationType}'}</td>
+                    	<td>${'${noti.title}'}</td>
+                    	<td>${'${noti.contents}'}</td>
+                    	<td>${'${noti.isRead}'}</td>
+                    	<td>${'${formattednotiDate}'}</td>
+                    	<td>${'${noti.link}'}</td>
+                    	<td>${'${noti.userSeq}'}</td>
+                    `);
+                    
+                    notificationTable.append(row);
+            	});
+            
+         	},
+             error: function (error) {
+                 alert('알림리스트 불러오기 실패');
+             }
+		});
+	});
+}
+
+
+
 
 //진아님 하트 토글 이거 쓰고싶어요
 // 쓰게 해드렸습니다~

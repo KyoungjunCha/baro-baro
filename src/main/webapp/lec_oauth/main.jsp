@@ -25,7 +25,15 @@
 
 
 <!-- 로그인 여부에 따른 페이지 분기 -->
-
-
+<%-- <c:choose>
+    <c:when test="${empty sessionScope['SESS_EMAIL']}">
+        <a href="/login_page">로그인</a> <!-- 로그인되지 않은 사용자는 로그인 페이지로 이동 -->
+    </c:when>
+    <c:otherwise>
+        <a href="/mypage">마이페이지</a> <!-- 로그인된 사용자는 마이페이지로 이동 -->
+        <a href="/form_logout_process">로그아웃</a>
+    </c:otherwise>
+</c:choose>
+ --%>
 </body>
 </html>

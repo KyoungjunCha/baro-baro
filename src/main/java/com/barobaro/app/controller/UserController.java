@@ -107,7 +107,11 @@ public class UserController {
     @RequestMapping(value = "/myposts/reservation", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
     public List<PostVO> ctlMyPostReservationList(HttpServletRequest request) {
-		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+//    	//기존 제무형꺼 기준?
+//    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	
+		//기존 경준코드
+    	int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	String usernickname = (String) request.getSession().getAttribute("SESS_PROFILE_NICKNAME");
     	
@@ -294,5 +298,6 @@ public class UserController {
 //	}
 	
 	
+	//키워드 json 버전 경준 25.02.07
 	
 }
