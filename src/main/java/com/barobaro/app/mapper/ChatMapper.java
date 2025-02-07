@@ -10,10 +10,10 @@ import com.barobaro.app.vo.ChatRoomVO;
 
 @Mapper
 public interface ChatMapper {
-    int insertChatMessage(ChatMessageVO message);
-    List<ChatMessageVO> selectMessagesByRoomSeq(@Param("roomSeq")long roomSeq);
-    int createRoom(ChatRoomVO vo);
-    List<ChatRoomVO> getRoomsByUserSeq(@Param("userSeq")long userSeq);
-    ChatRoomVO findChatRoomByUsers(@Param("senderSeq")long senderSeq, @Param("targetUserSeq")long targetUserSeq);
-    int createRoomMember(@Param("userSeq")long userSeq, @Param("chatRoomSeq")long chatRoomSeq);
+
+	int insertChatMessage(ChatMessageVO chatMessageVO);
+    ChatRoomVO getChatRoomByUserSeqAndPostSeq(@Param("requestUserSeq")long requestUserSeq, @Param("targetPostSeq")long targetPostSeq);
+    int createChatRoomByChatRoomVO(ChatRoomVO chatRoomVO);
+    ChatMessageVO getRelativeUsersByChatMessage(@Param("roomSeq")long roomSeq);
+    List<ChatRoomVO> getAllRoomsWithMessagesByUserSeq(@Param("userSeq")long userSeq);
 }
