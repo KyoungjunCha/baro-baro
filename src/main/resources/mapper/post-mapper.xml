@@ -345,6 +345,12 @@
         WHERE post_seq = #{postSeq}
     </update>
     
+    <delete id="deletePostFileByPostSeq">
+    	DELETE FROM
+    		post
+    	WHERE
+    		post_seq = #{postSeq}
+    </delete>
 </mapper>
 
 

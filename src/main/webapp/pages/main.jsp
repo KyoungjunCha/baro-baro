@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>바로바로</title>
+    <title>바로바로 | baro-borrow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/main.css">
 </head>
@@ -13,14 +13,14 @@
     <!-- 상단 배너 -->
     <section class="hero-section text-center text-md-start">
         <div class="container">
-            <div class="row align-items-center">
+            <div class="row align-items-stretch">
                 <!-- 왼쪽 텍스트 -->
-                <div class="col-md-6">
-                    <h1 class="hero-text">믿을만한<br>이웃 간 대여</h1>
-                    <p class="hero-subtext">동네 주민들과 가깝고 따뜻한 대여를<br>지금 경험해보세요.</p>
+                <div class="col-md-6 d-flex flex-column justify-content-center">
+                    <h1 class="hero-text text-light">믿을만한<br>이웃 간 대여</h1>
+                    <p class="hero-subtext mt-3">동네 주민들과 가깝고 따뜻한 대여를<br>지금 경험해보세요.</p>
                 </div>
                 <!-- 오른쪽 이미지 -->
-                <div class="col-md-6 text-center">
+                <div class="col-md-6 d-flex align-items-center">
                     <img src="/resources/images/banner.jpg" alt="배너 이미지" class="img-fluid">
                 </div>
             </div>

@@ -134,6 +134,7 @@ public class PostServiceImpl implements PostService{
 		postVO.getPostImages().forEach(e->
 			postMapper.insertPostFileByPostFileVO(e)
 		);
+		postMapper.deletePostFileByPostSeq(postVO.getPostSeq());
 	}
 	
 	
