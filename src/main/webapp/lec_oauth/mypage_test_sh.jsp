@@ -149,31 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
 //         return;
 //     }
 
-	let userSeq = ${sessionScope['SESS_USER_SEQ']}
-
-	// 거래 완료 상태로 업데이트할 것 있는지 먼저 확인
-	fetch("/reservation/done", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-      //body: JSON.stringify({ userSeq: userSeq }) 	
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("서버 응답 오류");
-        }
-        return response.text();
-    })
-    .then(message => {
-        console.log(message);
-        
-        loadReservationData();
-        loadRentalData();
-    })
-    .catch(error => console.error("업데이트 실패:", error));
-	
 	
     // rentalTable 가져오기 ======================================================================
     fetch("/reservation/getAllTimeSlots", {
