@@ -29,6 +29,12 @@
     	justify-content: flex-start; 	/* 자식 요소들을 왼쪽으로 정렬 (기본값) */
 	}
 	
+	/* 캘린더 오늘날짜 */
+	.fc-today {
+    background-color: yellow !important;
+    color: black !important;
+	}
+
 	/* 캘린더 날짜칸 안의 날짜 요소 */
 	.fc-daygrid-day-number {
 	    color: black;  					/* 검정색 글자 */
@@ -43,6 +49,8 @@
 		pointer-events: none; 				  /* 마우스 클릭 방지 */
 		opacity: 0.6; 						  /* 투명도 조정 */
 		color: #a0a0a0 !important; 			  /* 텍스트 색상 변경 */
+		text-align: left !important;
+		padding-left: 5px;  /* 왼쪽 여백을 추가하여 텍스트가 너무 붙지 않도록 할 수 있습니다 */
 	}
 	
 	/* 타임슬롯 테이블 */
@@ -607,6 +615,7 @@
                     info.el.style.color = "#bbb"; // 글자색 연하게
                     info.el.style.pointerEvents = "none"; // 클릭 방지
                     info.el.style.opacity = "0.5"; // 반투명 효과
+                    info.el.style.textAlign = "left"; // 날짜 텍스트 왼쪽 정렬
                 }
             },
             datesSet: function() {
@@ -757,6 +766,7 @@
 	<script>
 	$(document).ready(function() {
 		const userSeq = '${sessionScope.user_info.userSeq}';
+		console.log('userSeqqqq: ', userSeq);
 	
 		$.ajax({
 			url: '/favorite/list',
@@ -775,7 +785,7 @@
 	        }
 		});
 		
-	    $('.heart').click(function() {
+		 $(document).on('click', '.heart', function() {
 	        const heart = $(this);
 	        const postSeq = heart.data('post-seq');
 	        
@@ -805,9 +815,9 @@
 	});
 	
 	document.getElementById("modifyPostButton").addEventListener("click", function () {
-        window.location.href = "/post/update_page/" + ${KEY_POST_postSeq}; // 이동할 URL
+        window.location.href = "/post/update_page/" + ${KEY_POST.postSeq}; // 이동할 URL
     });
-	
+
 	</script>
 
 </body>
