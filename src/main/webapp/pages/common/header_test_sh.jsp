@@ -166,14 +166,15 @@
 							</c:choose>
 						</div>
 						<ul class="header__right__widget">
-							<li><span class="icon_search search-switch"></span></li>
-							<li><a href="/favorite/flist"><span class="icon_heart_alt"></span>
+							<!-- 채팅 -->
+							<li><a href="/favorite/flist"><i class="bi bi-send"></i></span>
 									<div class="tip">2</div> </a></li>
+							<!-- 즐겨찾기 -->
+							<li><a href="/favorite/flist"><i class="fa fa-bookmark"></i></span>
 							<!-- 알림 -->
 							<li class="notification-container">
 								<!-- 알림 아이콘 --> <a href="#" id="notification-bell"> <i
 									class="bi bi-bell"></i>
-									<div class="tip" id="notification-count">0</div>
 							</a> <!-- 알림 목록 -->
 								<div id="notification-dropdown">
 									<div class="notification-header">

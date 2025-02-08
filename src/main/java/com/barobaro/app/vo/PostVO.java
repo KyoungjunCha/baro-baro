@@ -28,6 +28,18 @@ public class PostVO {
 	private List<CommentTest> comments;
 	private List<RentTimeSlotVO> rentTimes; 
 	
+	private Double averageProductReviewScore;
+	private Integer productReviewCount;
+	private Double sampleProductReviewScore;
+	private String sampleProductReviewContent;
+	
+	private String userNickname;
+	private String userProfile;
+	private Long userScore;
+	
+	private int favorites;
+	private int existChats; 
+	
 	public static class CommentTest{
 		
 	}

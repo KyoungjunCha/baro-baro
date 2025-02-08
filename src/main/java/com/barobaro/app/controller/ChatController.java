@@ -55,16 +55,30 @@ public class ChatController {
         return ResponseEntity.ok(emitter);  
     }
     
+    @ResponseBody
+    @RequestMapping(value = "/sse/header/{userSeq}", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> handleChatIconSse(@PathVariable("userSeq") long userSeq) {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        chatService.add(userSeq, emitter);
+        try {  
+            emitter.send(SseEmitter.event()  
+                    .name("connect")  
+                    .data(new ObjectMapper().writeValueAsString(chatService.getNotReadChatMessage(userSeq))));  
+        } catch (IOException e) {  
+            throw new RuntimeException(e);  
+        }  
+        return ResponseEntity.ok(emitter);  
+    }
+    
+    
+    
 //    /chat/page
     @GetMapping("/page")
     public ModelAndView chatPage(@RequestParam(value = "chatRoomSeq", required = false, defaultValue = "0")long chatRoomSeq
     		, HttpSession session) {
 //    	UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
-//    	List<ChatRoomVO> rooms = chatService.getRoomsByUserSeq(userInfo.getUserSeq());
         ModelAndView mav = new ModelAndView();
         mav.setViewName("pages/chat/chat_page");
-//        mav.addObject("rooms", rooms);
-//        if(chatRoomSeq != 0)mav.addObject("select_room_seq", chatRoomSeq);
         return mav;
     }
     
@@ -85,13 +99,4 @@ public class ChatController {
         mav.setViewName("redirect:/chat/page?chatRoomSeq=" + chatRoomSeq);
         return mav;
     }
-
-	/*
-	 * @ResponseBody
-	 * 
-	 * @GetMapping("/messages/{roomSeq}") public ResponseEntity<?>
-	 * getMessages(@PathVariable Long roomSeq) { return new
-	 * ResponseEntity(chatService.selectMessagesByRoomSeq(roomSeq), HttpStatus.OK);
-	 * }
-	 */
 }
