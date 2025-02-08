@@ -10,6 +10,7 @@ import com.barobaro.app.vo.CommentVO;
 import com.barobaro.app.vo.FavoriteVO;
 import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.ReviewSummaryVO;
 import com.barobaro.app.vo.UserReviewAnswerVO;
 import com.barobaro.app.vo.UsersOauthVO;
 import com.barobaro.app.vo.UsersTblVO;
@@ -43,5 +44,7 @@ public interface MypageService {
 
 	
 //	public List<>
+	
+	public ReviewSummaryVO getReviewSummar(long userSeq);
 	
 }

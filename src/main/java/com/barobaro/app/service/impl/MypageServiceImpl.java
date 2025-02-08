@@ -15,6 +15,7 @@ import com.barobaro.app.vo.CommentVO;
 import com.barobaro.app.vo.FavoriteVO;
 import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.ReviewSummaryVO;
 import com.barobaro.app.vo.UserReviewAnswerVO;
 import com.barobaro.app.vo.UsersOauthVO;
 import com.barobaro.app.vo.UsersTblVO;
@@ -68,6 +69,8 @@ public class MypageServiceImpl implements MypageService {
 		return favoriteMapper.favoriteListByUser2(userSeq);
 	}
 
+
+
 //	@Override
 //	public List<CommentVO> svcGetAllMyComments(int userSeq) {
 //		return userMapper.allComments(userSeq);
@@ -78,6 +81,25 @@ public class MypageServiceImpl implements MypageService {
 //	public List<UserReviewAnswerVO> svcGetAllMyReviews(int userSeq) {
 //		return reviewMapper.allAnswers(userSeq);
 //	}
+	
+	@Override
+	public ReviewSummaryVO getReviewSummar(long userSeq) {
+		// Create a new ReviewSummaryVO to hold the results
+        ReviewSummaryVO reviewSummary = new ReviewSummaryVO();
 
+        // Fetch Received User Reviews
+        List<ReviewSummaryVO.ReceivedUserReview> receivedUserReviews = postMapper.getReceivedUserReview(userSeq);
+        reviewSummary.setReceivedUserReviews(receivedUserReviews);
+
+        // Fetch Received Post Reviews
+        List<ReviewSummaryVO.ReceivedPostReview> receivedPostReviews = postMapper.getReceivedPostReview(userSeq);
+        reviewSummary.setReceivedPostReviews(receivedPostReviews);
+
+        // Fetch Sended Post Reviews
+        List<ReviewSummaryVO.SendedPostReview> sendedPostReviews = postMapper.getSendedPostReview(userSeq);
+        reviewSummary.setSendedPostReviews(sendedPostReviews);
+
+        return reviewSummary;
+	}
 	
 }

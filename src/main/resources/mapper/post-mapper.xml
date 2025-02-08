@@ -404,6 +404,108 @@
     	INSERT INTO review_detail(REVIEW_DETAIL_SEQ, REVIEW_SEQ, USERREVIEW) 
     	VALUES (REVIEW_DETAIL_SEQ.NEXTVAL, #{reviewSeq}, #{userReview})
     </insert>
+    
+    <resultMap id="reviewSummaryResultMap" type="com.barobaro.app.vo.ReviewSummaryVO">
+	    <!-- ReceivedUserReview List -->
+	    <collection property="receivedUserReviews" ofType="com.barobaro.app.vo.ReviewSummaryVO$ReceivedUserReview">
+	        <result property="userReview" column="userreview"/>
+	        <result property="receivedReviewCount" column="received_review_count"/>
+	    </collection>
+	
+	    <!-- ReceivedPostReview List -->
+	    <collection property="receivedPostReviews" ofType="com.barobaro.app.vo.ReviewSummaryVO$ReceivedPostReview">
+	        <result property="postSeq" column="post_seq"/>
+	        <result property="title" column="title"/>
+	        <result property="productName" column="product_name"/>
+	        <result property="userSeq" column="user_seq"/>
+	        <result property="regDate" column="regdate"/>
+	        <result property="ratingValue" column="rating_value"/>
+	        <result property="itemReview" column="item_review"/>
+	    </collection>
+	
+	    <!-- SendedPostReview List -->
+	    <collection property="sendedPostReviews" ofType="com.barobaro.app.vo.ReviewSummaryVO$SendedPostReview">
+	        <result property="regDate" column="regdate"/>
+	        <result property="postSeq" column="post_seq"/>
+	        <result property="ratingValue" column="rating_value"/>
+	        <result property="itemReview" column="item_review"/>
+    	</collection>
+    </resultMap>
+    
+    <select id="getReceivedUserReview" resultMap="reviewSummaryResultMap">
+	    SELECT 
+	        userreview
+	        , count(userreview) AS received_review_count
+	    FROM
+	        review_detail 
+	    WHERE
+	        review_seq IN 
+	            (
+	                SELECT 
+	                    review_seq
+	                FROM
+	                    review
+	                WHERE
+	                    post_seq IN 
+	                        (
+	                            SELECT
+	                                post_seq
+	                            FROM
+	                                post
+	                            WHERE
+	                                user_seq = #{userSeq}
+	                        )
+	            )
+	    GROUP BY
+	        userreview
+    </select>
+    
+    <select id="getReceivedPostReview" resultMap="reviewSummaryResultMap">
+	    SELECT
+	        st1.post_seq
+	        , st1.title
+	        , st1.product_name
+	        , st1.user_seq
+	        , st2.regdate
+	        , st2.rating_value
+	        , st2.item_review
+	    FROM
+	        (
+	            SELECT
+	                post_seq
+	                , title
+	                , product_name
+	                , user_seq
+	            FROM 
+	                post
+	            WHERE 
+	                user_seq = #{userSeq}
+	        ) st1 INNER JOIN
+	        (
+	            SELECT
+	                post_seq 
+	                , regdate
+	                , rating_value
+	                , item_review
+	            FROM
+	                review
+	        ) st2 ON st1.post_seq = st2.post_seq
+    </select>
+    
+    <select id="getSendedPostReview" resultMap="reviewSummaryResultMap">
+
+		SELECT 
+		    regdate
+		    , post_seq
+		    , rating_value
+		    , item_review
+		FROM 
+		    review
+		WHERE
+		    reviewer = #{userSeq}
+		    
+    </select>
+    
 </mapper>
 
 
