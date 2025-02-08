@@ -108,6 +108,11 @@
 .search-button:hover {
 	background: #12c1c0;
 }
+
+.login-logo{
+	width:30px;
+	height:30px;
+}
 </style>
 </head>
 
@@ -140,8 +145,25 @@
 				<div class="col-lg-3">
 					<div class="header__right">
 						<div class="header__right__auth">
-							<a href="#">로그인</a> 
-							<a href="#">회원가입</a>
+							<c:choose>
+    							<c:when test="${empty sessionScope['SESS_EMAIL']}">
+        							<a href="/login_page">로그인</a> <!-- 로그인되지 않은 사용자는 로그인 페이지로 이동 -->
+   								 </c:when>
+							    <c:otherwise>
+							    	<c:choose>
+								    	 <c:when test="${sessionScope['SESS_PROVIDER'] == 'KAKAO'}">
+	                                         <img src="/resources/images/kakao_logo.svg" alt="Kakao Login" class="login-logo"/>
+	                                     </c:when>
+	                                     <c:otherwise>
+	                                         <img src="/resources/images/naver_logo.svg" alt="Naver Login" class="login-logo"/>
+	                                    </c:otherwise>
+                                    </c:choose>
+							        <a href="/mypage">마이페이지</a> <!-- 로그인된 사용자는 마이페이지로 이동 -->
+							        <form action="/form_logout_process" method="POST">
+            							<input type="submit" value="로그아웃">
+        							</form>
+							    </c:otherwise>
+							</c:choose>
 						</div>
 						<ul class="header__right__widget">
 							<!-- 채팅 -->

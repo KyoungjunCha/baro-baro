@@ -37,7 +37,7 @@ public class UserController {
 	
 	@Autowired
 	@Qualifier("favoriteServiceImpl")
-	private FavoriteService service;
+	private FavoriteService favoriteService;
 	
 	@Autowired
 	private NotificationService notificationService;
@@ -107,7 +107,11 @@ public class UserController {
     @RequestMapping(value = "/myposts/reservation", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
     public List<PostVO> ctlMyPostReservationList(HttpServletRequest request) {
-		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+//    	//기존 제무형꺼 기준?
+//    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	
+		//기존 경준코드
+    	int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	String usernickname = (String) request.getSession().getAttribute("SESS_PROFILE_NICKNAME");
     	
@@ -204,15 +208,16 @@ public class UserController {
   // 내 즐겨찾기 목록 보기
     @RequestMapping(value = "/myfavorite", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
-    public List<FavoriteVO> ctlMyFavoriteList(HttpServletRequest request) {
+    public List<PostVO> ctlMyFavoriteList(HttpServletRequest request) {
 		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	
 		
 		//유저 상태가 active 일 경우
 		if(status != null && "ACTIVE".equals(status.name())) {
-			List<FavoriteVO> favorites = mypageService.svcGetAllMyFavorites(userSeq);
-			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
+//			List<FavoriteVO> favorites = mypageService.svcGetAllMyFavorites(userSeq);
+			List<PostVO> favorites = favoriteService.favoriteListInfo(userSeq);
+//			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
 			System.out.println("즐겨찾기" + favorites);
 			return favorites;
 		}else {
@@ -223,19 +228,25 @@ public class UserController {
 
 	@RequestMapping(value = "/myfavorite/toggle", method = RequestMethod.POST )
 	@ResponseBody
-	public ResponseEntity<String> toggleFavorite(@RequestBody FavoriteVO fvo) {
-	    try {
-	        int userSeq = fvo.getUserSeq();
+	public ResponseEntity<String> toggleFavorite(@RequestBody FavoriteVO fvo, HttpServletRequest request) {
+		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+    	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+		
+		try {
+//	        int userSeq = fvo.getUserSeq();
+	        System.out.println(userSeq);
 	        int postSeq = fvo.getPostSeq();
 	        
-	        boolean isFavorite = service.isFavorite(userSeq, postSeq);
+	        boolean isFavorite = favoriteService.isFavorite(userSeq, postSeq);
 	        if (isFavorite) {
 	            // 즐겨찾기 해지
-	            service.favoriteDelete(userSeq, postSeq);
+	        	favoriteService.favoriteDelete(userSeq, postSeq);
+	        	System.out.println("즐찾해지");
 	            return ResponseEntity.ok("deleted");
 	        } else {
 	            // 즐겨찾기 추가
-	            service.favoriteInsert(fvo);
+	        	favoriteService.favoriteInsert(fvo);
+	        	System.out.println("즐찾");
 	            return ResponseEntity.ok("added");
 	        }
 	    } catch (Exception e) {
@@ -287,5 +298,6 @@ public class UserController {
 //	}
 	
 	
+	//키워드 json 버전 경준 25.02.07
 	
 }

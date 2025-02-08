@@ -83,7 +83,7 @@
 </head>
 
 <body>
-
+<p>유저 시퀀스 : ${sessionScope['SESS_USER_SEQ']}</p>
 <h2> 😊내가 등록한 물품 관리하기😊 </h2>
 
     <table id="rentalTable">
@@ -149,6 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //         return;
 //     }
 
+	let userSeq = ${sessionScope['SESS_USER_SEQ']}
+
 	// 거래 완료 상태로 업데이트할 것 있는지 먼저 확인
 	fetch("/reservation/done", {
         method: "POST",
@@ -179,8 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
             "Content-Type": "application/json"
         },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
+        credentials: "include" , 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+        body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
     })
     .then(response => {
         if (!response.ok) {
@@ -189,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     })
     .then(data => {
-        console.log("서버 응답 데이터:", data); 
+        console.log("서버 응답 데이터1:", data); 
         populateRentalTable(data); // 서버에서 받은 데이터를 테이블에 적용
     })
     .catch(error => console.error("데이터 불러오기 실패:", error));
@@ -202,8 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
             "Content-Type": "application/json"
         },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
+        credentials: "include" , 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
+        body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
     })
     .then(response => {
         if (!response.ok) {
@@ -212,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     })
     .then(data => {
-        console.log("서버 응답 데이터:", data); 
+        console.log("서버 응답 데이터2:", data); 
         populateReservationTable(data); // 서버에서 받은 데이터를 테이블에 적용
     })
     .catch(error => console.error("데이터 불러오기 실패:", error));

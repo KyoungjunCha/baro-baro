@@ -116,6 +116,7 @@ public class OauthServiceImpl implements OauthService{  // implemenets OauthServ
 	    	usersTblVO.setEmail(usersTblVO.getEmail());
 	    }
 	    System.out.println("저장 뭘로 되냐 : " + usersTblVO);
+	    System.out.println("저장전role : " + usersTblVO.getRole().getCode()+ " (" + usersTblVO.getRole().getDesc() + ")");
 		
 	    // 프로필 닉네임을 nickname 컬럼에 저장
 	    usersTblVO.setNickname(usersTblVO.getNickname());
