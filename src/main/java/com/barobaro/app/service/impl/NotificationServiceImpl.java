@@ -45,11 +45,9 @@ public class NotificationServiceImpl implements NotificationService {
 	public SseEmitter subscribe(int userSeq) {
 		if (emitters.containsKey(userSeq)) {
 			SseEmitter oldEmitter = emitters.get(userSeq);
-			System.out.println("기존 SSE 연결 종료: " + userSeq);
 			try {
 	            oldEmitter.complete(); // 기존 Emitter를 명확히 종료
 	        } catch (Exception e) {
-	            System.out.println("기존 Emitter 종료 중 오류 발생: " + e.getMessage());
 	        }
 	        emitters.remove(userSeq);
 		}
@@ -58,16 +56,13 @@ public class NotificationServiceImpl implements NotificationService {
 		emitters.put(userSeq, emitter);
 
 		emitter.onCompletion(() -> {
-			System.out.println("SSE 연결 종료: " + userSeq);
 			//emitters.remove(userSeq);
 		});
 		
 		emitter.onTimeout(() -> {
-			System.out.println("SSE 연결 타임아웃: " + userSeq);
 			//emitters.remove(userSeq);
 		});
 
-		System.out.println("SSE 연결이 열렸습니다. 사용자 ID: " + userSeq);
 		
 		return emitter;
 	}
@@ -92,27 +87,22 @@ public class NotificationServiceImpl implements NotificationService {
 		SseEmitter emitter = emitters.get(nvo.getUserSeq());
 
 		if (emitter == null) {
-			System.err.println("Emitter 없음. 사용자: " + nvo.getUserSeq());
 			//emitter = subscribe(nvo.getUserSeq());
 			return;
 		}
 
 		try {
 			addNotification(nvo);
-			System.out.println("알림 저장: " + nvo.getTitle());
 			
 			final SseEmitter finalEmitter = emitter;
 			executor.execute(() -> {
 				try {
 					if (!emitters.containsKey(nvo.getUserSeq())) {
-	                    System.out.println("SSE 연결이 종료되어 알림을 보낼 수 없습니다.");
 	                    return;
 	                }
 					String notificationJson = new ObjectMapper().writeValueAsString(nvo);
 					finalEmitter.send(SseEmitter.event().name("notification").data(notificationJson));
-					System.out.println("알림 전송 완료: " + nvo.getUserSeq());
 				} catch (IOException | IllegalStateException e) {
-					System.err.println("알림 전송 오류: " + e.getMessage());
 					emitters.remove(nvo.getUserSeq());
 				}
 			});

@@ -6,66 +6,6 @@
     <meta charset="UTF-8">
     <title>바로바로 | baroborrow</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script> <!-- jQuery 라이브러리 로드 -->
-    <!-- <style>
-        /* 모달 창 스타일 */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        #additional-items {
-            margin-left: 10px;
-        }
-    </style>
-    <style>
-    	#title {
-    		width: 500px;
-    		height: 20px;
-    	}
-    	#product_name {
-    		width: 500px;
-    		height: 40px;
-    	}
-    	#item_content {
-    		width: 500px;
-    		height: 150px;
-    	}
-    	#rent_content {
-    		width: 500px;
-    		height: 150px;
-    	}
-    </style> -->
     <style>
     	/* 전체 레이아웃 */
 		body {
@@ -297,7 +237,7 @@
 
                     // 마커가 표시될 위치입니다 
                     var markerPosition1 = new kakao.maps.LatLng(33.450701, 126.570667); 
-                    var imageSrc1 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FB9H3a%2FbtsL1rLr5SF%2FwBDG93KWdsxiN8XRiaGYI0%2Fimg.png', // 마커이미지의 주소입니다    
+                    var imageSrc1 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FNnUIO%2FbtsMcb8o0ug%2FQnNlyxAdCvxvkogRMn60aK%2Fimg.png', // 마커이미지의 주소입니다    
                     imageSize1 = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
                     imageOption1 = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                       
@@ -319,7 +259,7 @@
                     
 
                     var markerPosition2 = new kakao.maps.LatLng(33.450701, 126.570667); 
-                    var imageSrc2 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F2hoOn%2FbtsL1DY49q9%2F9bZVPkpSALn7VDKDkK5oC1%2Fimg.png', // 마커이미지의 주소입니다    
+                    var imageSrc2 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcOmYpH%2FbtsMcc0Aeje%2FuRWZfVpgNMt4D6NQOaUz51%2Fimg.png', // 마커이미지의 주소입니다    
                     imageSize2 = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
                     imageOption2 = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                       

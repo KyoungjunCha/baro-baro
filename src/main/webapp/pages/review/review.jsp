@@ -95,6 +95,34 @@
 		    $(".cancel-btn").click(function () {
 		        history.back();
 		    });
+		    
+		    
+		    $(".main-color").click(function (event) {
+		        event.preventDefault(); // Prevent default form submission
+
+		        const data = {
+		            ratingValue: $("#ratingValue").val(),
+		            itemReview: $("#itemReview").val(),
+		            userReview: $("input[name='userReview']:checked").map(function () {
+		                return $(this).val();
+		            }).get(),
+		            postSeq: ${postSeq}
+		        };
+
+		        $.ajax({
+		            type: "POST",
+		            url: "/post/submitReview",
+		            contentType: "application/json",
+		            data: JSON.stringify(data),
+		            success: function (response) {
+		                alert("Review submitted successfully!");
+		                window.location.href = "http://localhost:8089/post/post/1";
+		            },
+		            error: function (xhr, status, error) {
+		                console.error("Error submitting review:", error);
+		            }
+		        });
+		    });
 		});
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

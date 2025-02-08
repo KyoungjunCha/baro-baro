@@ -16,4 +16,5 @@ public interface ChatMapper {
     int createChatRoomByChatRoomVO(ChatRoomVO chatRoomVO);
     ChatMessageVO getRelativeUsersByChatMessage(@Param("roomSeq")long roomSeq);
     List<ChatRoomVO> getAllRoomsWithMessagesByUserSeq(@Param("userSeq")long userSeq);
+    int getNotReadChatCount(@Param("userSeq")long userSeq);
 }

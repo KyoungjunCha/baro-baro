@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ChatServiceImpl implements ChatService {
 
 	private final Map<Long, Set<SseEmitter>> emitters = new ConcurrentHashMap<>();
+	private final Map<Long, Set<SseEmitter>> chatIconemitters = new ConcurrentHashMap<>();
+	
 	@Autowired
     private ChatMapper chatMapper;
 	
@@ -34,6 +36,16 @@ public class ChatServiceImpl implements ChatService {
   
         return emitter; 
 	}
+	
+	@Override
+	public SseEmitter chatIconAddSseEmitter(long userSeq, SseEmitter emitter) {
+		emitters.computeIfAbsent(userSeq, k -> ConcurrentHashMap.newKeySet()).add(emitter);
+		emitter.onCompletion(() -> removeEmitter(userSeq, emitter));
+        emitter.onTimeout(() -> removeEmitter(userSeq, emitter));
+  
+        return emitter;
+	}
+	
 	
 	@Override
 	public long createOrGetChatRoomSeq(long requestUserSeq, long targetPostSeq) {
@@ -52,19 +64,6 @@ public class ChatServiceImpl implements ChatService {
 		chatNotificateAboutNewChat(chatMessageVO2.getPostOwnerSeq(), chatMessageVO);
 		chatNotificateAboutNewChat(chatMessageVO2.getRequestUserSeq(), chatMessageVO);
 	}
-
-
-//	@Override
-//	public List<ChatRoomVO> getRoomsByUserSeq(long userSeq) {
-//		return chatMapper.getRoomsByUserSeq(userSeq);
-//		return null;
-//	}
-
-//	@Override
-//	public List<ChatMessageVO> selectMessagesByRoomSeq(long roomSeq) {
-//		return chatMapper.selectMessagesByRoomSeq(roomSeq);
-//		return null;
-//	}
 
 	@Override
 	public List<ChatRoomVO> getAllRoomsWithMessagesByUserSeq(long userSeq) {
@@ -102,6 +101,13 @@ public class ChatServiceImpl implements ChatService {
 	    }
 		
 	}
+
+	@Override
+	public int getNotReadChatMessage(Long userSeq) {
+		return chatMapper.getNotReadChatCount(userSeq);
+	}
+
+	
 
 	
 }
