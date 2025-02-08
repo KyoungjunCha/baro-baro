@@ -36,8 +36,8 @@ public class CommonCode {
 	}
 	
 	//session, addAttribute("user_info", userinfo)
-	@Data
 	@AllArgsConstructor
+	@Data
 	@NoArgsConstructor
 	public static class UserInfo{
 		private long userSeq;
