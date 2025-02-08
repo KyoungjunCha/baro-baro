@@ -43,8 +43,9 @@ public class KeywordController {
 
 	
 	//25.02.07 경준 버전
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addKeyword(@ModelAttribute KeywordVO kvo, HttpSession session) {
+	@RequestMapping(value = "/add", method = RequestMethod.POST, produces="application/json")
+	@ResponseBody
+	public KeywordVO addKeyword(@ModelAttribute KeywordVO kvo, HttpSession session) {
 	    
 		int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
 
@@ -55,7 +56,7 @@ public class KeywordController {
 	    service.addKeyword(kvo);
 
 
-	    return "redirect:/keyword/list";
+	    return kvo;
 	}
 
 	
@@ -102,11 +103,12 @@ public class KeywordController {
 	//25.02.07 경준버전 json return
 	@RequestMapping(value = "/{keywordSeq}", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
-	public KeywordVO getKeywordBySeq(@PathVariable int keywordSeq, Model model) {
+	public String getKeywordBySeq(@PathVariable int keywordSeq, Model model) {
 		KeywordVO kvo = service.getKeywordBySeq(keywordSeq);
 		model.addAttribute("KEYWORD_LIST", kvo);
+		System.out.println("여기 작동하는 구조인가 : " + model);
 
-		return kvo;
+		return "/pages/notification/keyword2";
 	}
 
 	
@@ -123,8 +125,8 @@ public class KeywordController {
 	
 
 	@RequestMapping(value = "/delete/{keywordSeq}", method = RequestMethod.POST)
-	@ResponseBody
 	public String deleteKeyword(@PathVariable int keywordSeq, @RequestParam int userSeq) {
+		System.out.println("삭제 값 잘 들어 왔는지 : " + keywordSeq + "  :  여긴유저값 : " + userSeq);
 		service.deleteKeyword(keywordSeq);
 		return "success";
 	}
