@@ -388,7 +388,12 @@
 		<!-- 브래드 크럼 -->
         <div class="breadcrumb" style="width:1140px">
             <a>카테고리 [ ${KEY_POST.categoryName} ]
-            <c:if test="${KEY_POST.userSeq == sessionScope.user_info.userSeq}"><button class="modify-post-button">게시글 수정</button></c:if>
+            <c:if test="${KEY_POST.userSeq == sessionScope.user_info.userSeq}">
+            	<button class="modify-post-button" onclick="window.location.href='/post/update_page/${KEY_POST.postSeq}'">게시글 수정</button>
+            </c:if>
+            <c:if test="${reviewIsAvailable}">
+            	<button class="modify-post-button" onclick="window.location.href='/post/createReviewPage/${KEY_POST.postSeq}'">리뷰 작성하기</button>
+            </c:if>
             </a>
             <i class="heart bi bi-heart"
 							data-post-seq="${KEY_POST.postSeq}"></i>
@@ -814,9 +819,9 @@
 	    });
 	});
 	
-	document.getElementById("modifyPostButton").addEventListener("click", function () {
+	/* document.getElementById("modifyPostButton").addEventListener("click", function () {
         window.location.href = "/post/update_page/" + ${KEY_POST.postSeq}; // 이동할 URL
-    });
+    }); */
 
 	</script>
 

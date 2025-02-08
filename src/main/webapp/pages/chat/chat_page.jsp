@@ -494,6 +494,10 @@
 	            
 	            const messageBodyEL = document.createElement("div");
 	            messageBodyEL.classList.add("message-body");
+	            messageBodyEL.style.color = "gray"; 
+	            messageBodyEL.style.overflow = "hidden";
+	            messageBodyEL.style.text-overflow = "ellipsis";
+	            messageBodyEL.style.white-space = "nowrap";
 	            
 	            /* const initChatMessageSTR = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content.split(" *date: ")[0];
 	            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR); */

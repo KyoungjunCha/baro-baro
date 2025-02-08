@@ -38,7 +38,9 @@ public class PostVO {
 	private Long userScore;
 	
 	private int favorites;
-	private int existChats; 
+	private int existChats;
+	
+	private int reviewIsAvailable;
 	
 	public static class CommentTest{
 		
