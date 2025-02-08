@@ -145,7 +145,7 @@
 						</div>
 						<ul class="header__right__widget">
 							<!-- 채팅 -->
-							<li><a href="/favorite/flist"><i class="bi bi-send"></i></span>
+							<li><a href="/chat/page"><i class="bi bi-send"></i></span>
 									<div class="tip">2</div> </a></li>
 							<!-- 즐겨찾기 -->
 							<li><a href="/favorite/flist"><i class="fa fa-bookmark"></i></span>
