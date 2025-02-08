@@ -143,12 +143,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	// 세션 꺼내기
  	//var userSeq = ${sessionScope.user_info.userSeq};
 <%-- 	let userSeq = "<%= session.getAttribute("userSeq") %>"; --%>
-	//console.log("QWER : " + userSeq)
+	//console.log("유저시큐는 : " + userSeq)
 //     if (!userSeq || userSeq === "null") {
 //         console.error("세션 정보가 없습니다.");
 //         return;
 //     }
-
+	
+	// 세션 꺼내기
+	let userSeq = ${sessionScope['SESS_USER_SEQ']};
 	
     // rentalTable 가져오기 ======================================================================
     fetch("/reservation/getAllTimeSlots", {

@@ -135,7 +135,7 @@ public class ReservationController {
 	// 로그인유저가 등록한 물품의 타임목록 현황 가져오기  /reservation/getAllTimeSlots
 	@RequestMapping(value = "/getAllTimeSlots", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	@ResponseBody  //JSON 응답을 반환하도록 설정
-	public List<RentTimeSlotVO> getAllTimeSlots(HttpServletRequest request) { //HttpSession session) {
+	public List<RentTimeSlotVO> getAllTimeSlots(){ //HttpServletRequest request) { //HttpSession session) {
 		
 		Logger logger = LoggerFactory.getLogger(this.getClass()); // SLF4J Logger 사용
 		
@@ -145,16 +145,17 @@ public class ReservationController {
 //		System.out.println(userSeq2);
 		
 		//250206 유저 seq 등록을 위한 수정 경준작성
-//		long userSeq = 1001; // (테스트용으로 로그인유저 1001로 설정)
-		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
-		UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+		//250209 일단 하드코딩으로 박아둠으로 다시 되돌림
+		long userSeq = 1001; // (테스트용으로 로그인유저 1001로 설정)
+//		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+//		UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
 		
 		
 		
 //	    long userSeq = Long.parseLong(requestData.get("userSeq").toString()); // 요청 받은 userSeq
 	    logger.info("✅ 요청받은 userSeq: " + userSeq);
 	   
-	    if(status != null && "ACTIVE".equals(status.name())) {
+//	    if(status != null && "ACTIVE".equals(status.name())) {
 		    List<RentTimeSlotVO> timeSlotList = reservationService.getAllTimeSlots(userSeq);
 		    
 		    logger.info("🔄 조회된 대여 목록: " + timeSlotList.size() + "개"); // 데이터 개수 확인
@@ -162,16 +163,16 @@ public class ReservationController {
 		        logger.info("📌 대여 정보: " + slot.toString()); // 개별 데이터 확인
 		    }
 		    return timeSlotList;
-	    }else {
-	    	
-	    	return Collections.emptyList();
-	    }
+//	    }else {
+//	    	
+//	    	return Collections.emptyList();
+//	    }
 	}
 	
 	// 로그인유저가 예약한 내역 현황 가져오기  /reservation/getAllReservation
 	@RequestMapping(value = "/getAllReservation", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	@ResponseBody  //JSON 응답을 반환하도록 설정
-	public List<RentTimeSlotVO> getAllReservation(HttpServletRequest request) { //HttpSession session) {
+	public List<RentTimeSlotVO> getAllReservation(){ //HttpServletRequest request) { //HttpSession session) {
 		
 		Logger logger = LoggerFactory.getLogger(this.getClass()); // SLF4J Logger 사용
 		
@@ -179,15 +180,15 @@ public class ReservationController {
 //		long userSeq = userInfo.getUserSeq();
 		
 		//250206 세션값에서 userSeq 가져오기 경준
-//		long userSeq = 1001; // (테스트용으로 로그인유저 1001로 설정)
-		int userSeq = (Integer) request.getSession().getAttribute("SESS_USER_SEQ");
-		UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+		long userSeq = 1001; // (테스트용으로 로그인유저 1001로 설정)
+//		int userSeq = (Integer) request.getSession().getAttribute("SESS_USER_SEQ");
+//		UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
 		
 		
 //	    long userSeq = Long.parseLong(requestData.get("userSeq").toString()); // 요청 받은 userSeq
 	    logger.info("✅ getAllReservation 요청받은 userSeq: " + userSeq);
 	    
-		if(status != null && "ACTIVE".equals(status.name())) {
+//		if(status != null && "ACTIVE".equals(status.name())) {
 		    List<RentTimeSlotVO> reservationList = reservationService.getAllReservation(userSeq);
 		    logger.info("🔄 조회된 예약 목록: " + reservationList.size() + "개"); // 데이터 개수 확인
 		    for (RentTimeSlotVO rvo : reservationList) {
@@ -196,10 +197,10 @@ public class ReservationController {
 		    }
 		    
 	    return reservationList; //JSON 리스트 반환
-	    } else {
+//	    } else {
 	    	
-	    	return Collections.emptyList();
-	    }
+//	    	return Collections.emptyList();
+//	    }
 	}
 
 }
