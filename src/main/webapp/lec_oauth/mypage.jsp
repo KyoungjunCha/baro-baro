@@ -305,13 +305,12 @@ button:hover, input[type="submit"]:hover {
 	        <h2>관심 키워드 관리</h2>
 	
 	        <!-- 키워드 추가 폼 -->
-	        <form action="/keyword/add" method="post" class="add-form">
-	            
-	            <input type="hidden" name="userSeq" value=${sessionScope['SESS_USER_SEQ']}>
-	            <input type="text" name="contents" placeholder="키워드를 입력하세요" required>
-	            <!-- 여기 onclick 으로 바꾸기 -->
-	            <button type="submit">추가</button>
-	        </form>
+	        <form id="addKeywordForm" class="add-form">
+	    		<input type="hidden" name="userSeq" value="${sessionScope['SESS_USER_SEQ']}">
+	   		 	<input type="text" name="contents" placeholder="키워드를 입력하세요" required>
+	   			<button type="button" onclick="addKeyword()">추가</button> <!-- 버튼 클릭 시 addKeyword 함수 실행 -->
+			</form>
+	        
 			<input type="hidden" name="userSeq" value=${sessionScope['SESS_USER_SEQ']}>
 	        <!-- 관심 키워드 목록 -->
 	        <div class="keyword-list">
@@ -433,6 +432,51 @@ button:hover, input[type="submit"]:hover {
     
 <script>
 
+
+
+//키워드 추가 버튼 클릭 시
+function addKeyword(){
+
+	// 폼 데이터 가져오기
+	var formData = {
+		contents: $("input[name='contents']").val(),
+		userSeq: ${sessionScope['SESS_USER_SEQ']}
+	};
+	console.log("확인 폼데이터 들어간 값 : " + formData);
+
+	// AJAX 요청
+	$.ajax({
+		url: '/keyword/add',  // 서버의 /keyword/add로 POST 요청
+		type: 'POST',
+		data: formData,  // 폼 데이터
+		success: function(response) {
+			// 키워드 추가 성공 시
+			loadKeyword();
+			console.log("추가된 키워드: ", response);
+			// 성공적으로 추가된 키워드 목록에 새 키워드 추가
+			$(".keyword-list").append(`
+				<div class="keyword-item">
+					<span>${'${response.contents}'}</span>
+					<button class="delete-btn" data-seq=${'${response.keywordSeq}'}>X</button>
+				</div>
+			`);
+			
+			// 키워드 입력란 초기화
+			$("input[name='contents']").val('');
+			
+		},
+		error: function(xhr, status, error) {
+			alert("키워드 추가 실패: " + error);
+		}
+	});
+	
+	
+	
+};
+
+
+
+
 function loadKeyword() {
     $.ajax({
         url: "/keyword/list",
@@ -451,12 +495,49 @@ function loadKeyword() {
                     </div>
                 `);
             });
+            
+            $(".delete-btn").click(function(e) {
+                e.preventDefault();
+                
+                const keywordItem = $(this).closest('.keyword-item');
+                const keywordSeq = $(this).data('seq');
+                console.log("키워드 번호 : "+keywordSeq);
+                const userSeq = ${sessionScope['SESS_USER_SEQ']};  // 서버에서 받아온 userSeq 사용
+
+                $.ajax({
+                    url: "/keyword/delete/" + keywordSeq,
+                    type: "POST",
+//                    contentType:"application/json",
+//                    data: JSON.stringify{
+					data:{
+                        userSeq: userSeq
+                    },
+                    success: function(res) {
+                    	console.log(res);
+                    	if(res === "success"){
+                        keywordItem.remove();  // 삭제 성공 시 해당 항목 삭제	
+                       	loadKeyword();
+                        console.log("동작중인거야아닌거야");
+                    	}else{
+                    		alert("삭제 실패 : 서버 오류");
+                    	}
+                    },
+                    error: function(xhr, status, error) {
+                        alert("삭제 실패: " + error);
+                    }
+                });
+            });
+            
         },
         error: function(xhr, status, error) {
             alert("리스트 요청 실패 : " + error);
         }
     });
+    
+    
 }
+
+
 
 
 function loadReview() {
@@ -637,6 +718,59 @@ function loadFavorites() {
 };
 
 
+//진아님 하트 토글 이거 쓰고싶어요
+//쓰게 해드렸습니다~
+$(document).ready(function() {
+	    $(document).on('click','.heart',function() {
+	        const $icon = $(this);
+	        const userSeq = $icon.data('user-seq');
+	        console.log(userSeq);
+	        const postSeq = $icon.data('post-seq');
+	        console.log(postSeq);
+	        // 하트를 클릭할 때마다 빨간 하트와 빈 하트를 토글
+	        if ($icon.hasClass('bi-heart-fill')) {
+	            // 즐겨찾기 해제
+	            $.ajax({
+	                url: '/myfavorite/toggle', // 서버에서 즐겨찾기 토글 처리
+	                type: 'POST',
+	                contentType: 'application/json',
+	                data: JSON.stringify({
+	                    userSeq: userSeq,
+	                    postSeq: postSeq
+	                }),
+	                success: function(response) {
+	                    if (response === 'deleted') {
+	                        $icon.removeClass('bi-heart-fill').addClass('bi-heart');
+	                    }
+	                },
+	                error: function () {
+	                    alert('즐겨찾기 해제에 실패했습니다.');
+	                }
+	            });
+	        } else {
+	            // 즐겨찾기 추가
+	            $.ajax({
+	                url: '/myfavorite/toggle', // 서버에서 즐겨찾기 토글 처리
+	                type: 'POST',
+	                contentType: 'application/json',
+	                data: JSON.stringify({
+	                    userSeq: userSeq,
+	                    postSeq: postSeq
+	                }),
+	                success: function(response) {
+	                    if (response === 'added') {
+	                        $icon.removeClass('bi-heart').addClass('bi-heart-fill');
+	                    }
+	                },
+	                error: function () {
+	                    alert('즐겨찾기 추가에 실패했습니다.');
+	                }
+	            });
+	        }
+	    });
+	});
+
+
 //댓글 그리기
 function loadComment() {
 // AJAX로 데이터를 가져옵니다
@@ -752,45 +886,8 @@ function loadNotification(){
 
 <script>
 
-//키워드 추가 버튼 클릭 시
-$("form.add-form").submit(function(event) {
-	event.preventDefault(); // 기본 폼 제출을 막기
 
-	// 폼 데이터 가져오기
-	var formData = {
-		contents: $("input[name='contents']").val(),
-		userSeq: ${sessionScope['SESS_USER_SEQ']}
-	};
-	console.log("확인 폼데이터 들어간 값 : " + formData);
-
-	// AJAX 요청
-	$.ajax({
-		url: '/keyword/add',  // 서버의 /keyword/add로 POST 요청
-		type: 'POST',
-		data: formData,  // 폼 데이터
-		success: function(response) {
-			// 키워드 추가 성공 시
-			console.log("추가된 키워드: ", response);
-			// 성공적으로 추가된 키워드 목록에 새 키워드 추가
-			$(".keyword-list").append(`
-				<div class="keyword-item">
-					<span>${'${response.contents}'}</span>
-					<button class="delete-btn" data-seq=${'${response.keywordSeq}'}>X</button>
-				</div>
-			`);
-			
-			// 키워드 입력란 초기화
-			$("input[name='contents']").val('');
-			
-		},
-		error: function(xhr, status, error) {
-			alert("키워드 추가 실패: " + error);
-		}
-	});
-});
-
-
-	
+/* function deleteKeyword(){
 $(document).on('click', '.delete-btn', function(e) {	
 	e.preventDefault();
 	
@@ -812,7 +909,7 @@ $(document).on('click', '.delete-btn', function(e) {
 		}
 	});
 };
-
+}; */
 	
 	
 
@@ -823,57 +920,7 @@ $(document).on('click', '.delete-btn', function(e) {
 
 
 
-//진아님 하트 토글 이거 쓰고싶어요
-// 쓰게 해드렸습니다~
-$(document).ready(function() {
-	    $(document).on('click','.heart',function() {
-	        const $icon = $(this);
-	        const userSeq = $icon.data('user-seq');
-	        console.log(userSeq);
-	        const postSeq = $icon.data('post-seq');
-	        console.log(postSeq);
-	        // 하트를 클릭할 때마다 빨간 하트와 빈 하트를 토글
-	        if ($icon.hasClass('bi-heart-fill')) {
-	            // 즐겨찾기 해제
-	            $.ajax({
-	                url: '/myfavorite/toggle', // 서버에서 즐겨찾기 토글 처리
-	                type: 'POST',
-	                contentType: 'application/json',
-	                data: JSON.stringify({
-	                    userSeq: userSeq,
-	                    postSeq: postSeq
-	                }),
-	                success: function(response) {
-	                    if (response === 'deleted') {
-	                        $icon.removeClass('bi-heart-fill').addClass('bi-heart');
-	                    }
-	                },
-	                error: function () {
-	                    alert('즐겨찾기 해제에 실패했습니다.');
-	                }
-	            });
-	        } else {
-	            // 즐겨찾기 추가
-	            $.ajax({
-	                url: '/myfavorite/toggle', // 서버에서 즐겨찾기 토글 처리
-	                type: 'POST',
-	                contentType: 'application/json',
-	                data: JSON.stringify({
-	                    userSeq: userSeq,
-	                    postSeq: postSeq
-	                }),
-	                success: function(response) {
-	                    if (response === 'added') {
-	                        $icon.removeClass('bi-heart').addClass('bi-heart-fill');
-	                    }
-	                },
-	                error: function () {
-	                    alert('즐겨찾기 추가에 실패했습니다.');
-	                }
-	            });
-	        }
-	    });
-	});
+
 	
 
 </script>
