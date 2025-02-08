@@ -98,7 +98,7 @@
 		    background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
 		}
 		
-		.modal-content {
+		.modal-content2 {
 		    background-color: white; 
 		    margin: auto; 
 		    padding: 20px; 
@@ -182,7 +182,7 @@
 
     <!-- 모달 창 -->
     <div id="myModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content2">
             <span class="close">&times;</span>
             <h2>대여 일정 입력</h2>
             <form id="modal-form">

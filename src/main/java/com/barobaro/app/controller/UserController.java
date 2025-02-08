@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,12 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.barobaro.app.common.CommonCode.Role;
+import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.service.FavoriteService;
 import com.barobaro.app.service.MypageService;
@@ -27,6 +32,7 @@ import com.barobaro.app.vo.FavoriteVO;
 import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.ReviewSummaryVO;
 import com.barobaro.app.vo.UserReviewAnswerVO;
 
 @Controller
@@ -299,5 +305,20 @@ public class UserController {
 	
 	
 	//키워드 json 버전 경준 25.02.07
+	
+	//리뷰 관련 정보 확인
+	// /review/summaryPage
+	@GetMapping("/review/summaryPage")
+	public ModelAndView getReviewSummary(HttpSession session) {
+		session.setAttribute("user_info",
+				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		ModelAndView mav = new ModelAndView();
+		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		mav.setViewName("/lec_oauth/review_summary");
+		ReviewSummaryVO reviewSummaryVO = mypageService.getReviewSummar(userInfo.getUserSeq());
+		mav.addObject("reviewSummary", reviewSummaryVO);
+		System.out.println(reviewSummaryVO);
+		return mav;
+	}
 	
 }
