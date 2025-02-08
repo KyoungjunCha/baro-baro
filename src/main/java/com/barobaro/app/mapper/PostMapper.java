@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.RentTimeSlotVO;
+import com.barobaro.app.vo.ReviewSummaryVO;
 import com.barobaro.app.vo.ReviewVO;
 import com.barobaro.app.vo.SearchVO;
 
@@ -30,4 +31,10 @@ public interface PostMapper {
 	
 	int insertReview(@Param("reviewVO") ReviewVO reviewVO, @Param("userSeq")long userSeq);
 	int insertReviewDetail(@Param("userReview")String userReview, @Param("reviewSeq")long reviewSeq);
+	
+    List<ReviewSummaryVO.ReceivedUserReview> getReceivedUserReview(@Param("userSeq") long userSeq);
+
+    List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReview(@Param("userSeq")long userSeq);
+
+    List<ReviewSummaryVO.SendedPostReview> getSendedPostReview(@Param("userSeq") long userSeq);
 }
