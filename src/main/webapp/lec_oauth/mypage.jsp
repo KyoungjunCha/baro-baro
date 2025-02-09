@@ -269,7 +269,7 @@ button:hover, input[type="submit"]:hover {
 
 
 
-
+<!-- 섹션들!!! -->
 <div class="table-responsive">  
 	<div class="section" id="favorites">
 	<h3>즐겨찾기 목록</h3>
@@ -295,7 +295,7 @@ button:hover, input[type="submit"]:hover {
 
 
 
-<!-- 섹션들!!! -->
+
 
 <div class="section" id="keyword">
      <h3>🔍키워드&알림🔔️</h3>
@@ -340,8 +340,7 @@ button:hover, input[type="submit"]:hover {
 
 <div class="section" id="rental">
     <h3>대여관리✅</h3>
-    <a href="/lec_oauth/mypage_test_sh.jsp">대여세부보기</a>
-	<jsp:include page="/lec_oauth/mypage_test_sh.jsp" />
+	<jsp:include page="/lec_oauth/mypage_reservation.jsp" />
 	<br><br>
     <!-- <table id="postTable">
 	<thead>
@@ -379,24 +378,56 @@ button:hover, input[type="submit"]:hover {
 	</table>
 </div>
 
+
+
 <div class="section" id="reviews">
      <h3>📝리뷰📝️</h3>
-	<table id="reviewTable">
-	<thead>
-		<tr>
-			<th>리뷰번호</th>
-			<th>리뷰사진</th>
-			<th>리뷰상품명</th>
-			<th>리뷰자명</th>
-			<th>리뷰날짜</th>
-			<th>리뷰내용</th>
-		</tr>
-	</thead>
-	<tbody>
-		<!-- javaScript 로 그림 -->
-	</tbody>
+	<table id="receivedUserReviewTable">
+	    <thead>
+	        <tr>
+	            <th>리뷰 종류</th>
+	            <th>리뷰 받은 횟수</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <!-- 데이터가 여기에 추가됩니다 -->
+	    </tbody>
+	</table>
+
+	<h2>내가 받은 게시글에 대한 리뷰</h2>
+	<table id="receivedPostReviewTable">
+	    <thead>
+	        <tr>
+	            <th>게시물 번호</th>
+	            <th>제품명</th>
+	            <th>작성일</th>
+	            <th>별점</th>
+	            <th>상세 리뷰</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <!-- 데이터가 여기에 추가됩니다 -->
+	    </tbody>
+	</table>
+
+	<h2>내가 작성한 게시글에 대한 리뷰</h2>
+	<table id="sendedPostReviewTable">
+	    <thead>
+	        <tr>
+	            <th>리뷰 작성일</th>
+	            <th>게시물 번호</th>
+	            <th>별점</th>
+	            <th>상세 리뷰</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <!-- 데이터가 여기에 추가됩니다 -->
+	    </tbody>
 	</table>
 </div>
+
+
+
 
 </div>
 
@@ -424,12 +455,8 @@ button:hover, input[type="submit"]:hover {
 	
 	
 	
-	
-
-	
-	
-
-    
+	 
+  
 <script>
 
 
@@ -591,58 +618,8 @@ function loadReview() {
 };
 
 
-/* function loadPosts() {
-    // AJAX로 데이터를 가져옵니다
-    $.ajax({
-        url: '/myposts', // 서버에서 게시물 목록을 받아올 URL
-        method: 'GET',  // GET 요청
-        success: function(posts) {
-            console.log("게시글로그",posts); // 받아온 게시물 로그 출력
 
-            // 테이블의 tbody를 비우고 새롭게 데이터 추가
-            const postTable = $('#postTable tbody');
-            postTable.empty();
-
-            // 게시물 데이터를 테이블에 추가
-            posts.forEach(post => {
-                const postDate = new Date(post.postAt);
-                const formattedDate = postDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
-
-                var rentAt = post.rentTimes[0].rent_at ? new Date(post.rentTimes[0].rent_at).toLocaleString() : '없음';
-                const formattedRentAt = rentAt.toLocaleString();
-					
-                var returnAt = post.rentTimes[0].return_at ? new Date(post.rentTimes[0].return_at).toLocaleString() : '없음';
-                const formattedReturnAt = returnAt.toLocaleString();
-				
-               	const userSeq = post.userSeq;
-				const postSeq = post.postSeq;
-                const postImage = postImages.find(image => image.postSeq === postSeq);
-	            const imageUrl = postImage ? postImage.storagePath : '/img/logo.png'; // 이미지가 있으면 storagePath, 없으면 기본 이미지 
-                
-                
-                const row = $('<tr>');  // 새 행(<tr>) 생성
-
-
-                // 데이터 추가
-                row.append(`
-                    <td><a href = "/post/post/${'${post.postSeq}'}"> ${'${post.title}'}</a></td>
-                    <td>${'${post.rentContent}'}</td>
-                    <td>${'${formattedDate}'}</td>
-                    <td>${'${post.count}'}</td>
-                    <td>${'${post.productName}'}</td>
-                    <td>${'${post.categoryName}'}</td>
-                    <td><img src=${'${imageUrl}'} alt="이미지" class="image"/></td>
-                `);
-
-                // 행을 테이블에 추가
-                postTable.append(row);
-            });
-        },
-        error: function(error) {
-            console.error('Error loading posts:', error);
-        }
-    });
-}; */
+ 
 
 
 function getPostImage() {
@@ -717,6 +694,149 @@ function loadFavorites() {
     });
 };
 
+/* 여기부터 리뷰 */
+let userSeq = ${sessionScope['SESS_USER_SEQ']}
+console.log("도대체 왜 uesrSeq 가 1001? : " + userSeq);
+
+function receivedUserReview(data) {
+    const tableBody = document.getElementById('receivedUserReviewTable').querySelector('tbody');
+    tableBody.innerHTML = "";  // 기존 테이블 내용 초기화
+
+    if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="2">데이터 없음</td>`;
+        tableBody.appendChild(row);
+    } else {
+        data.forEach((review) => {
+            const row = document.createElement('tr');
+            const userReviewCell = document.createElement('td');
+            const receivedReviewCountCell = document.createElement('td');
+
+            userReviewCell.textContent = review.userReview || '데이터 없음';
+            receivedReviewCountCell.textContent = review.receivedReviewCount || '데이터 없음';
+
+            row.appendChild(userReviewCell);
+            row.appendChild(receivedReviewCountCell);
+
+            tableBody.appendChild(row);
+        });
+    }
+}
+
+function receivedReview(data) {
+    const tableBody = document.getElementById('receivedPostReviewTable').querySelector('tbody');
+    tableBody.innerHTML = "";  // 기존 테이블 내용 초기화
+
+    if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="5">데이터 없음</td>`;
+        tableBody.appendChild(row);
+    } else {
+        data.forEach((review) => {
+            const row = document.createElement('tr');
+            const postSeqCell = document.createElement('td');
+            const productNameCell = document.createElement('td');
+            const regDateCell = document.createElement('td');
+            const ratingValueCell = document.createElement('td');
+            const itemReviewCell = document.createElement('td');
+
+            postSeqCell.textContent = review.postSeq || '데이터 없음';
+            productNameCell.textContent = review.productName || '데이터 없음';
+            regDateCell.textContent = review.regDate || '데이터 없음';
+            ratingValueCell.textContent = review.ratingValue || '데이터 없음';
+            itemReviewCell.textContent = review.itemReview || '데이터 없음';
+
+            row.appendChild(postSeqCell);
+            row.appendChild(productNameCell);
+            row.appendChild(regDateCell);
+            row.appendChild(ratingValueCell);
+            row.appendChild(itemReviewCell);
+
+            tableBody.appendChild(row);
+        });
+    }
+}
+
+function sendedReview(data) {
+    const tableBody = document.getElementById('sendedPostReviewTable').querySelector('tbody');
+    tableBody.innerHTML = "";  // 기존 테이블 내용 초기화
+
+    if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="4">데이터 없음</td>`;
+        tableBody.appendChild(row);
+    } else {
+        data.forEach((review) => {
+            const row = document.createElement('tr');
+            const regDateCell = document.createElement('td');
+            const postSeqCell = document.createElement('td');
+            const ratingValueCell = document.createElement('td');
+            const itemReviewCell = document.createElement('td');
+
+            regDateCell.textContent = review.regDate || '데이터 없음';
+            postSeqCell.textContent = review.postSeq || '데이터 없음';
+            ratingValueCell.textContent = review.ratingValue || '데이터 없음';
+            itemReviewCell.textContent = review.itemReview || '데이터 없음';
+
+            row.appendChild(regDateCell);
+            row.appendChild(postSeqCell);
+            row.appendChild(ratingValueCell);
+            row.appendChild(itemReviewCell);
+
+            tableBody.appendChild(row);
+        });
+    }
+}
+
+function loadReceivedUserReviews(userSeq) {
+	//const userSeq = ${sessionScope['SESS_USER_SEQ']}
+	console.log("얼마인지 : " + userSeq);
+	$.ajax({
+        url: '/receivedUserReviews',
+        type: 'GET',
+        data: { userSeq: userSeq },
+        success: function(data) {
+            console.log("받은 유저 리뷰 데이터: ", data);
+            receivedUserReview(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('받은 유저 리뷰 불러오기 실패:', error);
+        }
+    });
+}
+function loadReceivedPostReviews(userSeq) {
+	//const userSeq = ${sessionScope['SESS_USER_SEQ']}
+console.log("얼마인지 : " + userSeq);
+	$.ajax({
+        url: '/receivedPostReviews',
+        type: 'GET',
+        data: { userSeq: userSeq },
+        success: function(data) {
+            console.log("받은 게시글 리뷰 데이터: ", data);
+            receivedReview(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('받은 게시글 리뷰 불러오기 실패:', error);
+        }
+    });
+}
+function loadSendedPostReviews(userSeq) {
+	//const userSeq = ${sessionScope['SESS_USER_SEQ']}
+console.log("얼마인지 : " + userSeq);
+	$.ajax({
+        url: '/sendedPostReviews',
+        type: 'GET',
+        data: { userSeq: userSeq },
+        success: function(data) {
+            console.log("내가 작성한 게시글 리뷰 데이터: ", data);
+            sendedReview(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('내가 작성한 게시글 리뷰 불러오기 실패:', error);
+        }
+    });
+}
+/* 리뷰 끝 */
 
 //진아님 하트 토글 이거 쓰고싶어요
 //쓰게 해드렸습니다~
@@ -851,79 +971,39 @@ function loadNotification(){
 	});
 };	
 
-    // 각 섹션을 토글하여 보여주는 함수 얘네가 아래에 있어야함 load 함수들보다
-    function showSection(sectionId) {
-        // 모든 섹션을 숨긴다
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => section.classList.remove('active'));
 
-        // 클릭된 섹션만 보이도록
-        const activeSection = document.getElementById(sectionId);
-        activeSection.classList.add('active');
+//각 섹션을 토글하여 보여주는 함수
+function showSection(sectionId) {
+  // 모든 섹션을 숨긴다
+  const sections = document.querySelectorAll('.section');
+  sections.forEach(section => section.classList.remove('active'));
 
-        // 각 섹션에 대한 처리
-        if (sectionId === 'favorites') {
-            loadFavorites();  // 즐겨찾기 목록 로드
-        } else if (sectionId === 'rental') {
-//            getPostImage();  // 대여 관리 관련 데이터 로드
-        } else if (sectionId === 'keyword') {
-            loadKeyword();
-            loadNotification();
-        } else if (sectionId === 'comments') {
-            loadComment();  // 댓글 섹션 로드
-        } else if (sectionId === 'reviews') {
-            loadReview();  // 리뷰 섹션 로드
-        }
-    }
+  // 클릭된 섹션만 보이도록
+  const activeSection = document.getElementById(sectionId);
+  activeSection.classList.add('active');
 
-    // 기본적으로 'keyword' 섹션을 보이도록 설정
-    document.addEventListener('DOMContentLoaded', function() {
-        showSection('keyword'); // 이벤트 리스너 내에서 showSection을 호출합니다.
-    }); 
-
-</script>
-
-
-<script>
-
-
-/* function deleteKeyword(){
-$(document).on('click', '.delete-btn', function(e) {	
-	e.preventDefault();
-	
-	let keywordItem = $(this).closest('.keyword-item');
-	let keywordSeq = $(this).data('seq');
-	let userSeq = ${sessionScope['SESS_USER_SEQ']};
-
-	$.ajax({
-		url: "/keyword/delete/" + keywordSeq,
-		type: "POST",
-		data: {
-			userSeq: userSeq
-		},
-		success: function(res) {
-			keywordItem.remove();
-		},
-		error: function(xhr, status, error) {
-			alert("삭제 실패: " + error);
-		}
-	});
+  // 각 섹션에 대한 처리
+  if (sectionId === 'favorites') {
+      loadFavorites();  // 즐겨찾기 목록 로드
+  } else if (sectionId === 'rental') {
+      // getPostImage();  // 대여 관리 관련 데이터 로드
+  } else if (sectionId === 'keyword') {
+      loadKeyword();
+      loadNotification();
+  } else if (sectionId === 'comments') {
+      loadComment();  // 댓글 섹션 로드
+  } else if (sectionId === 'reviews') {
+	  loadReceivedUserReviews(userSeq);
+      loadReceivedPostReviews(userSeq);
+      loadSendedPostReviews(userSeq); 
+  }
 };
-}; */
-	
-	
-
-	
-
-
-
-
-
-
-
-	
-
+	//기본적으로 'keyword' 섹션을 보이도록 설정
+	document.addEventListener('DOMContentLoaded', function() {
+	  showSection('keyword'); // 이벤트 리스너 내에서 showSection을 호출합니다.
+	});
 </script>
+
 
 </body>
 </html>

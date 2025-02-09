@@ -47,4 +47,11 @@ public interface MypageService {
 	
 	public ReviewSummaryVO getReviewSummar(long userSeq);
 	
+	
+	public List<ReviewSummaryVO.ReceivedUserReview> getReceivedUserReviews(long userSeq);
+
+    public List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReviews(long userSeq);
+
+    public List<ReviewSummaryVO.SendedPostReview> getSendedPostReviews(long userSeq);
+	
 }
