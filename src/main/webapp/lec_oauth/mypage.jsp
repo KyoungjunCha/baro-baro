@@ -731,7 +731,7 @@ function loadNotification(){
         if (sectionId === 'favorites') {
             loadFavorites();  // 즐겨찾기 목록 로드
         } else if (sectionId === 'rental') {
-//            getPostImage();  // 대여 관리 관련 데이터 로드
+            getPostImage();  // 대여 관리 관련 데이터 로드
         } else if (sectionId === 'keyword') {
             loadKeyword();
             loadNotification();

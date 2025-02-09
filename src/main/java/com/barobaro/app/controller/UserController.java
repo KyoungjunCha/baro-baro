@@ -310,8 +310,7 @@ public class UserController {
 	// /review/summaryPage
 	@GetMapping("/review/summaryPage")
 	public ModelAndView getReviewSummary(HttpSession session) {
-		session.setAttribute("user_info",
-				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		
 		ModelAndView mav = new ModelAndView();
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		mav.setViewName("/lec_oauth/review_summary");
