@@ -7,21 +7,102 @@
     <title>바로바로 | baro-borrow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gasoek+One&family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+	
+    <style>
+    	.button-container-main-el {
+	    	position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between; 
+			align-items: center; 
+    	}
+    	.button-container-main-el div {
+		    padding: 12px 20px; /* 버튼 크기 조정 */
+		    margin: 5px 0; /* 버튼 간격 조정 */
+		    border: none; /* 기본 테두리 제거 */
+		    border-radius: 15px; /* 버튼 테두리 둥글게 */
+		    font-size: 24px; /* 버튼 텍스트 크기 */
+		    cursor: pointer; /* 마우스 커서 변경 */
+		    transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
+		    
+		    background-color: transparent; /* 버튼 배경색 */
+		    color: black; /* 버튼 텍스트 색상 */
+		    /* font-weight: 600; */
+		    letter-spacing: 1px;
+		    font-family: 'Gasoek One', sans-serif; 
+		}
+		
+		.bg-image {
+		  position: fixed;      /* 또는 absolute를 사용해도 됩니다 */
+		  top: 138px;
+		  right: 0;
+		  width: 400px;
+		  height: 400px;
+		  z-index: 10;          /* 다른 콘텐츠 뒤에 배치 */
+		  overflow: hidden;
+		}
+		
+		.bg-image img {
+		  width: 100%;
+		  height: 100%;
+		  object-fit: cover;    /* 이미지의 비율을 유지하며 꽉 채움 */
+		}
+		
+		.bg-image2 {
+		  position: fixed;      
+		  top: 165px;
+		  right: 500px;
+		  width: 300px;
+		  height: 350px;
+		  z-index: 10;          
+		  overflow: hidden;
+		}
+		
+		.bg-image2 img {
+		  width: 100%;
+		  height: 100%;
+		  border-top-left-radius: 35%; 
+	      border-top-right-radius: 35%;
+	      object-fit: cover;
+		}
+    </style>
 </head>
 <body>
+	<!-- <div class="bg-image">
+	  <img src="https://karrotmarket-com-sanity-cdn.krrt.io/production/56e986c736d6e4f5526448a7a408a0b8f370394e-1125x930.png" alt="Background">
+	</div>
+	 -->
+	<div class="bg-image2">
+	  <img src="https://pplx-res.cloudinary.com/image/upload/v1739021155/ai_generated_images/znxdncylq0bzktfxb83l.png" alt="Background">
+	</div>
+	
 	<jsp:include page="/pages/common/header_test_sh.jsp" />
     <!-- 상단 배너 -->
-    <section class="hero-section text-center text-md-start">
+    <section class="hero-section text-center text-md-start" style="background: #12c1c0;">
         <div class="container">
             <div class="row align-items-stretch">
                 <!-- 왼쪽 텍스트 -->
                 <div class="col-md-6 d-flex flex-column justify-content-center">
-                    <h1 class="hero-text text-light">믿을만한<br>이웃 간 대여</h1>
-                    <p class="hero-subtext mt-3">동네 주민들과 가깝고 따뜻한 대여를<br>지금 경험해보세요.</p>
+                    <h1 class="hero-text text-light">필요한 건 빌려서,<br>&nbsp;&nbsp;삶을 더 자유롭게</h1>
+                    <p class="hero-subtext mt-3" style="padding-left: 20px;color: #ebebe9;">물건을 소유하는 대신, <br>&nbsp;&nbsp;필요한 순간에만 빌려 쓰는 새로운 라이프스타일을 제안합니다.
+                    	<br/>불필요한 부담을 덜고, <br>&nbsp;&nbsp;더 가볍고 자유로운 삶을 경험해보세요.
+                    </p>
+                    <div style="font-size: 22px; width: 600px; margin-left:80px; font-family: 'Black Han Sans', sans-serif;" onclick="location.href='/post/posts';">물품/장소 대여받으러 가기</div>
+                    <div style="font-size: 22px; width: 600px; margin-left:80px; font-family: 'Black Han Sans', sans-serif;" onclick="location.href='/post/create_page';">물품/장소 대여하고 수익 창출하러 가기</div>
                 </div>
                 <!-- 오른쪽 이미지 -->
                 <div class="col-md-6 d-flex align-items-center">
-                    <img src="/resources/images/banner.jpg" alt="배너 이미지" class="img-fluid">
+                    <!-- <img src="/resources/images/banner.jpg" alt="배너 이미지" class="img-fluid"> -->
+                    <div class="button-container-main-el">
+                    	<!-- <img class="" src="https://pplx-res.cloudinary.com/image/upload/v1739021155/ai_generated_images/znxdncylq0bzktfxb83l.png" alt="Background"> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -95,7 +176,7 @@
 		                    let categoryHTML = 
 		                    	'<div class="col">' +
 		                        '<div class="category-icon">' +
-		                            '<a href="/post/posts?category=' + category.categorySeq + '"><img src="/resources/images/category' + (j + 1) + '.png" alt="' + category.categoryName + '"></a>' +
+		                            '<a style="cursor: pointer;" href="/post/posts?category=' + category.categorySeq + '"><img src="/resources/images/category' + (j + 1) + '.png" alt="' + category.categoryName + '"></a>' +
 		                            /* '<img src="/resources/images/category' + (j + 1) + '.png" alt="' + category.categoryName + '">' + */
 		                        '</div>' +
 		                        '<p class="fw-bold mt-2">' + category.categoryName + '</p>' +

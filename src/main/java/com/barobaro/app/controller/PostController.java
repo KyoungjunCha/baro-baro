@@ -165,6 +165,7 @@ public class PostController {
 	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
 		session.setAttribute("user_info",
 				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		session.setAttribute("SESS_USER_SEQ",1001);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/detail_post");
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
@@ -176,6 +177,9 @@ public class PostController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		if(userInfo == null) mav.addObject("reviewIsAvailable", null);
+		else mav.addObject("reviewIsAvailable", postService.reviewIsAvailable(userInfo.getUserSeq(), postSeq));
 		return mav;
 	}
 
