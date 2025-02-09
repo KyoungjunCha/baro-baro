@@ -37,4 +37,6 @@ public interface PostMapper {
     List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReview(@Param("userSeq")long userSeq);
 
     List<ReviewSummaryVO.SendedPostReview> getSendedPostReview(@Param("userSeq") long userSeq);
+    
+    int getReviewIsAvailable(@Param("postSeq")long postSeq, @Param("userSeq")long userSeq);
 }

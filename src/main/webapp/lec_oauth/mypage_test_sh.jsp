@@ -143,16 +143,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	// 세션 꺼내기
  	//var userSeq = ${sessionScope.user_info.userSeq};
 <%-- 	let userSeq = "<%= session.getAttribute("userSeq") %>"; --%>
-	//console.log("유저시큐는 : " + userSeq)
+	//console.log("QWER : " + userSeq)
 //     if (!userSeq || userSeq === "null") {
 //         console.error("세션 정보가 없습니다.");
 //         return;
 //     }
-	
-	// 굳이 꺼낼필요는 없지만. 확인용으로 세션 꺼내봄.
-	let userSeq = ${sessionScope['SESS_USER_SEQ']};
-	console.log("세션에서 꺼낸 유저시큐는 : " + userSeq);
-	
+
+	let userSeq = ${sessionScope['SESS_USER_SEQ']}
+
     // rentalTable 가져오기 ======================================================================
     fetch("/reservation/getAllTimeSlots", {
         method: "POST",
@@ -160,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Content-Type": "application/json"
         },
         credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-        //body: JSON.stringify({ userSeq: userSeq }) 	//컨트롤러에서 유저시큐 꺼낼거라 굳이 바디에 보내줄 필요없음
+        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
     })
     .then(response => {
         if (!response.ok) {
@@ -183,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Content-Type": "application/json"
         },
         credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-        //body: JSON.stringify({ userSeq: userSeq }) 	//컨트롤러에서 유저시큐 꺼낼거라 굳이 바디에 보내줄 필요없음
+        //body: JSON.stringify({ userSeq: userSeq }) 			// 서버에서 세션의 userSeq 받는다면 필요. 테스트용으로 막아둠
     })
     .then(response => {
         if (!response.ok) {

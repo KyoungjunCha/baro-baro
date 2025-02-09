@@ -14,4 +14,5 @@ public interface PostService {
 	List<PostVO> getPostBySearchCondition(SearchVO searchVO);
 	void updatePost(PostVO postVO, List<MultipartFile> files);
 	void createReview(ReviewVO reviewVO, long userSeq);
+	boolean reviewIsAvailable(long userSeq, long postSeq);
 }
