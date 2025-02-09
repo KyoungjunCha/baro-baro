@@ -394,7 +394,7 @@ button:hover, input[type="submit"]:hover {
 	    </tbody>
 	</table>
 
-	<h2>내가 받은 게시글에 대한 리뷰</h2>
+	<h2>내가 작성한 리뷰</h2>
 	<table id="receivedPostReviewTable">
 	    <thead>
 	        <tr>
@@ -733,6 +733,7 @@ function receivedReview(data) {
         tableBody.appendChild(row);
     } else {
         data.forEach((review) => {
+        	review.receivedPostReviews.forEach((postReview)=>{
             const row = document.createElement('tr');
             const postSeqCell = document.createElement('td');
             const productNameCell = document.createElement('td');
@@ -740,11 +741,11 @@ function receivedReview(data) {
             const ratingValueCell = document.createElement('td');
             const itemReviewCell = document.createElement('td');
 
-            postSeqCell.textContent = review.postSeq || '데이터 없음';
-            productNameCell.textContent = review.productName || '데이터 없음';
-            regDateCell.textContent = review.regDate || '데이터 없음';
-            ratingValueCell.textContent = review.ratingValue || '데이터 없음';
-            itemReviewCell.textContent = review.itemReview || '데이터 없음';
+            postSeqCell.textContent = postReview.postSeq || '데이터 없음';
+            productNameCell.textContent = postReview.productName || '데이터 없음';
+            regDateCell.textContent = postReview.regDate || '데이터 없음';
+            ratingValueCell.textContent = postReview.ratingValue || '데이터 없음';
+            itemReviewCell.textContent = postReview.itemReview || '데이터 없음';
 
             row.appendChild(postSeqCell);
             row.appendChild(productNameCell);
@@ -753,12 +754,14 @@ function receivedReview(data) {
             row.appendChild(itemReviewCell);
 
             tableBody.appendChild(row);
+        	});
         });
     }
 }
 
 function sendedReview(data) {
-    const tableBody = document.getElementById('sendedPostReviewTable').querySelector('tbody');
+	console.log("sendedReview : " + data);
+	const tableBody = document.getElementById('sendedPostReviewTable').querySelector('tbody');
     tableBody.innerHTML = "";  // 기존 테이블 내용 초기화
 
     if (data.length === 0) {
@@ -767,16 +770,18 @@ function sendedReview(data) {
         tableBody.appendChild(row);
     } else {
         data.forEach((review) => {
-            const row = document.createElement('tr');
+			console.log("my sendedReview review : " + JSON.stringify(review,null,2));
+			review.sendedPostReviews.forEach((postReview)=>{
+        	const row = document.createElement('tr');
             const regDateCell = document.createElement('td');
             const postSeqCell = document.createElement('td');
             const ratingValueCell = document.createElement('td');
             const itemReviewCell = document.createElement('td');
 
-            regDateCell.textContent = review.regDate || '데이터 없음';
-            postSeqCell.textContent = review.postSeq || '데이터 없음';
-            ratingValueCell.textContent = review.ratingValue || '데이터 없음';
-            itemReviewCell.textContent = review.itemReview || '데이터 없음';
+            regDateCell.textContent = postReview.regDate || '데이터 없음';
+            postSeqCell.textContent = postReview.postSeq || '데이터 없음';
+            ratingValueCell.textContent = postReview.ratingValue || '데이터 없음';
+            itemReviewCell.textContent = postReview.itemReview || '데이터 없음';
 
             row.appendChild(regDateCell);
             row.appendChild(postSeqCell);
@@ -784,15 +789,53 @@ function sendedReview(data) {
             row.appendChild(itemReviewCell);
 
             tableBody.appendChild(row);
+			});
         });
     }
-}
+} 
+
+/* function sendedReview(data) {
+    const tableBody = document.getElementById('sendedPostReviewTable').querySelector('tbody');
+    tableBody.innerHTML = "";  // 기존 테이블 내용 초기화
+    if (data.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = <td colspan="4">데이터 없음</td>;
+        tableBody.appendChild(row);
+    } else {
+        //review 를 뽑아 보자 콘솔로
+    	data.forEach((review) => {
+        review.forEach((reviewDetail) => {
+            const row = document.createElement('tr');
+                const regDateCell = document.createElement('td');
+                const postSeqCell = document.createElement('td');
+                const ratingValueCell = document.createElement('td');
+                const itemReviewCell = document.createElement('td');
+
+                regDateCell.textContent = reviewDetail.regDate  '데이터 없음';
+                postSeqCell.textContent = reviewDetail.postSeq  '데이터 없음';
+                ratingValueCell.textContent = reviewDetail.ratingValue  '데이터 없음';
+                itemReviewCell.textContent = reviewDetail.itemReview  '데이터 없음';
+
+                row.appendChild(regDateCell);
+                row.appendChild(postSeqCell);
+                row.appendChild(ratingValueCell);
+                row.appendChild(itemReviewCell);
+
+                tableBody.appendChild(row);
+
+        })
+
+        });
+    }
+} */
+
+
 
 function loadReceivedUserReviews(userSeq) {
 	//const userSeq = ${sessionScope['SESS_USER_SEQ']}
 	console.log("얼마인지 : " + userSeq);
 	$.ajax({
-        url: '/receivedUserReviews',
+        url: '/sendedPostReviews',
         type: 'GET',
         data: { userSeq: userSeq },
         success: function(data) {
@@ -808,7 +851,7 @@ function loadReceivedPostReviews(userSeq) {
 	//const userSeq = ${sessionScope['SESS_USER_SEQ']}
 console.log("얼마인지 : " + userSeq);
 	$.ajax({
-        url: '/receivedPostReviews',
+        url: '/sendedPostReviews',
         type: 'GET',
         data: { userSeq: userSeq },
         success: function(data) {

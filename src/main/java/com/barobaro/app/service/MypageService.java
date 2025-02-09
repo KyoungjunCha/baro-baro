@@ -47,11 +47,13 @@ public interface MypageService {
 	
 	public ReviewSummaryVO getReviewSummar(long userSeq);
 	
-	
+	//남들이 해준 내리뷰총점
 	public List<ReviewSummaryVO.ReceivedUserReview> getReceivedUserReviews(long userSeq);
 
+	//받은 리뷰
     public List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReviews(long userSeq);
-
+    
+    //내가 작성한 리뷰
     public List<ReviewSummaryVO.SendedPostReview> getSendedPostReviews(long userSeq);
 	
 }
