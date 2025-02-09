@@ -76,7 +76,6 @@ public class ChatController {
     @GetMapping("/page")
     public ModelAndView chatPage(@RequestParam(value = "chatRoomSeq", required = false, defaultValue = "0")long chatRoomSeq
     		, HttpSession session) {
-//    	UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
         ModelAndView mav = new ModelAndView();
         mav.setViewName("pages/chat/chat_page");
         return mav;
@@ -84,8 +83,6 @@ public class ChatController {
     
     @GetMapping("/test/page")
     public ModelAndView chatPageTest(HttpSession session) {
-    	session.setAttribute("user_info",
-				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
         ModelAndView mav = new ModelAndView();
         mav.setViewName("pages/chat/chat_page");
         return mav;

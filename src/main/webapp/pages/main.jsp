@@ -94,8 +94,8 @@
                     <p class="hero-subtext mt-3" style="padding-left: 20px;color: #ebebe9;">물건을 소유하는 대신, <br>&nbsp;&nbsp;필요한 순간에만 빌려 쓰는 새로운 라이프스타일을 제안합니다.
                     	<br/>불필요한 부담을 덜고, <br>&nbsp;&nbsp;더 가볍고 자유로운 삶을 경험해보세요.
                     </p>
-                    <div style="font-size: 22px; width: 600px; margin-left:80px; font-family: 'Black Han Sans', sans-serif;" onclick="location.href='/post/posts';">물품/장소 대여받으러 가기</div>
-                    <div style="font-size: 22px; width: 600px; margin-left:80px; font-family: 'Black Han Sans', sans-serif;" onclick="location.href='/post/create_page';">물품/장소 대여하고 수익 창출하러 가기</div>
+                    <div style="cursor: pointer; font-size: 22px; width: 600px; margin-left:80px; font-family: 'Black Han Sans', sans-serif;" onclick="location.href='/post/posts';">물품/장소 대여받으러 가기</div>
+                    <div style="cursor: pointer; font-size: 22px; width: 600px; margin-left:80px; font-family: 'Black Han Sans', sans-serif;" onclick="location.href='/post/create_page';">물품/장소 대여하고 수익 창출하러 가기</div>
                 </div>
                 <!-- 오른쪽 이미지 -->
                 <div class="col-md-6 d-flex align-items-center">

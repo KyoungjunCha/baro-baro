@@ -165,9 +165,10 @@
 									</c:choose>
 									<a href="/mypage">마이페이지</a>
 									<!-- 로그인된 사용자는 마이페이지로 이동 -->
-									<form action="/form_logout_process" method="POST">
+									<a href="#" onclick="sendPostRequest(event)">로그아웃</a>
+									<!-- <form action="/form_logout_process" method="POST">
 										<input type="submit" value="로그아웃">
-									</form>
+									</form> -->
 								</c:otherwise>
 							</c:choose>
 						</div>
@@ -218,7 +219,7 @@
 		let reconnectAttempts = 0;
 		const maxReconnectAttempts = 5;
 
-		$(document)
+		/* $(document)
 				.ready(
 						function() {
 							//let userSeq = 1001;
@@ -512,7 +513,28 @@
 				addNotification(notification);
 			});
 
-		}
+		} */
+		
+		function sendPostRequest(event) {
+            event.preventDefault();  // 기본 a 태그 동작(링크 이동)을 막음
+
+            const url = '/form_logout_process';  // 요청을 보낼 URL
+
+            fetch(url, {
+                method: 'POST'
+                /* headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data), */
+            })
+            //.then(response => response.json())  // 응답을 JSON으로 처리
+            .then(data => {
+            	location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);  // 에러 발생 시
+            });
+        }
 	</script>
 </body>
 

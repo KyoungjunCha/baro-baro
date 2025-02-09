@@ -101,8 +101,6 @@ public class PostController {
 			@RequestParam(value = "return_rotate_y[]", required = false) List<Double> returnRotateY,
 			@RequestParam("ufile") List<MultipartFile> files,
 			@RequestParam(value = "isUpdate", required = false, defaultValue = "0")long isUpdate) {
-		session.setAttribute("user_info",
-				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		PostVO postVO = PostVO.builder().title(title).itemContent(itemContent).rentContent(rentContent)
 				.productName(productName).userSeq(userInfo.getUserSeq()).categoryName(category)
@@ -138,7 +136,6 @@ public class PostController {
 		mav.setViewName("redirect:/post/post/" + postVO.getPostSeq());
 
 		// 관심 키워드 알림
-		// List<KeywordVO> keywordList = keywordService.getKeywordsByUserSeq(1001); // 해당 카테고리를 가진 모든 userSeq에게 알림 보내기(수정사항)
 		List<KeywordVO> keywordList = keywordService.getAllKeywords();
 		
 		for (KeywordVO kvo : keywordList) {
@@ -163,9 +160,6 @@ public class PostController {
 
 	@RequestMapping(value = "/post/{postSeq}", method = RequestMethod.GET)
 	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
-		session.setAttribute("user_info",
-				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
-		session.setAttribute("SESS_USER_SEQ",1001);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/detail_post");
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
@@ -215,8 +209,6 @@ public class PostController {
 	
 	@RequestMapping(value = "/update_page/{postSeq}", method = RequestMethod.GET)
 	public ModelAndView getUpdatePostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
-		session.setAttribute("user_info",
-				new UserInfo(1002, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/update_post");
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
@@ -269,6 +261,6 @@ public class PostController {
     public String submitReview(@RequestBody ReviewVO reviewVO, HttpSession session) {
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		postService.createReview(reviewVO, userInfo.getUserSeq());
-        return "success";
+        return reviewVO.getPostSeq() + "";
     }
 }

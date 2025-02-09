@@ -403,6 +403,8 @@
 		    console.log(JSChatVOMap.get(chatRoomSeq).chatMessages);
 		    sock.send("CONNECT");
 		    JSChatVOMap.get(chatRoomSeq).chatMessages.forEach(msg =>{
+		    	console.log("뭐가 저장??"+msg.content);
+		    	if(msg.content == null) return;
 		    	const matches = msg.content.split(" *date: ");
 		    	const [message, time] = [matches[0], matches[1]];
 		    	const chatEL = document.createElement("li");
@@ -496,8 +498,8 @@
 	            messageBodyEL.classList.add("message-body");
 	            messageBodyEL.style.color = "gray"; 
 	            messageBodyEL.style.overflow = "hidden";
-	            messageBodyEL.style.text-overflow = "ellipsis";
-	            messageBodyEL.style.white-space = "nowrap";
+	            //messageBodyEL.style.text-overflow = "ellipsis";
+	            //messageBodyEL.style.white-space = "nowrap";
 	            
 	            /* const initChatMessageSTR = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content.split(" *date: ")[0];
 	            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR); */
@@ -507,12 +509,18 @@
 	            console.log(JSChatVO.chatMessages);
 	            
 	            // 채팅 메시지가 있을 경우, 마지막 메시지를 처리
-	            if (JSChatVO.chatMessages != null) {
+	            try {
+	            	const lastMessage = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content;
+	                initChatMessageSTR = lastMessage.split(" *date: ")[0];
+				} catch (err) {
+					initChatMessageSTR = "새로운 채팅을 시작해보세요.";
+				}
+	           /*  if (JSChatVO.chatMessages != null) {
 	                const lastMessage = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content;
 	                initChatMessageSTR = lastMessage.split(" *date: ")[0];
 	            } else {
 	                initChatMessageSTR = "새로운 채팅을 시작해보세요."; // 기본 메시지
-	            }
+	            } */
 	            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR);
 	            messageBodyEL.appendChild(messageBodyELTextNode);
 	            messageBodyELMap.set(JSChatVO.chatRoomSeq, messageBodyEL); // Initialize map for chat room
