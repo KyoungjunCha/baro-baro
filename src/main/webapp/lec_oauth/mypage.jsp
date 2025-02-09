@@ -382,7 +382,7 @@ button:hover, input[type="submit"]:hover {
 
 <div class="section" id="reviews">
      <h3>📝리뷰📝️</h3>
-	<table id="receivedUserReviewTable">
+	<!-- <table id="receivedUserReviewTable">
 	    <thead>
 	        <tr>
 	            <th>리뷰 종류</th>
@@ -390,9 +390,9 @@ button:hover, input[type="submit"]:hover {
 	        </tr>
 	    </thead>
 	    <tbody>
-	        <!-- 데이터가 여기에 추가됩니다 -->
+	        데이터가 여기에 추가됩니다
 	    </tbody>
-	</table>
+	</table> -->
 
 	<h2>내가 작성한 리뷰</h2>
 	<table id="receivedPostReviewTable">
@@ -410,7 +410,7 @@ button:hover, input[type="submit"]:hover {
 	    </tbody>
 	</table>
 
-	<h2>내가 작성한 게시글에 대한 리뷰</h2>
+	<h2>답변 받은 리뷰</h2>
 	<table id="sendedPostReviewTable">
 	    <thead>
 	        <tr>
@@ -992,10 +992,20 @@ function loadNotification(){
 				const notiDate = new Date(noti.createdAt);
 				const formattednotiDate = notiDate.toLocaleString();  // 사용자 지역에 맞는 형식으로 변환
 				
+				let notificationType = noti.notificationType;
+                // 알림 타입이 KEYWORD_MATCH일 때 "관심키워드"로 변경
+                if (notificationType === 'KEYWORD_MATCH') {
+                    notificationType = '관심키워드';
+                }else if(notificationType ==='Rental Start'){
+                	notificationType = '대여시작!';
+                }else{
+                	notificationType = '새로운 알림!';
+                }
+				
 				const row = $('<tr>');
 				row.append(`
 					<td>${'${noti.notificationSeq}'}</td>
-					<td>${'${noti.notificationType}'}</td>
+					<td>${'${notificationType}'}</td>
 					<td>${'${noti.title}'}</td>
 					<td>${'${noti.contents}'}</td>
 					<td>${'${noti.isRead}'}</td>
