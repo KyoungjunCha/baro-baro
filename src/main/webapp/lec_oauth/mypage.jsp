@@ -340,7 +340,7 @@ button:hover, input[type="submit"]:hover {
 
 <div class="section" id="rental">
     <h3>대여관리✅</h3>
-	<jsp:include page="/lec_oauth/mypage_reservation.jsp" />
+	<jsp:include page="/lec_oauth/mypage_test_sh.jsp" />
 	<br><br>
     <!-- <table id="postTable">
 	<thead>
