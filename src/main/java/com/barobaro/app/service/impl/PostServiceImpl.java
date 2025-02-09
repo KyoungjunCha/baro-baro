@@ -147,6 +147,12 @@ public class PostServiceImpl implements PostService{
 		});
 		
 	}
+
+	@Override
+	public boolean reviewIsAvailable(long userSeq, long postSeq) {
+		if(postMapper.getReviewIsAvailable(postSeq, userSeq) >= 1) return true;
+		return false;
+	}
 	
 	
 }

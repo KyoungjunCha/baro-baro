@@ -17,7 +17,7 @@
 
 	<div class="container mt-5">
 		<h3 class="text-start ms-3">
-			(유저 닉네임)님,<br> (상대방 닉네임)님과 거래가 어떠셨나요?
+			${sessionScope.user_info.profile_nickname}님,<br> 거래가 어떠셨나요?
 		</h3>
 
 		<!-- 유저 평가 -->
