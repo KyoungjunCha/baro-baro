@@ -124,10 +124,19 @@ public class KeywordController {
 	
 	
 
+//	@RequestMapping(value = "/delete/{keywordSeq}", method = RequestMethod.POST)
+//	public String deleteKeyword(@PathVariable int keywordSeq, @RequestParam int userSeq) {
+//		service.deleteKeyword(keywordSeq);
+//		return "success";
+//	}
+	
+	//25.02.08 경준
 	@RequestMapping(value = "/delete/{keywordSeq}", method = RequestMethod.POST)
+	@ResponseBody
 	public String deleteKeyword(@PathVariable int keywordSeq, @RequestParam int userSeq) {
 		System.out.println("삭제 값 잘 들어 왔는지 : " + keywordSeq + "  :  여긴유저값 : " + userSeq);
 		service.deleteKeyword(keywordSeq);
+		System.out.println("삭제 성공 된건지? : ");
 		return "success";
 	}
 }

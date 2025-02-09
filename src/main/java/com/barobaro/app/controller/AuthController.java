@@ -48,7 +48,7 @@ public class AuthController {
             return "lec_oauth/admin_page";  // 관리자 페이지 JSP로 리다이렉트
     	}else {
     		 // 관리자가 아니면 접근 제한
-            return "lec_oauth/main";
+            return "pages/main";
     	}
     }
 
@@ -87,7 +87,7 @@ public class AuthController {
 	public String ctlFormLoginProcess(Model model, HttpServletRequest request) {
 		request.getSession().invalidate();
 		request.getSession().setMaxInactiveInterval(0);
-		return "lec_oauth/main";
+		return "pages/main";
 	}
 	
 	//마이페이지
@@ -121,7 +121,7 @@ public class AuthController {
 	        return "redirect:/login_page";
 	    }
 
-	    return "lec_oauth/mypage"; // 마이페이지로 이동
+	    return "/lec_oauth/mypage"; // 마이페이지로 이동
 	}
 
 	@RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
@@ -323,7 +323,7 @@ public class AuthController {
 			request.getSession().setAttribute("SESS_PROFILE_IMAGE", userInfo.getProfile_image());
 			request.getSession().setAttribute("SESS_STATUS", existingUserVO.getStatus()); // db에서 가져온값 확인
 	        request.getSession().setAttribute("SESS_ROLE", existingUserVO.getRole()); // db에서 가져온값 확인
-	        viewPage = "lec_oauth/main";  
+	        viewPage = "pages/main";  
 		}
 		return viewPage;
 	}
