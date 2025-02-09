@@ -506,6 +506,18 @@
 		    
     </select>
     
+    <select id="getReviewIsAvailable" resultType="int">
+    	
+    	SELECT 
+		    (SELECT COUNT(1) FROM RESERVATION_HISTORY
+		        WHERE
+		            user_seq = #{userSeq}
+		            AND STATUS = 6
+		            AND TIME_SLOT_SEQ IN (SELECT time_slot_seq FROM rent_time_slot WHERE post_seq = #{postSeq}))
+		            - (SELECT COUNT(1) FROM review WHERE reviewer = #{userSeq} AND post_seq = #{postSeq}) AS reviewIsAvailable
+		FROM DUAL
+    </select>
+    
 </mapper>
 
 
