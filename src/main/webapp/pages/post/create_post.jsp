@@ -6,66 +6,6 @@
     <meta charset="UTF-8">
     <title>바로바로 | baroborrow</title>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script> <!-- jQuery 라이브러리 로드 -->
-    <!-- <style>
-        /* 모달 창 스타일 */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        #additional-items {
-            margin-left: 10px;
-        }
-    </style>
-    <style>
-    	#title {
-    		width: 500px;
-    		height: 20px;
-    	}
-    	#product_name {
-    		width: 500px;
-    		height: 40px;
-    	}
-    	#item_content {
-    		width: 500px;
-    		height: 150px;
-    	}
-    	#rent_content {
-    		width: 500px;
-    		height: 150px;
-    	}
-    </style> -->
     <style>
     	/* 전체 레이아웃 */
 		body {
@@ -75,10 +15,14 @@
 		    padding: 0;
 		}
 		
+		textarea {
+			resize: none;
+		}
+		
 		#create-post-container {
 		    display: flex;
 		    justify-content: center;
-		    align-items: center;
+		    align-items: flex-start;
 		    height: 100vh;
 		    
 		}
@@ -161,12 +105,12 @@
 		    background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
 		}
 		
-		.modal-content {
+		.modal-content2 {
 		    background-color: white; 
 		    margin: auto; 
 		    padding: 20px; 
 		    border-radius: 8px; 
-		    width: 50%; 
+		    width: 60%;
 		}
 		
 		.close {
@@ -185,13 +129,13 @@
 
 <body>    
 	<jsp:include page="/pages/common/header_test_sh.jsp" />
-    <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/create">
+    <div id="create-post-container" style="">
+        <form id="create-post-form" style="margin-top: 20px" enctype="multipart/form-data" method="POST" action="/post/create">
             <table id="post-table">
                 <%-- <caption>게시글 작성</caption> --%>
                 <tr>
                     <td><label for="title">제목</label></td>
-                    <td colspan="5"><textarea id="title" name="title" required></textarea></td>
+                    <td colspan="5"><textarea style="height: 40px; resize: none;" id="title" name="title" required></textarea></td>
                 </tr>
                 <tr>
                 	<td><label for="category">카테고리</label></td>
@@ -216,15 +160,15 @@
                 </tr>
                 <tr>
                     <td><label for="product_name">제품명 상세 이름</label></td>
-                    <td colspan="4"><textarea id="product_name" name="product_name" required></textarea></td>
+                    <td colspan="4"><textarea style="height: 70px; resize: none;" id="product_name" name="product_name" required></textarea></td>
                 </tr>
                 <tr>
                     <td><label for="item_content">상품에 관한 설명</label></td>
-                    <td colspan="4"><textarea id="item_content" name="item_content" required></textarea></td>
+                    <td colspan="4"><textarea style="height: 150px; resize: none;"  id="item_content" name="item_content" required></textarea></td>
                 </tr>
                 <tr>
                     <td><label for="rent_content">대여에 관한 설명</label></td>
-                    <td colspan="4"><textarea id="rent_content" name="rent_content" required></textarea></td>
+                    <td colspan="4"><textarea style="height: 150px; resize: none;" id="rent_content" name="rent_content" required></textarea></td>
                 </tr>
                 <tr>
                 	<td>대여일 ~ 반납일</td>
@@ -239,13 +183,13 @@
                     <!-- 추가된 항목들이 들어갈 곳 -->
                 </tr>
             </table>
-            <button type="submit">게시글 작성</button>
+            <button type="submit" style="margin-top: 20px">게시글 작성</button>
         </form>
     </div>
 
     <!-- 모달 창 -->
     <div id="myModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content2" style="margin-top: 70px">
             <span class="close">&times;</span>
             <h2>대여 일정 입력</h2>
             <form id="modal-form">
@@ -297,7 +241,7 @@
 
                     // 마커가 표시될 위치입니다 
                     var markerPosition1 = new kakao.maps.LatLng(33.450701, 126.570667); 
-                    var imageSrc1 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FB9H3a%2FbtsL1rLr5SF%2FwBDG93KWdsxiN8XRiaGYI0%2Fimg.png', // 마커이미지의 주소입니다    
+                    var imageSrc1 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FNnUIO%2FbtsMcb8o0ug%2FQnNlyxAdCvxvkogRMn60aK%2Fimg.png', // 마커이미지의 주소입니다    
                     imageSize1 = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
                     imageOption1 = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                       
@@ -319,7 +263,7 @@
                     
 
                     var markerPosition2 = new kakao.maps.LatLng(33.450701, 126.570667); 
-                    var imageSrc2 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F2hoOn%2FbtsL1DY49q9%2F9bZVPkpSALn7VDKDkK5oC1%2Fimg.png', // 마커이미지의 주소입니다    
+                    var imageSrc2 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcOmYpH%2FbtsMcc0Aeje%2FuRWZfVpgNMt4D6NQOaUz51%2Fimg.png', // 마커이미지의 주소입니다    
                     imageSize2 = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
                     imageOption2 = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                       

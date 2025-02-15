@@ -87,12 +87,38 @@
             rt.return_location,
             rt.return_rotate_x,
             rt.return_rotate_y
+            
+            ,st10.*
+            ,st13.*
+            ,st14.favorites
+            ,st15.existChats
         FROM
             post p
         LEFT JOIN
             post_file pf ON p.post_seq = pf.post_seq
         LEFT JOIN
             (SELECT * FROM rent_time_slot ORDER BY rent_at ASC) rt ON p.post_seq = rt.post_seq
+        LEFT OUTER JOIN
+            (
+                SELECT st1.*, st2.*
+                FROM
+                    (SELECT POST_SEQ AS post_seq11, ROUND(AVG(RATING_VALUE), 2) AS averageProductReviewScore, COUNT(1) AS productReviewCount FROM review WHERE post_seq = #{postSeq} GROUP BY post_seq) st1
+                    LEFT OUTER JOIN (SELECT post_seq, RATING_VALUE AS sampleProductReviewScore, ITEM_REVIEW AS sampleProductReviewContent FROM review WHERE review_seq = (SELECT MAX(review_seq) FROM review WHERE post_seq = #{postSeq})) st2 ON st1.post_seq11 = st2.post_seq
+            ) st10 ON st10.post_seq11 = p.post_seq
+        LEFT OUTER JOIN
+        	(
+        		SELECT USER_SEQ, NICKNAME, PROFILE_IMAGE, (SELECT COUNT(1) FROM REVIEW_DETAIL WHERE REVIEW_SEQ IN(SELECT REVIEW_SEQ FROM REVIEW WHERE POST_SEQ = #{postSeq})) AS userScore
+        		FROM USER_TABLE 
+        		WHERE USER_SEQ = (SELECT USER_SEQ FROM post WHERE post_seq = #{postSeq})
+        	) st13 ON p.user_seq = st13.user_seq
+        LEFT OUTER JOIN
+        	(
+        		SELECT COUNT(1) AS favorites, post_seq FROM FAVORITE WHERE post_seq = #{postSeq} GROUP BY post_seq 
+        	) st14 ON p.post_seq = st14.post_seq
+        LEFT OUTER JOIN
+        	(
+				SELECT COUNT(1) AS existChats, post_seq FROM CHAT_ROOM WHERE post_seq = #{postSeq} GROUP BY post_seq       	
+        	) st15 ON p.post_seq = st15.post_seq
         WHERE
             p.post_seq = #{postSeq}
     </select>
@@ -198,6 +224,17 @@
 	    <result property="userSeq" column="user_seq"/>
 	    <result property="categoryName" column="category_name"/>
 	    <result property="pricePerTenMinute" column="price_per_ten_minute"/>
+	    <result property="averageProductReviewScore" column="averageProductReviewScore"/>
+	    <result property="productReviewCount" column="productReviewCount"/>
+	    <result property="sampleProductReviewScore" column="sampleProductReviewScore"/>
+	    <result property="sampleProductReviewContent" column="sampleProductReviewContent"/>
+	    
+	    <result property="userNickname" column="nickname"/>
+	    <result property="userProfile" column="profile_image"/>
+	    <result property="userScore" column="userScore"/>
+	    
+	    <result property="favorites" column="favorites"/>
+	    <result property="existChats" column="existChats"/>
 	    
 	    <!-- postImages (PostFileVO) 리스트 매핑 -->
 	    <collection property="postImages" ofType="com.barobaro.app.vo.PostFileVO">
@@ -236,6 +273,9 @@
 	     		c.CATEGORY_NAME,
          		pf.STORAGE_PATH
          		, st2.price_per_ten_minute
+         		, (
+         			SELECT ROUND(AVG(r11.RATING_VALUE), 2) FROM review r11 WHERE r11.post_seq = p.POST_SEQ
+         		) AS averageProductReviewScore
          		<!-- , ( SELECT
 					(SUM(rts.PRICE) / SUM((rts.RETURN_AT - rts.RENT_AT) * 1440)) * 10
 					FROM
@@ -328,6 +368,7 @@
 	    <result property="productName"  column="product_name"/>
 	    <result property="categoryName" column="category_name"/>
 	    <result property="pricePerTenMinute" column="price_per_ten_minute" />
+	    <result property="averageProductReviewScore" column="averageProductReviewScore"/>
 	    <!-- 하나의 사진만 매핑 (PostFileVO) -->
 	    <association property="postImage" javaType="com.barobaro.app.vo.PostFileVO">
 	        <result property="storagePath" column="storage_path"/>
@@ -347,10 +388,136 @@
     
     <delete id="deletePostFileByPostSeq">
     	DELETE FROM
-    		post
+    		POST_FILE
     	WHERE
     		post_seq = #{postSeq}
     </delete>
+    
+    <insert id="insertReview" parameterType="com.barobaro.app.vo.ReviewVO">
+	    <selectKey keyProperty="reviewVO.reviewSeq" resultType="Long" order="BEFORE">
+	        SELECT REVIEW_SEQ.NEXTVAL AS reviewSeq FROM dual
+	    </selectKey>
+	    INSERT INTO review(REVIEW_SEQ, REGDATE, POST_SEQ, REVIEWER, RATING_VALUE, ITEM_REVIEW) 
+	    VALUES (#{reviewVO.reviewSeq}, SYSDATE, #{reviewVO.postSeq}, #{userSeq}, #{reviewVO.ratingValue}, #{reviewVO.itemReview})
+	</insert>
+    <insert id="insertReviewDetail">
+    	INSERT INTO review_detail(REVIEW_DETAIL_SEQ, REVIEW_SEQ, USERREVIEW) 
+    	VALUES (REVIEW_DETAIL_SEQ.NEXTVAL, #{reviewSeq}, #{userReview})
+    </insert>
+    
+    <resultMap id="reviewSummaryResultMap" type="com.barobaro.app.vo.ReviewSummaryVO">
+	    <!-- ReceivedUserReview List -->
+	    <collection property="receivedUserReviews" ofType="com.barobaro.app.vo.ReviewSummaryVO$ReceivedUserReview">
+	        <result property="userReview" column="userreview"/>
+	        <result property="receivedReviewCount" column="received_review_count"/>
+	    </collection>
+	
+	    <!-- ReceivedPostReview List -->
+	    <collection property="receivedPostReviews" ofType="com.barobaro.app.vo.ReviewSummaryVO$ReceivedPostReview">
+	        <result property="postSeq" column="post_seq"/>
+	        <result property="title" column="title"/>
+	        <result property="productName" column="product_name"/>
+	        <result property="userSeq" column="user_seq"/>
+	        <result property="regDate" column="regdate"/>
+	        <result property="ratingValue" column="rating_value"/>
+	        <result property="itemReview" column="item_review"/>
+	    </collection>
+	
+	    <!-- SendedPostReview List -->
+	    <collection property="sendedPostReviews" ofType="com.barobaro.app.vo.ReviewSummaryVO$SendedPostReview">
+	        <result property="regDate" column="regdate"/>
+	        <result property="postSeq" column="post_seq"/>
+	        <result property="ratingValue" column="rating_value"/>
+	        <result property="itemReview" column="item_review"/>
+    	</collection>
+    </resultMap>
+    
+    <select id="getReceivedUserReview" resultMap="reviewSummaryResultMap">
+	    SELECT 
+	        userreview
+	        , count(userreview) AS received_review_count
+	    FROM
+	        review_detail 
+	    WHERE
+	        review_seq IN 
+	            (
+	                SELECT 
+	                    review_seq
+	                FROM
+	                    review
+	                WHERE
+	                    post_seq IN 
+	                        (
+	                            SELECT
+	                                post_seq
+	                            FROM
+	                                post
+	                            WHERE
+	                                user_seq = #{userSeq}
+	                        )
+	            )
+	    GROUP BY
+	        userreview
+    </select>
+    
+    <select id="getReceivedPostReview" resultMap="reviewSummaryResultMap">
+	    SELECT
+	        st1.post_seq
+	        , st1.title
+	        , st1.product_name
+	        , st1.user_seq
+	        , st2.regdate
+	        , st2.rating_value
+	        , st2.item_review
+	    FROM
+	        (
+	            SELECT
+	                post_seq
+	                , title
+	                , product_name
+	                , user_seq
+	            FROM 
+	                post
+	            WHERE 
+	                user_seq = #{userSeq}
+	        ) st1 INNER JOIN
+	        (
+	            SELECT
+	                post_seq 
+	                , regdate
+	                , rating_value
+	                , item_review
+	            FROM
+	                review
+	        ) st2 ON st1.post_seq = st2.post_seq
+    </select>
+    
+    <select id="getSendedPostReview" resultMap="reviewSummaryResultMap">
+
+		SELECT 
+		    regdate
+		    , post_seq
+		    , rating_value
+		    , item_review
+		FROM 
+		    review
+		WHERE
+		    reviewer = #{userSeq}
+		    
+    </select>
+    
+    <select id="getReviewIsAvailable" resultType="int">
+    	
+    	SELECT 
+		    (SELECT COUNT(1) FROM RESERVATION_HISTORY
+		        WHERE
+		            user_seq = #{userSeq}
+		            AND STATUS = 6
+		            AND TIME_SLOT_SEQ IN (SELECT time_slot_seq FROM rent_time_slot WHERE post_seq = #{postSeq}))
+		            - (SELECT COUNT(1) FROM review WHERE reviewer = #{userSeq} AND post_seq = #{postSeq}) AS reviewIsAvailable
+		FROM DUAL
+    </select>
+    
 </mapper>
 
 

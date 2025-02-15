@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +47,7 @@ import com.barobaro.app.vo.LocationVO;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
 import com.barobaro.app.vo.RentTimeSlotVO;
+import com.barobaro.app.vo.ReviewVO;
 import com.barobaro.app.vo.SearchVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -162,7 +164,8 @@ public class PostController {
 	@RequestMapping(value = "/post/{postSeq}", method = RequestMethod.GET)
 	public ModelAndView getPostPage(@PathVariable("postSeq") long postSeq, HttpSession session) {
 		session.setAttribute("user_info",
-				new UserInfo(1002, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		session.setAttribute("SESS_USER_SEQ",1001);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("pages/post/detail_post");
 		PostVO postVO = postService.getPostByPostSeq(postSeq);
@@ -174,6 +177,9 @@ public class PostController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		if(userInfo == null) mav.addObject("reviewIsAvailable", null);
+		else mav.addObject("reviewIsAvailable", postService.reviewIsAvailable(userInfo.getUserSeq(), postSeq));
 		return mav;
 	}
 
@@ -249,4 +255,20 @@ public class PostController {
 			System.out.println("경도: " + longitude);
 		}
 	}
+	
+	@GetMapping("/createReviewPage/{postSeq}")
+	public ModelAndView createReviewPage(@PathVariable("postSeq") long postSeq) {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("pages/review/review");
+		mav.addObject("postSeq", postSeq);
+		return mav;
+	}
+	
+	@PostMapping("/submitReview")
+	@ResponseBody
+    public String submitReview(@RequestBody ReviewVO reviewVO, HttpSession session) {
+		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		postService.createReview(reviewVO, userInfo.getUserSeq());
+        return "success";
+    }
 }

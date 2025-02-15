@@ -17,7 +17,7 @@
 
 	<div class="container mt-5">
 		<h3 class="text-start ms-3">
-			(유저 닉네임)님,<br> (상대방 닉네임)님과 거래가 어떠셨나요?
+			${sessionScope.user_info.profile_nickname}님,<br> 거래가 어떠셨나요?
 		</h3>
 
 		<!-- 유저 평가 -->
@@ -94,6 +94,34 @@
 		    
 		    $(".cancel-btn").click(function () {
 		        history.back();
+		    });
+		    
+		    
+		    $(".main-color").click(function (event) {
+		        event.preventDefault(); // Prevent default form submission
+
+		        const data = {
+		            ratingValue: $("#ratingValue").val(),
+		            itemReview: $("#itemReview").val(),
+		            userReview: $("input[name='userReview']:checked").map(function () {
+		                return $(this).val();
+		            }).get(),
+		            postSeq: ${postSeq}
+		        };
+
+		        $.ajax({
+		            type: "POST",
+		            url: "/post/submitReview",
+		            contentType: "application/json",
+		            data: JSON.stringify(data),
+		            success: function (response) {
+		                alert("Review submitted successfully!");
+		                window.location.href = "http://localhost:8089/post/post/1";
+		            },
+		            error: function (xhr, status, error) {
+		                console.error("Error submitting review:", error);
+		            }
+		        });
 		    });
 		});
 	</script>

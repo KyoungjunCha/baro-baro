@@ -83,7 +83,7 @@
 </head>
 
 <body>
-
+<p>유저 시퀀스 : ${sessionScope['SESS_USER_SEQ']}</p>
 <h2> 😊내가 등록한 물품 관리하기😊 </h2>
 
     <table id="rentalTable">
@@ -149,30 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //         return;
 //     }
 
-	// 거래 완료 상태로 업데이트할 것 있는지 먼저 확인
-	fetch("/reservation/done", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: "include" //, 								// JSESSIONID 같은 쿠키 기반 세션을 자동 포함
-      //body: JSON.stringify({ userSeq: userSeq }) 	
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("서버 응답 오류");
-        }
-        return response.text();
-    })
-    .then(message => {
-        console.log(message);
-        
-        loadReservationData();
-        loadRentalData();
-    })
-    .catch(error => console.error("업데이트 실패:", error));
-	
-	
+	let userSeq = ${sessionScope['SESS_USER_SEQ']}
+
     // rentalTable 가져오기 ======================================================================
     fetch("/reservation/getAllTimeSlots", {
         method: "POST",
@@ -189,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     })
     .then(data => {
-        console.log("서버 응답 데이터:", data); 
+        console.log("서버 응답 데이터1:", data); 
         populateRentalTable(data); // 서버에서 받은 데이터를 테이블에 적용
     })
     .catch(error => console.error("데이터 불러오기 실패:", error));
@@ -212,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     })
     .then(data => {
-        console.log("서버 응답 데이터:", data); 
+        console.log("서버 응답 데이터2:", data); 
         populateReservationTable(data); // 서버에서 받은 데이터를 테이블에 적용
     })
     .catch(error => console.error("데이터 불러오기 실패:", error));

@@ -108,6 +108,56 @@
 .search-button:hover {
 	background: #12c1c0;
 }
+
+.login-logo {
+	width: 30px;
+	height: 30px;
+}
+
+/* '마이페이지'와 '로그아웃' 링크를 감싸는 .auth-links 클래스 */
+.header__right__auth .auth-links {
+    display: flex;  /* flexbox를 사용하여 가로로 배치 */
+    align-items: center;  /* 세로로 중앙 정렬 */
+    gap: 10px;  /* 두 요소 사이에 간격을 10px로 설정 */
+    content:'';
+}
+
+/* '마이페이지' 링크와 '로그아웃' 버튼에 동일한 스타일 적용 */
+.header__right__auth .auth-links a,
+.header__right__auth .auth-links input[type="submit"] {
+    background-color: #f2f2f2;  /* 회색 배경 */
+    color: #6c757d;  /* 회색 텍스트 */
+    padding: 8px 15px;  /* 버튼 안의 텍스트 여백 */
+    border-radius: 20px;  /* 버튼 모서리 둥글게 */
+    text-decoration: none;  /* 링크 밑줄 제거 */
+    cursor: pointer;  /* 마우스를 올렸을 때 포인터로 변경 */
+    display: inline-flex;
+    align-items: center;  /* 세로로 중앙 정렬 */
+    justify-content: center;  /* 가로로 중앙 정렬 */
+    font-size: 14px;  /* 글씨 크기 */
+}
+
+/* '마이페이지' 링크와 '로그아웃' 버튼에 마우스를 올렸을 때 스타일 */
+.header__right__auth .auth-links a:hover,
+.header__right__auth .auth-links input[type="submit"]:hover {
+    background-color: #e0e0e0;  /* 마우스를 올렸을 때 배경 색 변화 */
+}
+
+/* '로그아웃' 버튼 스타일 */
+.header__right__auth .auth-links input[type="submit"] {
+    background-color: #f2f2f2;  /* 배경 색 */
+    border: none;  /* 테두리 제거 */
+}
+
+/* 마이페이지와 로그아웃 버튼의 위치를 정렬 */
+.header__right__auth .auth-links a,
+.header__right__auth .auth-links input[type="submit"] {
+    display: inline-flex; /* 세로로 정렬 */
+    align-items: center;  /* 세로 중앙 정렬 */
+}
+
+
+
 </style>
 </head>
 
@@ -126,12 +176,14 @@
 
 						<div class="search-container">
 							<form action="/post/posts" method="get">
-								<select name="searchType" class="search-type-button" aria-label="검색 유형 선택">
+								<select name="searchType" class="search-type-button"
+									aria-label="검색 유형 선택">
 									<option value="product">제품 및 장소 검색</option>
 									<option value="user">회원 닉네임 검색</option>
 								</select> <input type="search" name="searchKeyword" class="search-input"
 									placeholder="검색어를 입력하세요" value="${param.searchKeyword}">
-								<input type="hidden" name="availableOnly" id="availableOnly" value="${availableOnly}">
+								<input type="hidden" name="availableOnly" id="availableOnly"
+									value="${availableOnly}">
 								<button class="search-button" type="submit">검색</button>
 							</form>
 						</div>
@@ -140,28 +192,47 @@
 				<div class="col-lg-3">
 					<div class="header__right">
 						<div class="header__right__auth">
-							<a href="#">로그인</a> 
-							<a href="#">회원가입</a>
+							<c:choose>
+    							<c:when test="${empty sessionScope['SESS_EMAIL']}">
+        							<a href="/login_page">로그인</a> <!-- 로그인되지 않은 사용자는 로그인 페이지로 이동 -->
+   								 </c:when>
+							    <c:otherwise>
+                                    <div class = "auth-links">
+							        <a href="/mypage">마이페이지</a>
+							        <form action="/form_logout_process" method="POST">
+            							<input type="submit" value="로그아웃">
+        							</form>
+        							<c:choose>
+								    	 <c:when test="${sessionScope['SESS_PROVIDER'] == 'KAKAO'}">
+	                                         <img src="/resources/images/kakao_logo.svg" alt="Kakao Login" class="login-logo"/>
+	                                     </c:when>
+	                                     <c:otherwise>
+	                                         <img src="/resources/images/naver_logo.svg" alt="Naver Login" class="login-logo"/>
+	                                    </c:otherwise>
+                                    </c:choose>
+        							</div>
+							    </c:otherwise>
+							</c:choose>
 						</div>
 						<ul class="header__right__widget">
-							<li><span class="icon_search search-switch"></span></li>
-							<li><a href="/favorite/flist"><span class="icon_heart_alt"></span>
-									<div class="tip">2</div> </a></li>
-							<!-- 알림 -->
-							<li class="notification-container">
-								<!-- 알림 아이콘 --> <a href="#" id="notification-bell"> <i
-									class="bi bi-bell"></i>
-									<div class="tip" id="notification-count">0</div>
-							</a> <!-- 알림 목록 -->
-								<div id="notification-dropdown">
-									<div class="notification-header">
-										알림
-										<button id="mark-all-read">모두 읽음</button>
-									</div>
-									<ul id="notification-list"></ul>
-								</div>
-							</li>
-							<!-- 알림 end -->
+							<!-- 채팅 -->
+							<li><a href="/chat/page"><i class="bi bi-send"></i></span>
+									</a></li>
+							<!-- 즐겨찾기 -->
+							<li><a href="/favorite/flist"><i class="fa fa-bookmark"></i></span>
+									<!-- 알림 -->
+									<li class="notification-container">
+										<!-- 알림 아이콘 --> <a href="#" id="notification-bell"> <i
+											class="bi bi-bell"></i>
+									</a> <!-- 알림 목록 -->
+										<div id="notification-dropdown">
+											<div class="notification-header">
+												알림
+												<button id="mark-all-read">모두 읽음</button>
+											</div>
+											<ul id="notification-list"></ul>
+										</div>
+								</li> <!-- 알림 end -->
 						</ul>
 					</div>
 				</div>
@@ -185,252 +256,307 @@
 	<script src="/js/jquery.nicescroll.min.js"></script>
 	<script src="/js/main.js"></script>
 	<script>
-	/* ${sessionScope.user_info.userSeq} */	
+		/* ${sessionScope.user_info.userSeq} */
 		let eventSource = null;
 		let reconnectAttempts = 0;
 		const maxReconnectAttempts = 5;
-		
-	    $(document).ready(function () {
-			//let userSeq = 1001;
-	    	$.ajax({
-	    		url: '/notification/getUserSeq',
-	    		method: 'GET',
-	    		success: function(res) {
-	    			if(res !== -1) {
-	    				userSeq = res;
-	    				console.log("userSeq: ", userSeq);
-	    				if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
-	                        connectSSE(userSeq);  // ✅ AJAX 요청 후 한 번만 실행됨
-	                    }
-	    			} else {
-	    				console.log("로그인 정보 없음");
-	    			}
-	    		},
-	    		error: function(xhr, status, error) {
-	                console.error('userSeq 가져오는 과정에서 오류: ', error);
-	            }
-	    	});
-	    	
-	    	// 종 아이콘 클릭 시
-			$("#notification-bell").click(function (e) {
-			    e.preventDefault();
-			    $("#notification-dropdown").toggle();
-			    // ✅ 기존 연결이 존재하면 다시 연결하지 않음
-			    if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
-			        console.log("SSE 재연결 시도...");
-			    }
+
+		$(document)
+				.ready(
+						function() {
+							//let userSeq = 1001;
+							$
+									.ajax({
+										url : '/notification/getUserSeq',
+										method : 'GET',
+										success : function(res) {
+											if (res !== -1) {
+												userSeq = res;
+												console.log("userSeq: ",
+														userSeq);
+												if (!eventSource
+														|| eventSource.readyState === EventSource.CLOSED) {
+													connectSSE(userSeq); // ✅ AJAX 요청 후 한 번만 실행됨
+												}
+											} else {
+												console.log("로그인 정보 없음");
+											}
+										},
+										error : function(xhr, status, error) {
+											console.error(
+													'userSeq 가져오는 과정에서 오류: ',
+													error);
+										}
+									});
+
+							// 종 아이콘 클릭 시
+							$("#notification-bell")
+									.click(
+											function(e) {
+												e.preventDefault();
+												$("#notification-dropdown")
+														.toggle();
+												// ✅ 기존 연결이 존재하면 다시 연결하지 않음
+												if (!eventSource
+														|| eventSource.readyState === EventSource.CLOSED) {
+													console
+															.log("SSE 재연결 시도...");
+												}
+											});
+
+							loadNotification();
+
+							$('#mark-all-read').click(function() {
+								markAllAsRead();
+							});
+
+							// 알림 읽음 처리 & 이동
+							window.markAsRead = function(id, link) {
+								// 서버에 읽음 처리 요청
+								$.post(`/notification/read/${id}`, function() {
+									window.location.href = link; // 페이지 이동
+								});
+							};
+
+							// 드롭다운 외부 클릭 시 닫기
+							$(document)
+									.click(
+											function(e) {
+												if (!$(e.target)
+														.closest(
+																".notification-container").length) {
+													$("#notification-dropdown")
+															.hide();
+												}
+											});
+						}); // document.ready end
+
+		// 알림 추가 함수
+		function addNotification(notification) {
+			let keyword = notification.contents.split('-')[0].trim(); // 키워드 추출
+			let boldContents = notification.contents.replace(keyword,
+					"<strong>" + keyword + "</strong>");
+			const createdAt = new Date(notification.createdAt).toLocaleString();
+
+			const notificationItem = $('<li></li>').addClass("notification")
+					.attr("data-id", notification.notificationSeq);
+
+			if (notification.isRead === 0) {
+				notificationItem.addClass("unread");
+				notificationItem.prepend('<span class="unread"></span>'); // 파란 점 추가
+			}
+
+			notificationItem.html('<p>' + boldContents + '</p>' + '<small>'
+					+ createdAt + '</small>'
+					+ '<span class="check-box-container"></span>');
+
+			// 체크박스 추가
+			const checkBox = $('<input type="checkbox" class="read-check">')
+					.prop('checked', notification.isRead === 1).on(
+							'change',
+							function() {
+								const isRead = $(this).prop('checked');
+								updateReadStatus(notification.notificationSeq,
+										isRead, notificationItem);
+							});
+
+			// 체크박스를 알림 항목에 추가
+			notificationItem.find('.check-box-container').append(checkBox);
+
+			$("#notification-list").prepend(notificationItem);
+
+			updateUnreadCount();
+		}
+
+		// 알림 목록 불러오기
+		function loadNotification() {
+			$
+					.ajax({
+						url : '/notification/notification-list',
+						method : 'GET',
+						data : {
+							userSeq : '${sessionScope.user_info.userSeq}'
+						},
+						success : function(data) {
+							const notificationList = $('#notification-list');
+							const notificationCount = $('#notification-count');
+							notificationList.empty();
+
+							let unreadCount = 0;
+
+							$
+									.each(
+											data,
+											function(index, notification) {
+												const notificationElement = $(
+														'<li></li>')
+														.addClass(
+																'notification')
+														.attr(
+																'data-id',
+																notification.notificationSeq);
+
+												// 읽지 않은 알림에 파란 점 표시
+												if (notification.isRead === 0) {
+													notificationElement
+															.addClass('unread');
+													unreadCount++;
+												} else {
+													notificationElement
+															.addClass('read');
+												}
+
+												const createdAt = new Date(
+														notification.createdAt)
+														.toLocaleString();
+
+												notificationElement
+														.html('<p>'
+																+ notification.contents
+																+ '</p>'
+																+ '<small>'
+																+ createdAt
+																+ '</small>'
+																+ '<span class="check-box-container"></span>');
+
+												// 체크박스 추가
+												const checkBox = $(
+														'<input type="checkbox" class="read-check">')
+														.prop(
+																'checked',
+																notification.isRead === 1)
+														.on(
+																'change',
+																function() {
+																	const isRead = $(
+																			this)
+																			.prop(
+																					'checked');
+																	updateReadStatus(
+																			notification.notificationSeq,
+																			isRead,
+																			notificationElement);
+																});
+
+												// 체크박스를 알림 항목에 추가
+												notificationElement.find(
+														'.check-box-container')
+														.append(checkBox);
+
+												notificationList
+														.append(notificationElement);
+											});
+
+							// 읽지 않은 알림 개수 업데이트
+							if (unreadCount > 0) {
+								notificationCount.text(unreadCount).show();
+							} else {
+								notificationCount.text("0").hide();
+							}
+						},
+						error : function(xhr, status, error) {
+							console.error('알림 데이터를 가져오는 중 오류 발생:', error);
+						}
+					});
+		}
+
+		// 읽음 상태 처리
+		function updateReadStatus(notificationSeq, isRead, notificationItem) {
+			$
+					.ajax({
+						url : '/notification/mark-read/' + notificationSeq,
+						method : 'POST',
+						data : {
+							isRead : isRead ? 1 : 0
+						},
+						success : function(res) {
+							if (isRead) {
+								notificationItem.removeClass('unread')
+										.addClass('read');
+							} else {
+								notificationItem.removeClass('read').addClass(
+										'unread');
+							}
+
+							updateUnreadCount();
+						},
+						error : function(xhr, status, error) {
+							console.error('알림 읽음 처리 오류:', error);
+						}
+					});
+		}
+
+		// 안 읽은 알림 수 갱신
+		function updateUnreadCount() {
+			const unreadCount = $('.notification.unread').length;
+			if (unreadCount > 0) {
+				$("#notification-count").text(unreadCount).show();
+			} else {
+				$("#notification-count").text("0").hide();
+			}
+		}
+
+		// 모두 읽음 처리
+		function markAllAsRead() {
+			var userSeq = 1001;
+			$.ajax({
+				url : '/notification/mark-all-read',
+				method : 'POST',
+				data : {
+					userSeq : userSeq
+				},
+				success : function(response) {
+					$('#notification-list .notification').each(
+							function() {
+								$(this).removeClass('unread').addClass('read');
+								$(this).find('input[type="checkbox"]').prop(
+										'checked', true);
+							});
+
+					updateUnreadCount();
+				},
+				error : function(error) {
+					console.log('Error marking all as read:', error);
+				}
 			});
-	        
-	        loadNotification();
-	        
-	        $('#mark-all-read').click(function() {
-	            markAllAsRead();
-	        });
-	
-	        // 알림 읽음 처리 & 이동
-	        window.markAsRead = function(id, link) {
-	            // 서버에 읽음 처리 요청
-	            $.post(`/notification/read/${id}`, function() {
-	                window.location.href = link; // 페이지 이동
-	            });
-	        };
-	
-	        // 드롭다운 외부 클릭 시 닫기
-	        $(document).click(function (e) {
-	            if (!$(e.target).closest(".notification-container").length) {
-	                $("#notification-dropdown").hide();
-	            }
-	        });
-	    }); // document.ready end
-	    
-        // 알림 추가 함수
-        function addNotification(notification) {
-        	let keyword = notification.contents.split('-')[0].trim(); // 키워드 추출
-        	let boldContents = notification.contents.replace(keyword, "<strong>" + keyword + "</strong>");
-        	const createdAt = new Date(notification.createdAt).toLocaleString();
-        	
-            const notificationItem = $('<li></li>')
-            		.addClass("notification")
-            		.attr("data-id", notification.notificationSeq);
+		}
 
-	        if (notification.isRead === 0) {
-	            notificationItem.addClass("unread");
-	            notificationItem.prepend('<span class="unread"></span>'); // 파란 점 추가
-	        }
+		// SSE 연결
+		function connectSSE(userSeq) {
+			if (eventSource != null
+					&& eventSource.readyState !== EventSource.CLOSED) {
+				console.log("이미 SSE 연결이 열려 있습니다.");
+				return;
+			}
 
-	        notificationItem.html(
-	            '<p>' + boldContents + '</p>' +
-	            '<small>' + createdAt + '</small>' +
-	            '<span class="check-box-container"></span>'
-	        );
-	        
-	    	// 체크박스 추가
-            const checkBox = $('<input type="checkbox" class="read-check">')
-                .prop('checked', notification.isRead === 1)
-                .on('change', function() {
-                    const isRead = $(this).prop('checked');
-                    updateReadStatus(notification.notificationSeq, isRead, notificationItem);
-                });
+			console.log("새로운 SSE 연결 시도");
 
-            // 체크박스를 알림 항목에 추가
-            notificationItem.find('.check-box-container').append(checkBox);
+			// 기존 연결이 있다면 종료 후 새로 연결
+			if (eventSource !== null) {
+				console.log("기존 SSE 연결 종료 후 재연결");
+				eventSource.close();
+				eventSource = null;
+			}
 
-	        $("#notification-list").prepend(notificationItem);
+			eventSource = new EventSource("/notification/subscribe");
 
-	        updateUnreadCount();
-        }
-	    
-	    // 알림 목록 불러오기
-	    function loadNotification() {
-	    	$.ajax({
-	            url: '/notification/notification-list',
-	            method: 'GET',
-	            data: {userSeq: '${sessionScope.user_info.userSeq}'},
-	            success: function(data) {
-	                const notificationList = $('#notification-list');
-	                const notificationCount = $('#notification-count');
-	                notificationList.empty();
-	
-	                let unreadCount = 0;
-	                
-	                $.each(data, function(index, notification) {
-	                    const notificationElement = $('<li></li>')
-                   			.addClass('notification')
-                   			.attr('data-id', notification.notificationSeq);
-	
-	                    // 읽지 않은 알림에 파란 점 표시
-	                    if (notification.isRead === 0) {
-	                        notificationElement.addClass('unread');
-	                        unreadCount++;
-	                    } else {
-	                        notificationElement.addClass('read');
-	                    }
-	                    
-	                    const createdAt = new Date(notification.createdAt).toLocaleString();
-	
-	                    notificationElement.html(
-	                    	    '<p>' + notification.contents + '</p>' +
-	                    	    '<small>' + createdAt + '</small>' +
-	                    	    '<span class="check-box-container"></span>'
-	                    	);
-	                    
-	                 	// 체크박스 추가
-	                    const checkBox = $('<input type="checkbox" class="read-check">')
-	                        .prop('checked', notification.isRead === 1)
-	                        .on('change', function() {
-	                            const isRead = $(this).prop('checked');
-	                            updateReadStatus(notification.notificationSeq, isRead, notificationElement);
-	                        });
+			eventSource.onopen = function() {
+				console.log("SSE 연결 성공!");
+				reconnectAttempts = 0;
+			};
 
-	                    // 체크박스를 알림 항목에 추가
-	                    notificationElement.find('.check-box-container').append(checkBox);
-	
-	                    notificationList.append(notificationElement);
-	                });
-	
-	                // 읽지 않은 알림 개수 업데이트
-	                if (unreadCount > 0) {
-					    notificationCount.text(unreadCount).show();
-					} else {
-					    notificationCount.text("0").hide();
-					}
-	            },
-	            error: function(xhr, status, error) {
-	                console.error('알림 데이터를 가져오는 중 오류 발생:', error);
-	            }
-	        });
-	    }
-	    
-	    // 읽음 상태 처리
-	    function updateReadStatus(notificationSeq, isRead, notificationItem) {
-	    	$.ajax({
-	    		url: '/notification/mark-read/' + notificationSeq,
-	    		method: 'POST',
-	    		data: {
-	    			isRead: isRead ? 1 : 0
-    			},
-	    		success: function(res) {
-	    			if(isRead) {
-	    				notificationItem.removeClass('unread').addClass('read');
-	    			} else {
-	    				notificationItem.removeClass('read').addClass('unread');
-	    			}
-	    			
-	    			updateUnreadCount();
-	    		},
-	    		error: function(xhr, status, error) {
-	                console.error('알림 읽음 처리 오류:', error);
-	            }
-	    	});
-	    }
-	    
-	    // 안 읽은 알림 수 갱신
-	    function updateUnreadCount() {
-	    	const unreadCount = $('.notification.unread').length;
-	    	if(unreadCount > 0) {
-	    		$("#notification-count").text(unreadCount).show();
-	    	} else {
-	            $("#notification-count").text("0").hide();
-	        }
-	    }
-	    
-	    // 모두 읽음 처리
-	    function markAllAsRead() {
-	    	var userSeq = 1001;
-	        $.ajax({
-	            url: '/notification/mark-all-read',
-	            method: 'POST',
-	            data: {userSeq: userSeq},
-	            success: function(response) {
-	            	$('#notification-list .notification').each(function() {
-	                    $(this).removeClass('unread').addClass('read');
-	                    $(this).find('input[type="checkbox"]').prop('checked', true);
-	                });
+			eventSource.onerror = function(event) {
+				console.log(event);
+			};
 
-	                updateUnreadCount();
-	            },
-	            error: function(error) {
-	                console.log('Error marking all as read:', error);
-	            }
-	        });
-	    } 
-	    
-	    // SSE 연결
-	    function connectSSE(userSeq) {
-    		 if (eventSource != null && eventSource.readyState !== EventSource.CLOSED) {
-    			 console.log("이미 SSE 연결이 열려 있습니다.");
-    	       	 return;
-    	    }
-    		 
-    		console.log("새로운 SSE 연결 시도");
-    		
-    		// 기존 연결이 있다면 종료 후 새로 연결
-    	    if (eventSource !== null) {
-    	        console.log("기존 SSE 연결 종료 후 재연결");
-    	        eventSource.close();
-    	        eventSource = null;
-    	    }
-    		
-    	    eventSource = new EventSource("/notification/subscribe");
+			// 알림 이벤트 수신
+			eventSource.addEventListener('notification', function(event) {
+				const notification = JSON.parse(event.data);
+				addNotification(notification);
+			});
 
-    	    eventSource.onopen = function() {
-    	        console.log("SSE 연결 성공!");
-    	        reconnectAttempts = 0;
-    	    };
-    		
-    	    eventSource.onerror = function(event) {
-    	    	console.log(event);
-    	    };
-
-    	 	// 알림 이벤트 수신
-    	    eventSource.addEventListener('notification', function(event) {
-    	        const notification = JSON.parse(event.data);
-    	        addNotification(notification);
-    	    });
-    	    
-	    	
-    	}
-    </script>
+		}
+	</script>
 </body>
 
 </html>

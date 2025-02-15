@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,12 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.barobaro.app.common.CommonCode.Role;
+import com.barobaro.app.common.CommonCode.UserInfo;
 import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.service.FavoriteService;
 import com.barobaro.app.service.MypageService;
@@ -27,6 +32,7 @@ import com.barobaro.app.vo.FavoriteVO;
 import com.barobaro.app.vo.NotificationVO;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.ReviewSummaryVO;
 import com.barobaro.app.vo.UserReviewAnswerVO;
 
 @Controller
@@ -37,7 +43,7 @@ public class UserController {
 	
 	@Autowired
 	@Qualifier("favoriteServiceImpl")
-	private FavoriteService service;
+	private FavoriteService favoriteService;
 	
 	@Autowired
 	private NotificationService notificationService;
@@ -107,7 +113,11 @@ public class UserController {
     @RequestMapping(value = "/myposts/reservation", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
     public List<PostVO> ctlMyPostReservationList(HttpServletRequest request) {
-		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+//    	//기존 제무형꺼 기준?
+//    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	
+		//기존 경준코드
+    	int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	String usernickname = (String) request.getSession().getAttribute("SESS_PROFILE_NICKNAME");
     	
@@ -204,15 +214,16 @@ public class UserController {
   // 내 즐겨찾기 목록 보기
     @RequestMapping(value = "/myfavorite", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
-    public List<FavoriteVO> ctlMyFavoriteList(HttpServletRequest request) {
+    public List<PostVO> ctlMyFavoriteList(HttpServletRequest request) {
 		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
     	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
     	
 		
 		//유저 상태가 active 일 경우
 		if(status != null && "ACTIVE".equals(status.name())) {
-			List<FavoriteVO> favorites = mypageService.svcGetAllMyFavorites(userSeq);
-			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
+//			List<FavoriteVO> favorites = mypageService.svcGetAllMyFavorites(userSeq);
+			List<PostVO> favorites = favoriteService.favoriteListInfo(userSeq);
+//			List<PostVO> posts = mypageService.svcGetAllMyPosts(userSeq);
 			System.out.println("즐겨찾기" + favorites);
 			return favorites;
 		}else {
@@ -223,19 +234,25 @@ public class UserController {
 
 	@RequestMapping(value = "/myfavorite/toggle", method = RequestMethod.POST )
 	@ResponseBody
-	public ResponseEntity<String> toggleFavorite(@RequestBody FavoriteVO fvo) {
-	    try {
-	        int userSeq = fvo.getUserSeq();
+	public ResponseEntity<String> toggleFavorite(@RequestBody FavoriteVO fvo, HttpServletRequest request) {
+		int userSeq = (Integer)request.getSession().getAttribute("SESS_USER_SEQ");
+    	UserStatus status = (UserStatus) request.getSession().getAttribute("SESS_STATUS");
+		
+		try {
+//	        int userSeq = fvo.getUserSeq();
+	        System.out.println(userSeq);
 	        int postSeq = fvo.getPostSeq();
 	        
-	        boolean isFavorite = service.isFavorite(userSeq, postSeq);
+	        boolean isFavorite = favoriteService.isFavorite(userSeq, postSeq);
 	        if (isFavorite) {
 	            // 즐겨찾기 해지
-	            service.favoriteDelete(userSeq, postSeq);
+	        	favoriteService.favoriteDelete(userSeq, postSeq);
+	        	System.out.println("즐찾해지");
 	            return ResponseEntity.ok("deleted");
 	        } else {
 	            // 즐겨찾기 추가
-	            service.favoriteInsert(fvo);
+	        	favoriteService.favoriteInsert(fvo);
+	        	System.out.println("즐찾");
 	            return ResponseEntity.ok("added");
 	        }
 	    } catch (Exception e) {
@@ -285,6 +302,100 @@ public class UserController {
 //			return Collections.emptyList();
 //		}
 //	}
+	
+	
+	//키워드 json 버전 경준 25.02.07
+	
+	//리뷰 관련 정보 확인
+	// /review/summaryPage
+	@GetMapping("/review/summaryPage")
+	public ModelAndView getReviewSummary(HttpSession session) {
+//		session.setAttribute("user_info",
+//				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		
+		int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+		System.out.println(userSeq);
+		
+		ModelAndView mav = new ModelAndView();
+//		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		
+		mav.setViewName("/lec_oauth/review_summary");
+		ReviewSummaryVO reviewSummaryVO = mypageService.getReviewSummar(userSeq);
+		mav.addObject("reviewSummary", reviewSummaryVO);
+		System.out.println("vo : " + reviewSummaryVO);
+		System.out.println("mav : " + mav);
+		
+		return mav;
+	}
+	
+	@RequestMapping(value = "/myreview", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public ReviewSummaryVO getReviewUser(HttpSession session) {
+		System.out.println("리뷰 여기는?");
+	    Integer userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+	    System.out.println("리뷰 유저 : " + userSeq);
+
+	    if (userSeq == null) {
+	        throw new IllegalStateException("User is not logged in or session expired");
+	    }
+	    
+	    // 서비스 호출하여 데이터를 가져옵니다.
+	    ReviewSummaryVO reviewSummaryVO = mypageService.getReviewSummar(userSeq);
+	    System.out.println(reviewSummaryVO);
+	    // JSON 형태로 반환합니다.
+	    return reviewSummaryVO;
+	}
+	
+	
+	
+	
+	
+	
+	
+	// 받은 유저 관련 리뷰
+//  @GetMapping("/receivedUserReviews")
+    @RequestMapping(value = "/receivedUserReviews", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<ReviewSummaryVO.ReceivedUserReview> getReceivedUserReviews(HttpSession session){//@RequestParam("userSeq") long userSeq) {
+    	System.out.println("리뷰 여기는?");
+    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	System.out.println("유저시퀀스 리뷰" + userSeq);
+    	
+    	List<ReviewSummaryVO.ReceivedUserReview> data = mypageService.getReceivedUserReviews(userSeq);
+    	System.out.println("리뷰 테스트 리스트1 : " + data);
+    	
+        return mypageService.getReceivedUserReviews(userSeq);
+    }
+
+    // 받은 게시글 리뷰
+//    @GetMapping("/receivedPostReviews")
+    @RequestMapping(value = "/receivedPostReviews", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReviews(HttpSession session) {//@RequestParam("userSeq") long userSeq) {
+    	System.out.println("리뷰 여기는?");
+    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	System.out.println("유저시퀀스 리뷰" + userSeq);
+    	
+    	List<ReviewSummaryVO.ReceivedPostReview> data = mypageService.getReceivedPostReviews(userSeq);
+    	System.out.println("리뷰 테스트 리스트2 : " + data);
+    	
+        return mypageService.getReceivedPostReviews(userSeq);
+    }
+
+    // 내가 작성한 게시글 리뷰
+//    @GetMapping("/sendedPostReviews")
+    @RequestMapping(value = "/sendedPostReviews", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<ReviewSummaryVO.SendedPostReview> getSendedPostReviews(HttpSession session) {//@RequestParam("userSeq") long userSeq) {
+    	System.out.println("리뷰 여기는?");
+    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	System.out.println("유저시퀀스 리뷰" + userSeq);
+    	
+    	List<ReviewSummaryVO.SendedPostReview> data = mypageService.getSendedPostReviews(userSeq);
+    	System.out.println("리뷰 테스트 리스트3 : " + data);
+    	
+        return mypageService.getSendedPostReviews(userSeq);
+    }
 	
 	
 	

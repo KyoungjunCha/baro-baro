@@ -153,6 +153,15 @@
 		}
     </style>
     <style>
+    	#post-summary-continer-image img {
+			width: 100%;
+	      	height: 100%;
+	      	object-fit: cover; /* 컨테이너 전체를 채우되, 비율 유지 (필요에 따라 contain 사용) */
+	      	display: block;
+	    }
+    	
+    </style>
+    <style>
    		/* 알림창 배경 */
         #customAlert {
             display: none; /* 기본적으로 숨겨짐 */
@@ -185,15 +194,6 @@
 			cursor: pointer;
 			font-size: 16px;
         }
-    </style>
-    <style>
-    	#post-summary-continer-image img {
-			width: 100%;
-	      	height: 100%;
-	      	object-fit: cover; /* 컨테이너 전체를 채우되, 비율 유지 (필요에 따라 contain 사용) */
-	      	display: block;
-	    }
-    	
     </style>
     <script>
         // 알림창을 보여주는 함수
@@ -494,6 +494,10 @@
 	            
 	            const messageBodyEL = document.createElement("div");
 	            messageBodyEL.classList.add("message-body");
+	            messageBodyEL.style.color = "gray"; 
+	            messageBodyEL.style.overflow = "hidden";
+	            messageBodyEL.style.text-overflow = "ellipsis";
+	            messageBodyEL.style.white-space = "nowrap";
 	            
 	            /* const initChatMessageSTR = JSChatVO.chatMessages[JSChatVO.chatMessages.length - 1].content.split(" *date: ")[0];
 	            const messageBodyELTextNode = document.createTextNode(initChatMessageSTR); */

@@ -13,6 +13,7 @@ import com.barobaro.app.mapper.PostMapper;
 import com.barobaro.app.service.PostService;
 import com.barobaro.app.vo.PostFileVO;
 import com.barobaro.app.vo.PostVO;
+import com.barobaro.app.vo.ReviewVO;
 import com.barobaro.app.vo.SearchVO;
 
 @Service
@@ -94,7 +95,8 @@ public class PostServiceImpl implements PostService{
 			postMapper.insertRentTimeSlotByRentTimeSlotVO(e);
 		});
 		
-		
+		if(postVO.getPostImages() == null || postVO.getPostImages().size() == 0) return;
+		postMapper.deletePostFileByPostSeq(postVO.getPostSeq());
 		try {
 			String baseDirectoryPath = "c:/uploads/post/";  // 기본 디렉토리 경로
 			
@@ -134,7 +136,22 @@ public class PostServiceImpl implements PostService{
 		postVO.getPostImages().forEach(e->
 			postMapper.insertPostFileByPostFileVO(e)
 		);
-		postMapper.deletePostFileByPostSeq(postVO.getPostSeq());
+	}
+
+	@Override
+	public void createReview(ReviewVO reviewVO, long userSeq) {
+		postMapper.insertReview(reviewVO, userSeq);
+		if(reviewVO.getUserReview() == null || reviewVO.getUserReview().size() == 0) return ;
+		reviewVO.getUserReview().forEach(e -> {
+			postMapper.insertReviewDetail(e, reviewVO.getReviewSeq());
+		});
+		
+	}
+
+	@Override
+	public boolean reviewIsAvailable(long userSeq, long postSeq) {
+		if(postMapper.getReviewIsAvailable(postSeq, userSeq) >= 1) return true;
+		return false;
 	}
 	
 	

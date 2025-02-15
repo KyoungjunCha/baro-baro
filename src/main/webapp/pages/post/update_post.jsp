@@ -18,7 +18,7 @@
 		#create-post-container {
 		    display: flex;
 		    justify-content: center;
-		    align-items: center;
+		    align-items: flex-start;
 		    height: 100vh;
 		    
 		}
@@ -98,7 +98,7 @@
 		    background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
 		}
 		
-		.modal-content {
+		.modal-content2 {
 		    background-color: white; 
 		    margin: auto; 
 		    padding: 20px; 
@@ -122,13 +122,13 @@
 
 <body>    
 	<jsp:include page="/pages/common/header_test_sh.jsp" />
-    <div id="create-post-container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <form id="create-post-form" enctype="multipart/form-data" method="POST" action="/post/create?isUpdate=${KEY_POST.postSeq}">
+    <div id="create-post-container">
+        <form id="create-post-form" enctype="multipart/form-data" style="margin-top: 20px" method="POST" action="/post/create?isUpdate=${KEY_POST.postSeq}">
             <table id="post-table">
                 <%-- <caption>게시글 수정</caption> --%>
                 <tr>
                     <td><label for="title">제목</label></td>
-                    <td colspan="5"><textarea id="title" name="title">${KEY_POST.title}</textarea></td>
+                    <td colspan="5"><textarea style="height: 40px; resize: none;" id="title" name="title">${KEY_POST.title}</textarea></td>
                 </tr>
                 <tr>
                 	<td><label for="category">카테고리</label></td>
@@ -153,15 +153,15 @@
                 </tr>
                 <tr>
                     <td><label for="product_name">제품명 상세 이름</label></td>
-                    <td colspan="4"><textarea id="product_name" name="product_name">${KEY_POST.productName}</textarea></td>
+                    <td colspan="4"><textarea style="height: 70px; resize: none;" id="product_name" name="product_name">${KEY_POST.productName}</textarea></td>
                 </tr>
                 <tr>
                     <td><label for="item_content">상품에 관한 설명</label></td>
-                    <td colspan="4"><textarea id="item_content" name="item_content">${KEY_POST.itemContent}</textarea></td>
+                    <td colspan="4"><textarea style="height: 150px; resize: none;" id="item_content" name="item_content">${KEY_POST.itemContent}</textarea></td>
                 </tr>
                 <tr>
                     <td><label for="rent_content">대여에 관한 설명</label></td>
-                    <td colspan="4"><textarea id="rent_content" name="rent_content">${KEY_POST.rentContent}</textarea></td>
+                    <td colspan="4"><textarea style="height: 150px; resize: none;" id="rent_content" name="rent_content">${KEY_POST.rentContent}</textarea></td>
                 </tr>
                 <tr>
                 	<td>대여일 ~ 반납일</td>
@@ -176,13 +176,13 @@
                     <!-- 추가된 항목들이 들어갈 곳 -->
                 </tr>
             </table>
-            <button type="submit">게시글 수정</button>
+            <button type="submit" style="margin-top: 20px">게시글 수정</button>
         </form>
     </div>
 
     <!-- 모달 창 -->
     <div id="myModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content2" style="margin-top: 70px">
             <span class="close">&times;</span>
             <h2>대여 일정 입력</h2>
             <form id="modal-form">
