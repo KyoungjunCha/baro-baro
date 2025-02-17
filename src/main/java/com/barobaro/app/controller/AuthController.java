@@ -19,7 +19,6 @@ import com.barobaro.app.common.CommonCode;
 import com.barobaro.app.common.CommonCode.Role;
 import com.barobaro.app.common.CommonCode.SocialType;
 import com.barobaro.app.common.CommonCode.UserInfo;
-import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.common.StateGenerator;
 import com.barobaro.app.service.OauthService;
 import com.barobaro.app.vo.UsersOauthVO;
@@ -100,8 +99,6 @@ public class AuthController {
 	    System.out.println("업데이트되는 닉네임 세션에서 가져옴 : " + nickname);
 	    
 	    
-	    UserInfo userInfo = (UserInfo) request.getSession().getAttribute("user_info");
-	    
 	    if (email == null || nickname == null) {
 	        // 이메일혹은 닉네임 없으면 로그인 페이지로 리다이렉트
 	        return "redirect:/login_page";
@@ -112,10 +109,9 @@ public class AuthController {
 	    UsersTblVO user = oauthService.svcCheckExistUser(email, nickname); // DB에서 이메일로 유저 조회
 	    System.out.println("그러면 여기에 userseq 도 담겨 오려나: " + user);
 	    System.out.println("이렇게 써야하는건가 ? : " + user.getUserSeq());
-	    if (userInfo != null) {
+	    if (user != null) {
 	        // 사용자 정보를 마이페이지에서 보여줌
 	        model.addAttribute("user", user);
-//	        model.addAttribute("user", userInfo);
 	    } else {
 	        // 유저가 없으면 오류 처리 또는 로그인 페이지로 리다이렉트
 	        return "redirect:/login_page";
@@ -233,24 +229,6 @@ public class AuthController {
 		// ACCESS TOKEN을 사용해 REST 서비스(유저정보) 받기
 		UserInfo userInfo = oauthService.svcRequestUserInfo(socialType, accessToken);
 		System.out.println("OauthController.ctlCallback()!!!!:" + userInfo.toString());
-		
-		
-
-	    System.out.println("사용자 정보: " + userInfo.toString());
-	    
-	    // 세션에 저장할 UserInfo 객체 생성
-	    UserInfo userInfoObject = new UserInfo(
-	        userInfo.getUserSeq(),
-	        userInfo.getEmail(),
-	        userInfo.getProfile_nickname(),
-	        refreshToken, 
-	        UserStatus.ACTIVE,  // 기본값으로 활성 상태
-	        Role.GENERAL
-	    );
-	    
-	    // 세션에 UserInfo 객체 저장
-	    HttpSession session = request.getSession();
-	    session.setAttribute("user_info", userInfoObject);
 		
 		
 		 // 프로필 닉네임을 올바르게 사용

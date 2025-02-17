@@ -113,6 +113,51 @@
 	width: 30px;
 	height: 30px;
 }
+
+/* '마이페이지'와 '로그아웃' 링크를 감싸는 .auth-links 클래스 */
+.header__right__auth .auth-links {
+    display: flex;  /* flexbox를 사용하여 가로로 배치 */
+    align-items: center;  /* 세로로 중앙 정렬 */
+    gap: 10px;  /* 두 요소 사이에 간격을 10px로 설정 */
+    content:'';
+}
+
+/* '마이페이지' 링크와 '로그아웃' 버튼에 동일한 스타일 적용 */
+.header__right__auth .auth-links a,
+.header__right__auth .auth-links input[type="submit"] {
+    background-color: #f2f2f2;  /* 회색 배경 */
+    color: #6c757d;  /* 회색 텍스트 */
+    padding: 8px 15px;  /* 버튼 안의 텍스트 여백 */
+    border-radius: 20px;  /* 버튼 모서리 둥글게 */
+    text-decoration: none;  /* 링크 밑줄 제거 */
+    cursor: pointer;  /* 마우스를 올렸을 때 포인터로 변경 */
+    display: inline-flex;
+    align-items: center;  /* 세로로 중앙 정렬 */
+    justify-content: center;  /* 가로로 중앙 정렬 */
+    font-size: 14px;  /* 글씨 크기 */
+}
+
+/* '마이페이지' 링크와 '로그아웃' 버튼에 마우스를 올렸을 때 스타일 */
+.header__right__auth .auth-links a:hover,
+.header__right__auth .auth-links input[type="submit"]:hover {
+    background-color: #e0e0e0;  /* 마우스를 올렸을 때 배경 색 변화 */
+}
+
+/* '로그아웃' 버튼 스타일 */
+.header__right__auth .auth-links input[type="submit"] {
+    background-color: #f2f2f2;  /* 배경 색 */
+    border: none;  /* 테두리 제거 */
+}
+
+/* 마이페이지와 로그아웃 버튼의 위치를 정렬 */
+.header__right__auth .auth-links a,
+.header__right__auth .auth-links input[type="submit"] {
+    display: inline-flex; /* 세로로 정렬 */
+    align-items: center;  /* 세로 중앙 정렬 */
+}
+
+
+
 </style>
 </head>
 
@@ -148,28 +193,25 @@
 					<div class="header__right">
 						<div class="header__right__auth">
 							<c:choose>
-								<c:when test="${empty sessionScope['SESS_EMAIL']}">
-									<a href="/login_page">로그인</a>
-									<!-- 로그인되지 않은 사용자는 로그인 페이지로 이동 -->
-								</c:when>
-								<c:otherwise>
-									<c:choose>
-										<c:when test="${sessionScope['SESS_PROVIDER'] == 'KAKAO'}">
-											<img src="/resources/images/kakao_logo.svg" alt="Kakao Login"
-												class="login-logo" />
-										</c:when>
-										<c:otherwise>
-											<img src="/resources/images/naver_logo.svg" alt="Naver Login"
-												class="login-logo" />
-										</c:otherwise>
-									</c:choose>
-									<a href="/mypage">마이페이지</a>
-									<!-- 로그인된 사용자는 마이페이지로 이동 -->
-									<a href="#" onclick="sendPostRequest(event)">로그아웃</a>
-									<!-- <form action="/form_logout_process" method="POST">
-										<input type="submit" value="로그아웃">
-									</form> -->
-								</c:otherwise>
+    							<c:when test="${empty sessionScope['SESS_EMAIL']}">
+        							<a href="/login_page">로그인</a> <!-- 로그인되지 않은 사용자는 로그인 페이지로 이동 -->
+   								 </c:when>
+							    <c:otherwise>
+                                    <div class = "auth-links">
+							        <a href="/mypage">마이페이지</a>
+							        <form action="/form_logout_process" method="POST">
+            							<input type="submit" value="로그아웃">
+        							</form>
+        							<c:choose>
+								    	 <c:when test="${sessionScope['SESS_PROVIDER'] == 'KAKAO'}">
+	                                         <img src="/resources/images/kakao_logo.svg" alt="Kakao Login" class="login-logo"/>
+	                                     </c:when>
+	                                     <c:otherwise>
+	                                         <img src="/resources/images/naver_logo.svg" alt="Naver Login" class="login-logo"/>
+	                                    </c:otherwise>
+                                    </c:choose>
+        							</div>
+							    </c:otherwise>
 							</c:choose>
 						</div>
 						<ul class="header__right__widget">
@@ -219,7 +261,7 @@
 		let reconnectAttempts = 0;
 		const maxReconnectAttempts = 5;
 
-		/* $(document)
+		$(document)
 				.ready(
 						function() {
 							//let userSeq = 1001;
@@ -513,28 +555,7 @@
 				addNotification(notification);
 			});
 
-		} */
-		
-		function sendPostRequest(event) {
-            event.preventDefault();  // 기본 a 태그 동작(링크 이동)을 막음
-
-            const url = '/form_logout_process';  // 요청을 보낼 URL
-
-            fetch(url, {
-                method: 'POST'
-                /* headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data), */
-            })
-            //.then(response => response.json())  // 응답을 JSON으로 처리
-            .then(data => {
-            	location.reload();
-            })
-            .catch(error => {
-                console.error('Error:', error);  // 에러 발생 시
-            });
-        }
+		}
 	</script>
 </body>
 

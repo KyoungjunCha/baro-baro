@@ -310,14 +310,93 @@ public class UserController {
 	// /review/summaryPage
 	@GetMapping("/review/summaryPage")
 	public ModelAndView getReviewSummary(HttpSession session) {
+//		session.setAttribute("user_info",
+//				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		
+		int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+		System.out.println(userSeq);
 		
 		ModelAndView mav = new ModelAndView();
-		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+//		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
+		
 		mav.setViewName("/lec_oauth/review_summary");
-		ReviewSummaryVO reviewSummaryVO = mypageService.getReviewSummar(userInfo.getUserSeq());
+		ReviewSummaryVO reviewSummaryVO = mypageService.getReviewSummar(userSeq);
 		mav.addObject("reviewSummary", reviewSummaryVO);
-		System.out.println(reviewSummaryVO);
+		System.out.println("vo : " + reviewSummaryVO);
+		System.out.println("mav : " + mav);
+		
 		return mav;
 	}
+	
+	@RequestMapping(value = "/myreview", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public ReviewSummaryVO getReviewUser(HttpSession session) {
+		System.out.println("리뷰 여기는?");
+	    Integer userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+	    System.out.println("리뷰 유저 : " + userSeq);
+
+	    if (userSeq == null) {
+	        throw new IllegalStateException("User is not logged in or session expired");
+	    }
+	    
+	    // 서비스 호출하여 데이터를 가져옵니다.
+	    ReviewSummaryVO reviewSummaryVO = mypageService.getReviewSummar(userSeq);
+	    System.out.println(reviewSummaryVO);
+	    // JSON 형태로 반환합니다.
+	    return reviewSummaryVO;
+	}
+	
+	
+	
+	
+	
+	
+	
+	// 받은 유저 관련 리뷰
+//  @GetMapping("/receivedUserReviews")
+    @RequestMapping(value = "/receivedUserReviews", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<ReviewSummaryVO.ReceivedUserReview> getReceivedUserReviews(HttpSession session){//@RequestParam("userSeq") long userSeq) {
+    	System.out.println("리뷰 여기는?");
+    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	System.out.println("유저시퀀스 리뷰" + userSeq);
+    	
+    	List<ReviewSummaryVO.ReceivedUserReview> data = mypageService.getReceivedUserReviews(userSeq);
+    	System.out.println("리뷰 테스트 리스트1 : " + data);
+    	
+        return mypageService.getReceivedUserReviews(userSeq);
+    }
+
+    // 받은 게시글 리뷰
+//    @GetMapping("/receivedPostReviews")
+    @RequestMapping(value = "/receivedPostReviews", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReviews(HttpSession session) {//@RequestParam("userSeq") long userSeq) {
+    	System.out.println("리뷰 여기는?");
+    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	System.out.println("유저시퀀스 리뷰" + userSeq);
+    	
+    	List<ReviewSummaryVO.ReceivedPostReview> data = mypageService.getReceivedPostReviews(userSeq);
+    	System.out.println("리뷰 테스트 리스트2 : " + data);
+    	
+        return mypageService.getReceivedPostReviews(userSeq);
+    }
+
+    // 내가 작성한 게시글 리뷰
+//    @GetMapping("/sendedPostReviews")
+    @RequestMapping(value = "/sendedPostReviews", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<ReviewSummaryVO.SendedPostReview> getSendedPostReviews(HttpSession session) {//@RequestParam("userSeq") long userSeq) {
+    	System.out.println("리뷰 여기는?");
+    	int userSeq = (Integer) session.getAttribute("SESS_USER_SEQ");
+    	System.out.println("유저시퀀스 리뷰" + userSeq);
+    	
+    	List<ReviewSummaryVO.SendedPostReview> data = mypageService.getSendedPostReviews(userSeq);
+    	System.out.println("리뷰 테스트 리스트3 : " + data);
+    	
+        return mypageService.getSendedPostReviews(userSeq);
+    }
+	
+	
 	
 }

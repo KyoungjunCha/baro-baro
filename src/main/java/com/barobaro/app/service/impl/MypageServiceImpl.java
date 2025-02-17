@@ -102,4 +102,16 @@ public class MypageServiceImpl implements MypageService {
         return reviewSummary;
 	}
 	
+	public List<ReviewSummaryVO.ReceivedUserReview> getReceivedUserReviews(long userSeq) {
+        return postMapper.getReceivedUserReview(userSeq);
+    }
+
+    public List<ReviewSummaryVO.ReceivedPostReview> getReceivedPostReviews(long userSeq) {
+        return postMapper.getReceivedPostReview(userSeq);
+    }
+
+    public List<ReviewSummaryVO.SendedPostReview> getSendedPostReviews(long userSeq) {
+        return postMapper.getSendedPostReview(userSeq);
+    }
+	
 }
