@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.barobaro.app.mapper.CommentMapper">
+	
+	<!-- 댓글 영역 -->
+	<resultMap id="postMap" type="com.barobaro.app.vo.PostVO3">
+	    <result property="postSeq" 		column="post_seq"/>
+	    <result property="title" 		column="title"/>
+	    <result property="itemContent" 	column="item_content"/>
+	    <result property="rentContent" 	column="rent_content"/>
+	    <result property="postAt" 		column="post_at"/>
+	    <result property="count" 		column="count"/>
+	    <result property="productName" 	column="product_name"/>
+	    <result property="userSeq" 		column="user_seq"/>
+	    <result property="categorySeq" 	column="category_seq"/> <!-- 테이블 별칭 포함 -->
+	</resultMap>
+	
+	<!-- 게시물 전체 조회 쿼리 -->
+    <select id="getAllPosts" resultMap="postMap">
+        SELECT post_seq AS postSeq, 
+               title, 
+               item_content AS itemContent, 
+               rent_content AS rentContent, 
+               post_at AS postAt, 
+               count, 
+               product_name AS productName, 
+               user_seq AS userSeq, 
+               category_seq AS categorySeq
+        FROM post
+    </select>
+	
+	<!-- 게시물 상세 조회 쿼리 -->
+	<select id="getPostDetail" resultMap="postMap">
+	    SELECT post_seq,
+	           title, 
+	           item_content,
+	           rent_content,
+	           post_at,
+	           count, 
+	           product_name,
+	           user_seq,
+	           category_seq
+	    FROM post
+	    WHERE post_seq = #{postSeq}
+	</select>
+	
+	<!-- 댓글 영역 -->
+	<resultMap id="commentMap" type="com.barobaro.app.vo.CommentVO">
+	    <result property="commentSeq" 	column="comment_seq"/>
+	    <result property="parentSeq" 	column="parent_seq"/>
+	    <result property="content" 		column="content"/>
+	    <result property="secret" 		column="secret"/>
+	    <result property="status" 		column="status"/>
+	    <result property="createdAt" 	column="created_at"/>
+	    <result property="updatedAt" 	column="updated_at"/>
+	    <result property="postSeq" 		column="post_seq"/>
+	    <result property="userSeq" 		column="user_seq"/>
+	    <result property="nickname" 	column="nickname"/> <!-- 테이블 별칭 포함 -->
+	</resultMap>
+
+	
+	<!-- 최상단 댓글 조회 -->
+	<select id="getTopLevelComments" resultMap="commentMap">
+	    SELECT c.comment_seq, c.parent_seq, c.content, c.secret, c.status, 
+	           	TO_CHAR(c.created_at, 'YYYY-MM-DD HH24:MI') AS created_at, 
+           		TO_CHAR(c.updated_at, 'YYYY-MM-DD HH24:MI') AS updated_at, 
+	           c.post_seq, c.user_seq, u.nickname
+	    FROM post_comment c
+	    INNER JOIN user_table u ON c.user_seq = u.user_seq
+	    WHERE c.post_seq = #{postSeq} AND c.parent_seq IS NULL
+	    ORDER BY c.updated_at desc
+	</select>
+	
+	<!-- 대댓글 조회 -->
+	<select id="getReplies" resultMap="commentMap">
+	    SELECT c.comment_seq, c.parent_seq, c.content, c.secret, c.status, 
+	           TO_CHAR(c.created_at, 'YYYY-MM-DD HH24:MI') AS created_at, 
+	           TO_CHAR(c.updated_at, 'YYYY-MM-DD HH24:MI') AS updated_at, 
+	           c.post_seq, c.user_seq, u.nickname
+	    FROM post_comment c
+	    INNER JOIN user_table u ON c.user_seq = u.user_seq
+	    WHERE c.parent_seq = #{commentSeq}
+	    ORDER BY c.updated_at desc
+	</select>
+    
+	<!-- 댓글의 정보를 조회하는 쿼리(댓글 작성자를 알아내기 위해) -->
+	<select id="getCommentBySeq" resultMap="commentMap">
+	    SELECT c.comment_seq, c.parent_seq, c.content, c.secret, c.status, 
+	           c.created_at, c.updated_at, c.post_seq, c.user_seq, u.nickname
+	    FROM post_comment c
+	    INNER JOIN user_table u ON c.user_seq = u.user_seq
+	    WHERE comment_seq = #{commentSeq}
+	</select>
+	
+    <!-- 댓글 입력 -->
+	<insert id="insertComment" parameterType="com.barobaro.app.vo.CommentVO">
+	    INSERT INTO post_comment (comment_seq, parent_seq, post_seq, user_seq, content, secret, status, created_at, updated_at)
+    	VALUES (comment_seq.NEXTVAL, 
+            <choose>
+                <when test="parentSeq == null">NULL</when>
+                <otherwise>#{parentSeq}</otherwise>
+            </choose>, 
+            #{postSeq}, #{userSeq}, #{content}, #{secret}, 0, SYSDATE, SYSDATE)
+	</insert>
+	
+
+	<!-- 댓글 삭제 -->
+	<!-- 최상위 댓글 삭제 -->
+    <update id="deleteAllComment">
+        UPDATE post_comment 
+        SET status = 1
+        WHERE parent_seq = #{commentSeq} 
+        OR comment_seq = #{commentSeq}
+    </update>
+
+    <!-- 하위 댓글 삭제 -->
+    <update id="deleteChildComment">
+        UPDATE post_comment 
+        SET status = 1
+        WHERE comment_seq = #{commentSeq}
+    </update>
+    
+    <!-- 댓글 수정 -->
+   <update id="updateComment" parameterType="com.barobaro.app.vo.CommentVO">
+	    UPDATE post_comment
+	    SET content = #{content}, 
+	        secret = #{secret}, 
+	        updated_at = SYSDATE  <!-- DB에서 SYSDATE를 사용하여 수정 시간 갱신 -->
+	    WHERE comment_seq = #{commentSeq} AND user_seq = #{userSeq}
+	</update>
+
+</mapper>

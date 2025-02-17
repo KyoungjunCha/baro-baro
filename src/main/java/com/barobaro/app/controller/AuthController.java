@@ -19,7 +19,6 @@ import com.barobaro.app.common.CommonCode;
 import com.barobaro.app.common.CommonCode.Role;
 import com.barobaro.app.common.CommonCode.SocialType;
 import com.barobaro.app.common.CommonCode.UserInfo;
-import com.barobaro.app.common.CommonCode.UserStatus;
 import com.barobaro.app.common.StateGenerator;
 import com.barobaro.app.service.OauthService;
 import com.barobaro.app.vo.UsersOauthVO;
@@ -48,7 +47,7 @@ public class AuthController {
             return "lec_oauth/admin_page";  // 관리자 페이지 JSP로 리다이렉트
     	}else {
     		 // 관리자가 아니면 접근 제한
-            return "pages/main";
+            return "lec_oauth/main";
     	}
     }
 
@@ -87,7 +86,7 @@ public class AuthController {
 	public String ctlFormLoginProcess(Model model, HttpServletRequest request) {
 		request.getSession().invalidate();
 		request.getSession().setMaxInactiveInterval(0);
-		return "pages/main";
+		return "lec_oauth/main";
 	}
 	
 	//마이페이지
@@ -100,8 +99,6 @@ public class AuthController {
 	    System.out.println("업데이트되는 닉네임 세션에서 가져옴 : " + nickname);
 	    
 	    
-	    UserInfo userInfo = (UserInfo) request.getSession().getAttribute("user_info");
-	    
 	    if (email == null || nickname == null) {
 	        // 이메일혹은 닉네임 없으면 로그인 페이지로 리다이렉트
 	        return "redirect:/login_page";
@@ -112,16 +109,15 @@ public class AuthController {
 	    UsersTblVO user = oauthService.svcCheckExistUser(email, nickname); // DB에서 이메일로 유저 조회
 	    System.out.println("그러면 여기에 userseq 도 담겨 오려나: " + user);
 	    System.out.println("이렇게 써야하는건가 ? : " + user.getUserSeq());
-	    if (userInfo != null) {
+	    if (user != null) {
 	        // 사용자 정보를 마이페이지에서 보여줌
 	        model.addAttribute("user", user);
-//	        model.addAttribute("user", userInfo);
 	    } else {
 	        // 유저가 없으면 오류 처리 또는 로그인 페이지로 리다이렉트
 	        return "redirect:/login_page";
 	    }
 
-	    return "/lec_oauth/mypage"; // 마이페이지로 이동
+	    return "lec_oauth/mypage"; // 마이페이지로 이동
 	}
 
 	@RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
@@ -235,24 +231,6 @@ public class AuthController {
 		System.out.println("OauthController.ctlCallback()!!!!:" + userInfo.toString());
 		
 		
-
-	    System.out.println("사용자 정보: " + userInfo.toString());
-	    
-	    // 세션에 저장할 UserInfo 객체 생성
-	    UserInfo userInfoObject = new UserInfo(
-	        userInfo.getUserSeq(),
-	        userInfo.getEmail(),
-	        userInfo.getProfile_nickname(),
-	        refreshToken, 
-	        UserStatus.ACTIVE,  // 기본값으로 활성 상태
-	        Role.GENERAL
-	    );
-	    
-	    // 세션에 UserInfo 객체 저장
-	    HttpSession session = request.getSession();
-	    session.setAttribute("user_info", userInfoObject);
-		
-		
 		 // 프로필 닉네임을 올바르게 사용
 	    String profileNickname = userInfo.getProfile_nickname();
 	    System.out.println("닉네임 카카오 제공 : " + profileNickname);
@@ -323,7 +301,7 @@ public class AuthController {
 			request.getSession().setAttribute("SESS_PROFILE_IMAGE", userInfo.getProfile_image());
 			request.getSession().setAttribute("SESS_STATUS", existingUserVO.getStatus()); // db에서 가져온값 확인
 	        request.getSession().setAttribute("SESS_ROLE", existingUserVO.getRole()); // db에서 가져온값 확인
-	        viewPage = "pages/main";  
+	        viewPage = "lec_oauth/main";  
 		}
 		return viewPage;
 	}
