@@ -111,12 +111,12 @@
 		(
 		    SELECT COALESCE(SUM(NOT_READ_COUNT_REQUESTER), 0) AS requestCount
 		    FROM CHAT_ROOM
-		    WHERE REQUEST_USER_SEQ = 1001
+		    WHERE REQUEST_USER_SEQ = #{userSeq}
 		),
 		posterCount AS (
 		    SELECT COALESCE(SUM(cr.NOT_READ_COUNT_POSTER), 0) AS posterCount 
 		    FROM CHAT_ROOM cr 
-		    WHERE cr.POST_SEQ IN (SELECT p.post_seq FROM post p WHERE p.user_seq = 1005)
+		    WHERE cr.POST_SEQ IN (SELECT p.post_seq FROM post p WHERE p.user_seq = #{userSeq})
 		)
 		SELECT requestCount.requestCount + posterCount.posterCount AS totalCount FROM requestCount, posterCount;
 	</select>

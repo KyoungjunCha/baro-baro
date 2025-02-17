@@ -33,8 +33,6 @@ public class FavoriteController {
 
 	@RequestMapping(value = "/flist", method = RequestMethod.GET)
 	public String favoriteList(Model model, HttpSession session) {
-		session.setAttribute("user_info",
-				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		long userSeq = userInfo.getUserSeq();
 
@@ -48,8 +46,7 @@ public class FavoriteController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<List<Integer>> favoriteListByUser(HttpSession session) {
-		session.setAttribute("user_info",
-				new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
+		
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 
 		if (userInfo == null) {
@@ -74,8 +71,6 @@ public class FavoriteController {
 	@ResponseBody
 	public ResponseEntity<String> toggleFavorite(@RequestBody FavoriteVO fvo, HttpSession session) {
 		try {
-			session.setAttribute("user_info",
-					new UserInfo(1005, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN));
 			UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 			long userSeq = userInfo.getUserSeq();
 			int postSeq = fvo.getPostSeq();

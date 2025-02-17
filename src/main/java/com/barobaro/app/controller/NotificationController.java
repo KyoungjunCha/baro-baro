@@ -35,17 +35,18 @@ public class NotificationController {
 	@ResponseBody
 	public Long getUserSeq(HttpSession session) {
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
-	    if (userInfo == null) {
-	        userInfo = new UserInfo(1001, "test@test.com", "test nickname", "", UserStatus.ACTIVE, Role.ADMIN);
-	        session.setAttribute("user_info", userInfo);
-	    }
+		/*
+		 * if (userInfo == null) { userInfo = new UserInfo(1001, "test@test.com",
+		 * "test nickname", "", UserStatus.ACTIVE, Role.ADMIN);
+		 * session.setAttribute("user_info", userInfo); }
+		 */
 	    return userInfo.getUserSeq();
 	}
 	
 	@CrossOrigin(origins = "http://localhost:8089")
 	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
 	public SseEmitter subscribe(HttpSession session) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
+		//session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		long userSeq = userInfo.getUserSeq();
 		return service.subscribe((int) userSeq);
@@ -59,7 +60,7 @@ public class NotificationController {
 	@RequestMapping(value = "/notification-list", method = RequestMethod.GET)
 //	public List<NotificationVO> getAllNotifications(Model model, @RequestParam("userSeq") int userSeq) {
 	public List<NotificationVO> getAllNotifications(Model model, HttpSession session) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
+		//session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		long userSeq = userInfo.getUserSeq();
 		List<NotificationVO> list = service.getAllNotifications((int) userSeq);
@@ -75,7 +76,7 @@ public class NotificationController {
 	@RequestMapping(value = "/mark-all-read", method = RequestMethod.POST)
 	// public ResponseEntity<String> markAllAsRead(@RequestParam int userSeq) {
 	public ResponseEntity<String> markAllAsRead(HttpSession session) {
-		session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
+		//session.setAttribute("user_info", new UserInfo(1001, "test@test.com", "test nickname","", UserStatus.ACTIVE, Role.ADMIN));
 		UserInfo userInfo = (UserInfo) session.getAttribute("user_info");
 		long userSeq = userInfo.getUserSeq();
 		service.markAllAsRead((int) userSeq);

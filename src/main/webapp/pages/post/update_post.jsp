@@ -103,7 +103,7 @@
 		    margin: auto; 
 		    padding: 20px; 
 		    border-radius: 8px; 
-		    width: 50%; 
+		    width: 30%; 
 		}
 		
 		.close {
@@ -226,15 +226,15 @@
                     kakao.maps.load(function() {
                     	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
                         mapOption = { 
-                            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                            center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
                             level: 3 // 지도의 확대 레벨
                         };
 
                     var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
                     // 마커가 표시될 위치입니다 
-                    var markerPosition1 = new kakao.maps.LatLng(33.450701, 126.570667); 
-                    var imageSrc1 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FB9H3a%2FbtsL1rLr5SF%2FwBDG93KWdsxiN8XRiaGYI0%2Fimg.png', // 마커이미지의 주소입니다    
+                    var markerPosition1 = new kakao.maps.LatLng(37.566826, 126.9786567); 
+                    var imageSrc1 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FNnUIO%2FbtsMcb8o0ug%2FQnNlyxAdCvxvkogRMn60aK%2Fimg.png', // 마커이미지의 주소입니다    
                     imageSize1 = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
                     imageOption1 = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                       
@@ -255,8 +255,8 @@
                     
                     
 
-                    var markerPosition2 = new kakao.maps.LatLng(33.450701, 126.570667); 
-                    var imageSrc2 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F2hoOn%2FbtsL1DY49q9%2F9bZVPkpSALn7VDKDkK5oC1%2Fimg.png', // 마커이미지의 주소입니다    
+                    var markerPosition2 = new kakao.maps.LatLng(37.566826, 126.9786567); 
+                    var imageSrc2 = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcOmYpH%2FbtsMcc0Aeje%2FuRWZfVpgNMt4D6NQOaUz51%2Fimg.png', // 마커이미지의 주소입니다    
                     imageSize2 = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
                     imageOption2 = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                       

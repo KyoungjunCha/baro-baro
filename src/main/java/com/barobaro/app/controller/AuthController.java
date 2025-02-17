@@ -301,7 +301,7 @@ public class AuthController {
 			request.getSession().setAttribute("SESS_PROFILE_IMAGE", userInfo.getProfile_image());
 			request.getSession().setAttribute("SESS_STATUS", existingUserVO.getStatus()); // db에서 가져온값 확인
 	        request.getSession().setAttribute("SESS_ROLE", existingUserVO.getRole()); // db에서 가져온값 확인
-	        viewPage = "lec_oauth/main";  
+	        viewPage = "/pages/main";  
 		}
 		return viewPage;
 	}

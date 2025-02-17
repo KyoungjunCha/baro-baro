@@ -115,8 +115,7 @@
 		            contentType: "application/json",
 		            data: JSON.stringify(data),
 		            success: function (response) {
-		                alert("Review submitted successfully!");
-		                window.location.href = "http://localhost:8089/post/post/1";
+		                window.location.href = "http://localhost:8089/post/post/" + ${postSeq};
 		            },
 		            error: function (xhr, status, error) {
 		                console.error("Error submitting review:", error);

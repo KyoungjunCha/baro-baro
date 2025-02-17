@@ -717,7 +717,7 @@ textarea:focus {
                 	<br>
                 </div>
 
-                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.userSeq}'">판매자에게 채팅하기</button>
+                <button class="chat-button" type="button" onclick="window.location.href='/chat/createRoom/${KEY_POST.postSeq}'">판매자에게 채팅하기</button>
             </div>
         </div>
         <br>
